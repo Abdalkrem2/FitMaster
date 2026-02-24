@@ -1,0 +1,15 @@
+#spring.application.name=ecommerce_v2
+#spring.h2.console.enabled=true
+#spring.datasource.url=jdbc:h2:mem:test
+spring:
+  application:
+    name: ecommerce_v2
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url : jdbc:h2:mem:test
+  app :
+    jwtSecret : SGVsbG9Xb3JsZFRoaXNJc0FTZWNyZXRLZXlGb3JKV1RUb2tlbkdlbmVyYXRpb25XaXRoU3ByaW5nQm9vdA==
+    jwtExpirationMs: 300000
+    jwtCookieName: springBootEcom
