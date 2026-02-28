@@ -144,7 +144,7 @@ public class EmployeeServiceImp implements EmployeeService {
         return EmployeeDTOs.EmployeeDTO.builder()
                 .phone(user.getPhone())
                 .gender(user.getGender())
-                .id(user.getUserId())
+                .id(user.getId())
                 .fullName(user.getFullName())
                 .roles(user.getRoles())
                 .isActivated(user.getIsActivated())
