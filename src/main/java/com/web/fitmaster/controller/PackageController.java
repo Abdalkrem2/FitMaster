@@ -2,49 +2,64 @@ package com.web.fitmaster.controller;
 
 import com.web.fitmaster.model.Package;
 import com.web.fitmaster.services.PackageService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/packages")
+@RequiredArgsConstructor
 public class PackageController {
+
 
     private final PackageService packageService;
 
-    public PackageController(PackageService packageService) {
-        this.packageService = packageService;
-    }
 
     @PostMapping
-    public Package createPackage(@RequestBody Package pkg) {
-        return packageService.createPackage(pkg);
+    public ResponseEntity<Package> createPackage(@RequestBody Package pkg) {
+        Package created = packageService.createPackage(pkg);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
-    //response entity for all + postman
+
 
     @GetMapping
-    public List<Package> getAllPackages() {
-        return packageService.getAllPackages();
+    public ResponseEntity<List<Package>> getAllPackages() {
+        List<Package> packages = packageService.getAllPackages();
+        return ResponseEntity.ok(packages);
     }
+
 
     @GetMapping("/{id}")
-    public Package getPackage(@PathVariable Long id) {
-        return packageService.getPackageById(id);
+    public ResponseEntity<Package> getPackage(@PathVariable Long id) {
+        return ResponseEntity.ok(packageService.getPackageById(id));
     }
+
 
     @PutMapping("/{id}")
-    public Package updatePackage(@PathVariable Long id,
-                                 @RequestBody Package pkg) {
-        return packageService.updatePackage(id, pkg);
+    public ResponseEntity<Package> updatePackage(@PathVariable Long id,
+                                                 @RequestBody Package pkg) {
+        Package updated = packageService.updatePackage(id, pkg);
+        if (updated == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updated);
     }
 
+
     @DeleteMapping("/{id}")
-    public void deletePackage(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePackage(@PathVariable Long id) {
         packageService.deletePackage(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/status")
-    public Package changeStatus(@PathVariable Long id) {
-        return packageService.changeStatus(id);
+    public ResponseEntity<Package> changeStatus(@PathVariable Long id) {
+        Package updated = packageService.changeStatus(id);
+        if (updated == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updated);
     }
 }

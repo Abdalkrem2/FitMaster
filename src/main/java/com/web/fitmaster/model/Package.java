@@ -28,7 +28,7 @@ public class Package {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private PackageStatus status;
+    private PackageStatus status = PackageStatus.ACTIVE;
 
 
 

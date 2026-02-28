@@ -4,18 +4,20 @@ package com.web.fitmaster.services.Imp;
 import com.web.fitmaster.model.Package;
 import com.web.fitmaster.model.enums.PackageStatus;
 import com.web.fitmaster.repository.PackageRepository;
+import com.web.fitmaster.services.PackageService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class PackageServiceImpl implements com.web.fitmaster.services.PackageService {
+@RequiredArgsConstructor
+public class PackageServiceImpl implements PackageService {
+
 
     private final PackageRepository packageRepository;
 
-    public PackageServiceImpl(PackageRepository packageRepository) {
-        this.packageRepository = packageRepository;
-    }
 
     @Override
     public Package createPackage(Package pkg) {
@@ -38,7 +40,8 @@ public class PackageServiceImpl implements com.web.fitmaster.services.PackageSer
 
     @Override
     public void deletePackage(Long id) {
-        packageRepository.deleteById(id);
+        Package pkg = getPackageById(id);
+        packageRepository.delete(pkg);
     }
 
     @Override
@@ -49,7 +52,7 @@ public class PackageServiceImpl implements com.web.fitmaster.services.PackageSer
     @Override
     public Package getPackageById(Long id) {
         return packageRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Package not found"));
+                .orElseThrow(() -> new RuntimeException("Package not found: "+ id));
     }
 
     @Override
