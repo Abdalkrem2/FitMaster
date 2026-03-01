@@ -46,7 +46,7 @@ public class AuthUtil {
     }
 
     public Long loggedInUserId() {
-        return loggedInUser().getUserId();
+        return loggedInUser().getId();
     }
 
 
