@@ -29,6 +29,8 @@ public class EmployeeDTOs {
         @NotBlank @NotNull @Size(max = 50)
         private String password;
 
+        private String profilePicture;
+
         private AppRole role;
 
         private Boolean isActivated = true;
@@ -48,6 +50,8 @@ public class EmployeeDTOs {
 
         @Size(max = 50)
         private String password;
+
+        private String profilePicture;
 
         private AppRole role;
 
@@ -69,6 +73,7 @@ public class EmployeeDTOs {
         private String gender;
         private Set<Role> roles;
         private Boolean isActivated = false;
+        private String profilePicture;
     }
 
 

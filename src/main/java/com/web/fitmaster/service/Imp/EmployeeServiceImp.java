@@ -54,6 +54,7 @@ public class EmployeeServiceImp implements EmployeeService {
        User user = new User();
        user.setPhone(req.getPhone());
        user.setGender(req.getGender());
+       user.setProfilePicture(req.getProfilePicture());
        user.setPassword(passwordEncoder.encode(req.getPassword()) );
        user.setFullName(req.getFullName());
        user.setIsActivated(req.getIsActivated());
@@ -96,7 +97,8 @@ public class EmployeeServiceImp implements EmployeeService {
         if (req.getPassword() != null && !req.getPassword().isBlank()) {
             user.setPassword(passwordEncoder.encode(req.getPassword()));
         }
-
+        if(req.getProfilePicture() != null && !req.getProfilePicture().isBlank())
+            user.setProfilePicture(req.getProfilePicture());
 
         if(req.getRole()!=null) {
             Role employeeRole = roleRepository.findByRoleName(AppRole.EMPLOYEE)
@@ -131,7 +133,7 @@ public class EmployeeServiceImp implements EmployeeService {
     @Override
     public EmployeeDTOs.EmployeeDTO getEmployee(Long id) {
         User user = userRepository
-                .findByUserIdAndRoles_RoleNameIn(
+                .findByIdAndRoles_RoleNameIn(
                         id,
                         Set.of(AppRole.EMPLOYEE, AppRole.ADMIN)
                 )

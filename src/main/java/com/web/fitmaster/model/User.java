@@ -19,7 +19,6 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-
     @Column(nullable = false, unique = true)
     private String phone;
 
@@ -28,6 +27,9 @@ public class User {
 
     @Column(name = "full_name", nullable = false)
     private String fullName;
+
+    @Column(name = "profile_picture", columnDefinition = "LONGTEXT")
+    private String profilePicture;
 
     private String gender;
 
