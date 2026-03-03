@@ -5,35 +5,28 @@ import com.web.fitmaster.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
 public class MemberController {
 
-    private final MemberService memberService;
+    private final MemberService service;
 
-
-    @PostMapping("/")
-    public ResponseEntity<User> createProfile(@RequestBody User user) {
-        User createdUser = memberService.createProfile(user);
-        return ResponseEntity.ok(createdUser);
+    @PostMapping("/{userId}")
+    public ResponseEntity<User> create(@PathVariable Long userId) {
+        return ResponseEntity.ok(service.createMember(userId));
     }
-
 
     @PutMapping("/{userId}")
-    public ResponseEntity<User> updateProfile(
+    public ResponseEntity<User> update(
             @PathVariable Long userId,
-            @RequestBody User userDetails) {
+            @RequestParam String fullName) {
 
-        User updatedUser = memberService.updateProfile(userId, userDetails);
-        return ResponseEntity.ok(updatedUser);
+        return ResponseEntity.ok(service.updateMember(userId, fullName));
     }
 
-
     @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteProfile(@PathVariable Long userId) {
-        memberService.deleteProfile(userId);
-        return ResponseEntity.ok("User deleted successfully");
+    public ResponseEntity<String> delete(@PathVariable Long userId) {
+        return ResponseEntity.ok(service.deleteMember(userId));
     }
 }

@@ -12,22 +12,34 @@ public class MemberServiceImp implements MemberService {
 
     private final UserRepository userRepository;
 
-    @Override
-    public User createProfile(User user) {
-        return userRepository.save(user);
-    }
 
     @Override
-    public User updateProfile(Long userId, User userDetails) {
+    public User createMember(Long userId) {
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User updateMember(Long userId, String fullName) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setFullName(fullName);
 
         return userRepository.save(user);
     }
 
     @Override
-    public void deleteProfile(Long userId) {
-        userRepository.deleteById(userId);
+    public String deleteMember(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        userRepository.save(user);
+
+        return "Member role removed";
     }
 }

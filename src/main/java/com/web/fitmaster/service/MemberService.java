@@ -4,9 +4,9 @@ import com.web.fitmaster.model.User;
 
 public interface MemberService {
 
-    User createProfile(User user);
+    User createMember(Long userId);
 
-    User updateProfile(Long userId, User userDetails);
+    User updateMember(Long userId, String fullName);
 
-    void deleteProfile(Long userId);
+    String deleteMember(Long userId);
 }
