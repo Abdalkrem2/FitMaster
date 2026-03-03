@@ -1,12 +1,17 @@
 package com.web.fitmaster.service;
 
-import com.web.fitmaster.model.User;
+import com.web.fitmaster.dto.MemberDTOs;
 
+import jakarta.validation.Valid;
+import org.springframework.stereotype.Service;
+
+
+@Service
 public interface MemberService {
+    MemberDTOs.MemberDTO createMember(@Valid MemberDTOs.MemberRequest memberRequest);
 
-    User createMember(Long userId);
+    MemberDTOs.MemberDTO updateMember(Long id, MemberDTOs.MemberRequest memberRequest);
 
-    User updateMember(Long userId, String fullName);
+     String deleteMember(Long id);
 
-    String deleteMember(Long userId);
 }

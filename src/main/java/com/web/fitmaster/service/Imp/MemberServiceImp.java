@@ -1,45 +1,44 @@
 package com.web.fitmaster.service.Imp;
 
-import com.web.fitmaster.model.User;
-import com.web.fitmaster.repository.UserRepository;
+import com.web.fitmaster.dto.MemberDTOs;
 import com.web.fitmaster.service.MemberService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-@Service
-@RequiredArgsConstructor
 public class MemberServiceImp implements MemberService {
 
-    private final UserRepository userRepository;
+    private MemberDTOs.MemberDTO member;
 
 
     @Override
-    public User createMember(Long userId) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        return userRepository.save(user);
+    public MemberDTOs.MemberDTO createMember(MemberDTOs.MemberRequest memberRequest) {
+        member = new MemberDTOs.MemberDTO(
+                1L,
+                memberRequest.getName(),
+                memberRequest.getPhone()
+        );
+        return member;
     }
 
+
     @Override
-    public User updateMember(Long userId, String fullName) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        user.setFullName(fullName);
-
-        return userRepository.save(user);
+    public MemberDTOs.MemberDTO updateMember(Long id, MemberDTOs.MemberRequest memberRequest) {
+        if (member == null || !member.getId().equals(id)) {
+            throw new RuntimeException("Member not found with id: " + id);
+        }
+        member.setName(memberRequest.getName());
+        member.setPhone(memberRequest.getPhone());
+        return member;
     }
 
+
+
     @Override
-    public String deleteMember(Long userId) {
+    public String deleteMember(Long id) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        userRepository.save(user);
+        if (member == null || !member.getId().equals(id)) {
+            throw new RuntimeException("Member not found with id: " + id);
+        }
+        member = null;
 
-        return "Member role removed";
+        return "Member with id= " + id + " was deleted successfully";
     }
 }
