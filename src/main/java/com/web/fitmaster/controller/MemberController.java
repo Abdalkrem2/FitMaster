@@ -23,7 +23,7 @@ public class MemberController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MemberDTOs.MemberDTO> updateMember(
-            @PathVariable Long id,@RequestBody MemberDTOs.MemberRequest request) {
+            @PathVariable Long id,@RequestBody MemberDTOs.MemberUpdate request) {
 
         return ResponseEntity.ok(memberService.updateMember(id, request));
     }
