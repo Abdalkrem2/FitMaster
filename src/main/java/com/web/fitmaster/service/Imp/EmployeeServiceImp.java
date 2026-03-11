@@ -1,7 +1,8 @@
 package com.web.fitmaster.service.Imp;
 
 import com.web.fitmaster.dto.EmployeeDTOs;
-import com.web.fitmaster.exceptions.APIException;
+
+import com.web.fitmaster.exceptions.NotFoundException;
 import com.web.fitmaster.model.Role;
 import com.web.fitmaster.model.User;
 import com.web.fitmaster.model.enums.AppRole;
@@ -31,7 +32,7 @@ public class EmployeeServiceImp implements EmployeeService {
 
     @Override
     public EmployeeDTOs.EmployeeResponse getEmployees(Pageable pageable) {
-        Page<User>content=userRepository.findAll(pageable);
+        Page<User>content=userRepository.findByRoles_roleNameIn(Set.of(AppRole.EMPLOYEE,AppRole.ADMIN),pageable);
 
         List<EmployeeDTOs.EmployeeDTO> dto = content.stream().map(this::mapToDTO).toList();
 
@@ -49,7 +50,7 @@ public class EmployeeServiceImp implements EmployeeService {
     @Transactional
     public EmployeeDTOs.EmployeeDTO createEmployee(EmployeeDTOs.EmployeeRequest req) {
        if(userRepository.existsByPhone(req.getPhone()))
-           throw new APIException("Phone number already exists");
+           throw new NotFoundException("Phone number already exists");
 
        User user = new User();
        user.setPhone(req.getPhone());
@@ -60,10 +61,10 @@ public class EmployeeServiceImp implements EmployeeService {
        user.setIsActivated(req.getIsActivated());
 
         Role employeeRole = roleRepository.findByRoleName(AppRole.EMPLOYEE)
-                .orElseThrow(() -> new APIException("EMPLOYEE not found"));
+                .orElseThrow(() -> new NotFoundException("EMPLOYEE not found"));
 
         Role adminRole = roleRepository.findByRoleName(AppRole.ADMIN)
-                .orElseThrow(() -> new APIException("ADMIN not found"));
+                .orElseThrow(() -> new NotFoundException("ADMIN not found"));
 
 
        if(req.getRole()==null||req.getRole()==AppRole.EMPLOYEE)
@@ -81,7 +82,8 @@ public class EmployeeServiceImp implements EmployeeService {
     @Override
     @Transactional
     public EmployeeDTOs.EmployeeDTO updateEmployee(Long id, EmployeeDTOs. EmployeeUpdateRequest req) {
-        User user = userRepository.findById(id).orElseThrow(() -> new APIException("User not found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
+
         if (req.getFullName() != null && !req.getFullName().isBlank()) {
             user.setFullName(req.getFullName());
         }
@@ -97,15 +99,16 @@ public class EmployeeServiceImp implements EmployeeService {
         if (req.getPassword() != null && !req.getPassword().isBlank()) {
             user.setPassword(passwordEncoder.encode(req.getPassword()));
         }
+
         if(req.getProfilePicture() != null && !req.getProfilePicture().isBlank())
             user.setProfilePicture(req.getProfilePicture());
 
         if(req.getRole()!=null) {
             Role employeeRole = roleRepository.findByRoleName(AppRole.EMPLOYEE)
-                    .orElseThrow(() -> new APIException("EMPLOYEE not found"));
+                    .orElseThrow(() -> new NotFoundException("EMPLOYEE not found"));
 
             Role adminRole = roleRepository.findByRoleName(AppRole.ADMIN)
-                    .orElseThrow(() -> new APIException("ADMIN not found"));
+                    .orElseThrow(() -> new NotFoundException("ADMIN not found"));
 
             user.getRoles().clear();
 
@@ -124,7 +127,7 @@ public class EmployeeServiceImp implements EmployeeService {
     public String deleteEmployee(Long id) {
 
         if(!userRepository.existsById(id))
-            throw new APIException("User not found");
+            throw new NotFoundException("User not found");
         userRepository.deleteById(id);
 
         return "Employee with id= "+id+" was deleted successfully";
@@ -137,7 +140,7 @@ public class EmployeeServiceImp implements EmployeeService {
                         id,
                         Set.of(AppRole.EMPLOYEE, AppRole.ADMIN)
                 )
-                .orElseThrow(() -> new APIException("Staff Member not found"));
+                .orElseThrow(() -> new NotFoundException("Staff Member not found"));
 
         return mapToDTO(user);
     }

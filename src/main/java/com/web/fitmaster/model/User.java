@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -33,7 +32,7 @@ public class User {
 
     private String gender;
 
-    @Builder.Default
+
     @Column(name = "is_activated")
     private Boolean isActivated = false;
 

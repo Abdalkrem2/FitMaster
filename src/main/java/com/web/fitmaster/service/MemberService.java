@@ -2,8 +2,7 @@ package com.web.fitmaster.service;
 
 import com.web.fitmaster.dto.MemberDTOs;
 import jakarta.validation.Valid;
-
-import java.awt.print.Pageable;
+import org.springframework.data.domain.Pageable;
 
 public interface MemberService {
     MemberDTOs.MemberResponse getAllMembers(Pageable pageable);

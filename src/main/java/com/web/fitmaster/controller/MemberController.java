@@ -5,12 +5,11 @@ import com.web.fitmaster.dto.MemberDTOs;
 import com.web.fitmaster.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.awt.print.Pageable;
 
 @RestController()
 @RequestMapping("/api/members")
@@ -40,9 +39,10 @@ public class MemberController {
         MemberDTOs.MemberDTO member=memberService.createMember(memberDTO);
         return new ResponseEntity<>(member,HttpStatus.CREATED);
     }
+
     @PatchMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
-    public ResponseEntity<MemberDTOs.MemberDTO> updateMember(@RequestBody MemberDTOs.MemberUpdateRequest memberDTO,Long id){
+    public ResponseEntity<MemberDTOs.MemberDTO> updateMember(@RequestBody MemberDTOs.MemberUpdateRequest memberDTO, @PathVariable Long id){
         MemberDTOs.MemberDTO memberDetails=memberService.updateMember(memberDTO,id);
         return new ResponseEntity<>(memberDetails,HttpStatus.OK);
     }
