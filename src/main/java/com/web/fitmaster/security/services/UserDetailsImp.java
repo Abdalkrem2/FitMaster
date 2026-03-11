@@ -40,7 +40,7 @@ private Collection<? extends GrantedAuthority> authorities;
                 .map(role -> new SimpleGrantedAuthority(role.getRoleName().name())).collect(Collectors.toList());
 
 
-        return new UserDetailsImp(user.getUserId(), user.getFullName(), user.getPhone(), user.getPassword(),authorities);
+        return new UserDetailsImp(user.getId(), user.getFullName(), user.getPhone(), user.getPassword(),authorities);
     }
 
     @Override
