@@ -4,6 +4,8 @@ import com.web.fitmaster.model.Role;
 import com.web.fitmaster.model.User;
 
 import com.web.fitmaster.model.enums.AppRole;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -20,4 +22,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
     Optional<User> findByIdAndRoles_RoleNameIn(Long id, Set<AppRole> employee);
+
+    Page<User> findByRoles_roleNameIn(Set<AppRole> employee, Pageable pageable);
 }
