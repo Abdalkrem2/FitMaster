@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0316c984-9556-4b43-851b-e28bd04b7e55" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/FitMasterApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/controller/AuthController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/controller/EmployeeController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/controller/MemberController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/controller/PackageController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/controller/RevenueController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/dto/EmployeeDTOs.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/dto/MemberDTOs.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/dto/PackageDTOs.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/dto/RevenueDTOs.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/exceptions/APIException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/exceptions/BadRequestException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/exceptions/ForbiddenException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/exceptions/GlobalExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/exceptions/NotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/exceptions/ValidationException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/model/ActivityLog.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/model/Membership.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/model/Package.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/model/Revenue.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/model/Role.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/model/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/model/enums/ActionType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/model/enums/AppRole.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/model/enums/MembershipStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/model/enums/PackageStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/model/enums/PaymentMethod.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/model/enums/RevenueType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/repository/PackageRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/repository/RevenueRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/repository/RoleRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/repository/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/security/WebSecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/security/jwt/AuthEntryPointJwt.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/security/jwt/AuthTokenFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/security/jwt/JwtUtils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/security/request/LoginRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/security/response/LoginResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/security/response/MessageResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/security/services/UserDetailsImp.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/security/services/UserDetailsServiceImp.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/service/EmployeeService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/service/Imp/EmployeeServiceImp.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/service/Imp/MemberServiceImp.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/service/Imp/PackageServiceImp.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/service/Imp/RevenueServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/service/MemberService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/service/PackageService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/service/RevenueService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/web/fitmaster/util/AuthUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/web/fitmaster/EcommerceV2ApplicationTests.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Abdalkrem2&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Abdalkrem2/FitMaster.git&quot;,
+    &quot;accountId&quot;: &quot;0a97394b-3eff-4259-8fce-4f0cd45e09b2&quot;
+  }
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="37ei1al8AjlmB6dHIHHhbwUaSsn" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.EcommerceV2Application.executor": "Run",
+    "Spring Boot.FitMasterApplication.executor": "Run",
+    "git-widget-placeholder": "develop",
+    "last_opened_file_path": "E:/Graduation/GP2/FitMaster",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "editor.preferences.completion",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\Graduation\GP2\project user ready\src\main\java\com\web\ecommerce" />
+      <recent name="E:\SpringBoot\ecommerce_v2\src\main\java\com\web\ecommerce\controller" />
+      <recent name="E:\SpringBoot\ecommerce_v2\src\main\java\com\web\ecommerce" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="FitMasterApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="FitMaster" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.web.fitmaster.FitMasterApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.web.fitmaster.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.FitMasterApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.23774.435" />
+        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-IU-251.23774.435" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0316c984-9556-4b43-851b-e28bd04b7e55" name="Changes" comment="" />
+      <created>1767269731018</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1767269731018</updated>
+      <workItem from="1767269732210" duration="16039000" />
+      <workItem from="1767362027710" duration="1440000" />
+      <workItem from="1771853800018" duration="7077000" />
+      <workItem from="1771937598175" duration="925000" />
+      <workItem from="1772025600147" duration="5915000" />
+      <workItem from="1772047834239" duration="1012000" />
+      <workItem from="1772056485648" duration="485000" />
+      <workItem from="1772104587875" duration="7459000" />
+      <workItem from="1772202044214" duration="7836000" />
+      <workItem from="1772237877041" duration="1021000" />
+      <workItem from="1772286342336" duration="4828000" />
+      <workItem from="1772368944103" duration="11051000" />
+      <workItem from="1772449439908" duration="2074000" />
+      <workItem from="1772539240571" duration="1634000" />
+      <workItem from="1773199656564" duration="6186000" />
+      <workItem from="1773422507741" duration="2832000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
