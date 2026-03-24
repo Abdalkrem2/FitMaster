@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,6 +19,7 @@ public class MemberProfileController {
 
     // ------------------- GET ALL (PAGINATION) -------------------
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<MemberProfileDTOs.MemberProfileResponse> getAllProfiles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -29,6 +31,7 @@ public class MemberProfileController {
 
     // ------------------- CREATE -------------------
     @PostMapping("/{userId}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<MemberProfileDTOs.MemberProfileDTO> createProfile(
             @PathVariable Long userId,
             @Valid @RequestBody MemberProfileDTOs.MemberProfileRequest request
@@ -39,6 +42,7 @@ public class MemberProfileController {
 
     // ------------------- UPDATE -------------------
     @PutMapping("/{profileId}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<MemberProfileDTOs.MemberProfileDTO> updateProfile(
             @PathVariable Long profileId,
             @RequestBody MemberProfileDTOs.MemberProfileUpdateRequest request
@@ -49,6 +53,7 @@ public class MemberProfileController {
 
     // ------------------- DELETE -------------------
     @DeleteMapping("/{profileId}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<String> deleteProfile(@PathVariable Long profileId) {
         memberProfileService.deleteProfile(profileId);
         return ResponseEntity.ok("Profile deleted successfully");
@@ -56,6 +61,7 @@ public class MemberProfileController {
 
     // ------------------- GET SINGLE -------------------
     @GetMapping("/{profileId}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<MemberProfileDTOs.MemberProfileDTO> getProfile(@PathVariable Long profileId) {
         MemberProfileDTOs.MemberProfileDTO profile = memberProfileService.getMemberProfile(profileId);
         return ResponseEntity.ok(profile);
