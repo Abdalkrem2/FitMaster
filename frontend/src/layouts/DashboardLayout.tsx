@@ -1,13 +1,14 @@
-import React from 'react';
-import { Outlet, Navigate, useLocation } from 'react-router-dom';
-import { Sidebar } from '../components/Sidebar';
-import { Header } from '../components/Header';
+import React from "react";
+import { Outlet, Navigate, useLocation } from "react-router-dom";
+import { Sidebar } from "../components/Sidebar";
+//import { EmployeeSidebar } from "../components/EmployeeSidebar";
+import { Header } from "../components/Header";
 
 export const DashboardLayout: React.FC = () => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   const location = useLocation();
 
-  if (!token && location.pathname !== '/login') {
+  if (!token && location.pathname !== "/login") {
     return <Navigate to="/login" replace />;
   }
 
