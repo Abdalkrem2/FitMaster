@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface EmployeeService {
 
-   EmployeeDTOs.EmployeeResponse getEmployees(Pageable pageable);
+   EmployeeDTOs.EmployeeResponse getAllEmployees(Pageable pageable);
 
     EmployeeDTOs.EmployeeDTO createEmployee(EmployeeDTOs.EmployeeRequest employeeDTO);
 
@@ -14,5 +14,5 @@ public interface EmployeeService {
 
     String deleteEmployee(Long id);
 
-    EmployeeDTOs.EmployeeDTO getEmployee(Long id);
+
 }
