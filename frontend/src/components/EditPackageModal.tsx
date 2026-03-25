@@ -12,10 +12,15 @@ interface Props {
   onUpdate: (updatedPkg: Package) => void;
 }
 
-const EditPackageModal = ({ isOpen, onClose, packageItem, onUpdate }: Props) => {
-  const [price, setPrice] = useState('');
-  const [durationInDays, setDurationInDays] = useState('');
-  const [name, setName] = useState('');
+const EditPackageModal = ({
+  isOpen,
+  onClose,
+  packageItem,
+  onUpdate,
+}: Props) => {
+  const [price, setPrice] = useState("");
+  const [durationInDays, setDurationInDays] = useState("");
+  const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -25,9 +30,9 @@ const EditPackageModal = ({ isOpen, onClose, packageItem, onUpdate }: Props) => 
       setDurationInDays(packageItem.durationInDays.toString());
       console.log(durationInDays);
     } else {
-      setName('');
-      setPrice('');
-      setDurationInDays('');
+      setName("");
+      setPrice("");
+      setDurationInDays("");
     }
   }, [packageItem]);
 
@@ -54,36 +59,42 @@ const EditPackageModal = ({ isOpen, onClose, packageItem, onUpdate }: Props) => 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Edit Package">
       <form onSubmit={handleEditPackage} className="space-y-4">
-        <Input 
-          label="Plan Name" 
+        <Input
+          label="Plan Name"
           placeholder="e.g. 1 Year Premium"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
         />
-        <Input 
-          label="Price ($)" 
-          type="number" 
+        <Input
+          label="Price ($)"
+          type="number"
           placeholder="e.g. 200"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
           required
         />
-        <Input 
-          label="Duration (days)" 
-          type="number" 
+        <Input
+          label="Duration (days)"
+          type="number"
           placeholder="e.g. 30"
           value={durationInDays}
           onChange={(e) => setDurationInDays(e.target.value)}
           required
         />
-        
+
         <div className="flex justify-end pt-4 mt-6 border-t border-gray-100">
-          <Button type="button" variant="outline" className="mr-3" onClick={onClose} disabled={isSubmitting}>
+          <Button
+            type="button"
+            variant="outline"
+            className="mr-3"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Saving...' : 'Edit Package'}
+            {isSubmitting ? "Saving..." : "Edit Package"}
           </Button>
         </div>
       </form>
