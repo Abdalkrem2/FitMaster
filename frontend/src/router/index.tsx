@@ -1,5 +1,6 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 import { DashboardLayout } from "../layouts/DashboardLayout";
+import { useAuth } from "../context/AuthContext";
 
 // Pages
 import Login from "../pages/Login";
@@ -10,7 +11,22 @@ import Packages from "../pages/Packages";
 import Revenue from "../pages/Revenue";
 import ActivityLog from "../pages/ActivityLog";
 import Employees from "../pages/Employees";
+import EmployeeDashboard from "@/pages/EmployeeDashboard";
 
+//Guard: ADMIN only
+// if not admin return to tha main page
+const AdminOnly = () => {
+  const { isAdmin } = useAuth();
+  return isAdmin() ? <Outlet /> : <Navigate to="/" replace />;
+};
+
+//Guard: Render the appropriate dashboard based on user role
+const DashboardRouter = () => {
+  const { isAdmin } = useAuth();
+  return isAdmin() ? <Dashboard /> : <EmployeeDashboard />;
+};
+
+//Router
 export const router = createBrowserRouter([
   {
     path: "/login",
@@ -18,15 +34,24 @@ export const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <DashboardLayout />,
+    element: <DashboardLayout />, // ← الـ DashboardLayout فيه الـ auth guard
     children: [
-      { index: true, element: <Dashboard /> },
+      // pages for employee & admin
+      { index: true, element: <DashboardRouter /> },
+      { path: "e-dashboard", element: <EmployeeDashboard /> }, //employee Dashbord
       { path: "members", element: <Members /> },
       { path: "members/:id", element: <MemberDetails /> },
-      { path: "packages", element: <Packages /> },
-      { path: "revenue", element: <Revenue /> },
-      { path: "activity", element: <ActivityLog /> },
-      { path: "/employees", element: <Employees /> },
+
+      // pages for admin only
+      {
+        element: <AdminOnly />,
+        children: [
+          { path: "packages", element: <Packages /> },
+          { path: "revenue", element: <Revenue /> },
+          { path: "activity", element: <ActivityLog /> },
+          { path: "employees", element: <Employees /> },
+        ],
+      },
     ],
   },
   {

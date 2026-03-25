@@ -1,8 +1,11 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Users, Settings, Activity } from "lucide-react";
+import { Users, Settings, Activity, LayoutDashboard } from "lucide-react";
 
-const navItems = [{ name: "Members", path: "/members", icon: Users }];
+const navItems = [
+  { name: "E-Dashboard", path: "/e-dashboard", icon: LayoutDashboard }, //dashboard for Employee
+  { name: "Members", path: "/members", icon: Users },
+];
 
 export const EmployeeSidebar: React.FC = () => {
   return (

@@ -18,8 +18,8 @@ public class EmployeeController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EmployeeDTOs.EmployeeResponse> getAllEmployees(Pageable pageable) {
-        EmployeeDTOs.EmployeeResponse users=employeeService.getEmployees(pageable);
-        return ResponseEntity.ok(users);
+        EmployeeDTOs.EmployeeResponse EmployeeUsers=employeeService.getAllEmployees(pageable);
+        return ResponseEntity.ok(EmployeeUsers);
     }
 
     @PostMapping
@@ -43,10 +43,5 @@ public class EmployeeController {
         return ResponseEntity.ok(status);
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<EmployeeDTOs.EmployeeDTO> getEmployee(@PathVariable Long id) {
-        EmployeeDTOs.EmployeeDTO data=employeeService.getEmployee(id);
-        return ResponseEntity.ok(data);
-    }
+
 }

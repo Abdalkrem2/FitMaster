@@ -31,7 +31,7 @@ public class EmployeeServiceImp implements EmployeeService {
     private final RoleRepository roleRepository;
 
     @Override
-    public EmployeeDTOs.EmployeeResponse getEmployees(Pageable pageable) {
+    public EmployeeDTOs.EmployeeResponse getAllEmployees(Pageable pageable) {
         Page<User>content=userRepository.findByRoles_roleNameIn(Set.of(AppRole.EMPLOYEE,AppRole.ADMIN),pageable);
 
         List<EmployeeDTOs.EmployeeDTO> dto = content.stream().map(this::mapToDTO).toList();
@@ -119,30 +119,17 @@ public class EmployeeServiceImp implements EmployeeService {
 
             }
         }
-
+        userRepository.save(user);
         return mapToDTO(user);
     }
 
     @Override
     public String deleteEmployee(Long id) {
-
         if(!userRepository.existsById(id))
             throw new NotFoundException("User not found");
         userRepository.deleteById(id);
 
         return "Employee with id= "+id+" was deleted successfully";
-    }
-
-    @Override
-    public EmployeeDTOs.EmployeeDTO getEmployee(Long id) {
-        User user = userRepository
-                .findByIdAndRoles_RoleNameIn(
-                        id,
-                        Set.of(AppRole.EMPLOYEE, AppRole.ADMIN)
-                )
-                .orElseThrow(() -> new NotFoundException("Staff Member not found"));
-
-        return mapToDTO(user);
     }
 
     public  EmployeeDTOs.EmployeeDTO mapToDTO (User user) {
