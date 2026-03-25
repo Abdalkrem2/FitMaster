@@ -40,7 +40,7 @@ public class PackageServiceImp implements PackageService {
         pkg.setDescription(req.getDescription());
         pkg.setPrice(req.getPrice());
         pkg.setStatus(req.getStatus());
-        pkg.setDurationDays(req.getDurationDays());
+        pkg.setDurationInDays(req.getDurationInDays());
         pkg = packageRepository.save(pkg);
         return mapToDto(pkg);
     }
@@ -55,8 +55,8 @@ public class PackageServiceImp implements PackageService {
             pkg.setDescription(req.getDescription());
         if (req.getPrice() != null)
             pkg.setPrice(req.getPrice());
-        if (req.getDurationDays() != null)
-            pkg.setDurationDays(req.getDurationDays());
+        if (req.getDurationInDays() != null)
+            pkg.setDurationInDays(req.getDurationInDays());
         Package updatedPkg = packageRepository.save(pkg);
         return mapToDto(updatedPkg);
     }
@@ -83,7 +83,7 @@ public class PackageServiceImp implements PackageService {
                 .name(pkg.getName())
                 .description(pkg.getDescription())
                 .price(pkg.getPrice())
-                .durationDays(pkg.getDurationDays())
+                .durationInDays(pkg.getDurationInDays())
                 .status(pkg.getStatus())
                 .build();
     }

@@ -30,7 +30,7 @@ public class Package {
     private BigDecimal price;
 
     @Column(name = "duration_days", nullable = false)
-    private Integer durationDays;
+    private Integer durationInDays;
 
     @Enumerated(EnumType.STRING)
     private PackageStatus status;

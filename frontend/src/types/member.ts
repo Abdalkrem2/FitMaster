@@ -1,7 +1,7 @@
 import type { Membership } from "./membership";
 export interface Member {
   id: number;
-  name: string;
+  fullName: string;
   phone: string;
   debt: number;
   addedBy: string;

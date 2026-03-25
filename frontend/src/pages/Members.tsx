@@ -6,46 +6,52 @@ import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { Table, type Column } from '../components/ui/Table';
 import type { Member } from '../types/member';
-import AddMemberModal from './AddMemberModal';
+import AddMemberModal from '../components/AddMemberModal';
+import { getRemainingDays } from '@/utils/date';
 
 const Members: React.FC = () => {
-  const [members, setMembers] = useState<any[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [open,setOpen]=useState(false);
+  const [error,setError]=useState<string|null>(null);
   const navigate = useNavigate();
+
+  const [page,setPage]=useState(0);
+  console.log(page);
+  const [totalPages,setTotalPages]=useState(0);
 
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const data = await memberService.getAllMembers();
-        setMembers(data);
+        const data = await memberService.getAllMembers(page);
+        setMembers(data.content);
+        setTotalPages(data.totalPages);
       } catch (err) {
-        console.error('Failed to fetch members');
+        setError("Failed to fetch members");
       } finally {
         setLoading(false);
       }
     };
     fetchMembers();
-  }, []);
+  }, [page]);
 
 
 
 
-  // const filteredMembers = members.filter(m => 
-  //   m.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-  //   m.phone.includes(searchTerm)
-  // );
+  const filteredMembers = members.filter(m => 
+    m.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    m.phone.includes(searchTerm)
+  );
 
   const columns: Column<Member>[] = [
     { key: 'id', header: 'ID' },
-    { key: 'name', header: 'Name', render: (row) => <span className="font-medium text-gray-900">{row.name}</span> },
+    { key: 'fullName', header: 'Name', render: (row) => <span className="font-medium text-gray-900">{row.fullName}</span> },
     { key: 'phone', header: 'Phone' },
      {key:"gender",header:"Gender"}, 
 
 
     { key: 'debt', header: 'Debt', render: (row) => {
-      console.log(row);
     if(row.debt>0)
 
       return <span className="text-orange-800 font-bold">{row.debt}</span>
@@ -58,23 +64,18 @@ const Members: React.FC = () => {
       if(!row.endDate){
         return <span className="text-red-800 font-bold">Inactive</span>
       }
-
-      const today = new Date();
-  const end = new Date(row.endDate);
-
-  const diffTime = end.getTime() - today.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const days=getRemainingDays(row.endDate);
 
   return (
     <div className="flex flex-col">
-       <span className={`text-sm ${diffDays <= 3 ? "text-red-500" : "text-green-800 font-bold"}`}>
-        {diffDays > 0
-          ? `${diffDays} days `
+       <span className={`text-sm ${days <= 3 ? "text-red-500" : "text-green-800 font-bold"}`}>
+        {days > 0
+          ? `${days} days `
           : "Expired"}
       </span>
 
       <span className="text-gray-800 ">
-        {end.toLocaleDateString()}
+        {row.endDate}
       </span>
 
      
@@ -94,6 +95,9 @@ const Members: React.FC = () => {
     }
   ];
 
+
+
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -104,13 +108,13 @@ const Members: React.FC = () => {
         <Button onClick={()=> setOpen(true) }>
           <Plus className="w-4 h-4 mr-2" /> Add Member
         </Button>
-        <AddMemberModal open={open} onClose={()=>setOpen(false)} />
+        <AddMemberModal open={open} onClose={()=>setOpen(false)} onSuccess={(newMember)=>setMembers(prev=>[...prev,newMember])} />
       </div>
 
       <div className="bg-white rounded-xl shadow-soft border border-gray-100 p-6 space-y-4">
         <div className="flex items-center space-x-4">
           <div className="relative flex-1 max-w-md">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none mb-4">
               <Search className="h-5 w-5 text-gray-400" />
             </div>
             <Input
@@ -126,10 +130,39 @@ const Members: React.FC = () => {
 
         {loading ? (
           <div className="py-12 text-center text-gray-500">Loading members...</div>
+         ) : error ? (
+  <div className="text-red-500">{error}</div>
         ) : (
-          <Table data={members} columns={columns} keyExtractor={(row) => row.id} />
+          <Table data={filteredMembers} columns={columns} keyExtractor={(row) => row.id}  />
+          
         )}
+        
+        <div className="flex justify-between items-center pt-4">
+
+          <span className="text-sm text-gray-500">
+            Page {page + 1} of {totalPages}
+          </span>
+
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page === 0}
+              onClick={() => setPage(p => p - 1)}>
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page >= totalPages - 1}
+              onClick={() => setPage(p => p + 1)}>
+              Next
+    </Button>
+  </div>
+
+</div>
       </div>
+      
     </div>
   );
 };

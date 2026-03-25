@@ -7,16 +7,7 @@ export const packageService = {
   getAllPackages: async (): Promise<Package[]> => {
     const res=await api.get("/packages");
        const pakcages=res.data??[];
-    return pakcages.map((pkg:any)=>({
-    
-        id:pkg.id,
-        name:pkg.name,
-        price:pkg.price,
-        durationInDays:pkg.durationDays,
-        status:pkg.status,
-        description:pkg.description,
-      
-    }));
+   return pakcages;
   },
 
   createPackage: async (pkg: CreatePackageRequest): Promise<Package> => {

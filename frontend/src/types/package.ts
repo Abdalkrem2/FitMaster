@@ -10,7 +10,7 @@ export interface Package {
 export interface CreatePackageRequest {
   name: string;
   price: number;
-  durationDays: number;
+  durationInDays: number;
   description: string;
   status:string;
 }
@@ -18,6 +18,6 @@ export interface CreatePackageRequest {
 export interface UpdatePackageRequest {
   name?: string;
   price?: number;
-  durationDays?: number;
+  durationInDays?: number;
   description?: string;
 }

@@ -27,7 +27,7 @@ export default function EditMemberModal({ open, onClose, member, onUpdated }: Pr
   useEffect(() => {
     if (member) {
       setFormData({
-        fullName: member.name || "",
+        fullName: member.fullName || "",
         phone: member.phone || "",
       });
       setPreview(member.profilePicture || null);

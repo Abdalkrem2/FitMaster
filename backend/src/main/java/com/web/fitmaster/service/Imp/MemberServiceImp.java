@@ -161,7 +161,7 @@ public class MemberServiceImp implements MemberService {
       .startDate(startDate)
            .price(request.getPrice())
            .pkg(pkg)
-                .endDate(startDate.plusDays(pkg.getDurationDays()))
+                .endDate(startDate.plusDays(pkg.getDurationInDays()))
                         .description(request.getDescription())
                                 .debt(request.getDebt())
                                         .member(member)
