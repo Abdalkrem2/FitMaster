@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select"
 import type { Package } from '@/types/package';
 import type { Membership, MembershipHistory } from '@/types/membership';
-import EditMemberModal from './EditMemberModal';
+import EditMemberModal from '../components/EditMemberModal';
 
 
 
@@ -180,7 +180,7 @@ const MemberDetails: React.FC = () => {
            
             </div>
 
-            <h3 className="text-xl font-bold text-gray-900">{member.name}</h3>
+            <h3 className="text-xl font-bold text-gray-900">{member.fullName}</h3>
             
             
 

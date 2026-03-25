@@ -1,23 +1,14 @@
 import { api } from './api';
 import type { Member, MemberDetails ,CreateMemberRequest, UpdateMemberRequest} from '../types/member';
+import type { PageResponse } from '../types/pagination';
 
 
 export const memberService = {
-  getAllMembers: async (): Promise<Member[]> => {
-    const res= await api.get('/members')
-   
-
-    const members = res.data.content??[]; //إذا كانت القيمة null أو undefined استخدم القيمة الثانية.
-    return members.map((member: any) => ({
-      id: member.id,
-      name: member.fullName,
-      phone: member.phone,
-      gender: member.gender,
-      endDate: member.endDate,
-      addedBy: member.addedByName,
-      debt:member.debt,
-    }));
-  },
+ async getAllMembers(page:number,size:number=20): Promise<PageResponse<Member>>  {
+  const res = await api.get('/members',
+    {params:{page,size}});
+  return res.data;
+},
 
   
 
@@ -29,7 +20,7 @@ export const memberService = {
 
     return {
       id: member.id || Number(id),
-      name: member.fullName,
+      fullName: member.fullName,
       phone: member.phone,
       gender: member.gender,
       startDate: member.startDate,

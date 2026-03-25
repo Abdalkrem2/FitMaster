@@ -18,7 +18,7 @@ public class PackageDTOs {
         private String name;
         private String description;
         private BigDecimal price;
-        private Integer durationDays;
+        private Integer durationInDays;
         private PackageStatus status;
 
     }
@@ -32,7 +32,7 @@ public class PackageDTOs {
         private String name;
         private String description;
         private BigDecimal price;
-        private Integer durationDays;
+        private Integer durationInDays;
         private PackageStatus status;
 
     }
@@ -46,7 +46,7 @@ public class PackageDTOs {
         private String name;
         private String description;
         private BigDecimal price;
-        private Integer durationDays;
+        private Integer durationInDays;
 
 
     }

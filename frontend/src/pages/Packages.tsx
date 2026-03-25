@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Package as PackageIcon, Plus, Calendar, DollarSign } from 'lucide-react';
 import { packageService } from '../services/packageService';
-import EditPackageModal from './EditPackageModal';
+import EditPackageModal from '../components/EditPackageModal';
 import type { Package } from '../types/package';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
@@ -61,7 +61,7 @@ const validate = () => {
       const newPkg = await packageService.createPackage({
         name,
         price: Number(price),
-        durationDays: Number(durationInDays),
+        durationInDays: Number(durationInDays),
         description: '',
         status:'ACTIVE'
       });

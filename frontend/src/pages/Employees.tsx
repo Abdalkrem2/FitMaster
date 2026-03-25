@@ -5,8 +5,8 @@ import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
 import { Table, type Column } from "../components/ui/Table";
 import type { Employee } from "../types/employee";
-import AddEmployeeModal from "./AddEmployeeModel";
-import EditEmployeeModal from "./EditEmplyoeeModel";
+import AddEmployeeModal from "../components/AddEmployeeModel";
+import EditEmployeeModal from "../components/EditEmplyoeeModel";
 
 const Employees: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);

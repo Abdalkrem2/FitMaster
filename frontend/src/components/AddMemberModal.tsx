@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { uploadService } from "@/services/uploadService";
 import CameraCaptureModal from "../components/CameraCaptureModal";
 import { Camera } from "lucide-react";
+import type { Member } from "@/types/member";
 
 interface Props{
     open:boolean;
     onClose:()=>void;
+    onSuccess:(newMember:Member)=>void;
 }
 
 export default function AddMemberModal({open,onClose}:Props){
