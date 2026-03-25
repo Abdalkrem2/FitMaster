@@ -1,0 +1,18 @@
+
+spring:
+  application:
+    name: FitMaster
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url : jdbc:h2:mem:test
+  app :
+    jwtSecret : SGVsbG9Xb3JsZFRoaXNJc0FTZWNyZXRLZXlGb3JKV1RUb2tlbkdlbmVyYXRpb25XaXRoU3ByaW5nQm9vdA==
+    jwtExpirationMs: 86400000
+    jwtCookieName: springBootEcom
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
