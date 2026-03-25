@@ -1,34 +1,52 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { LogIn } from 'lucide-react';
-import { Card, CardHeader, CardTitle } from '../components/ui/Card';
-import { Input } from '../components/ui/Input';
-import { Button } from '../components/ui/Button';
-import { authService } from '../services/authService';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { LogIn } from "lucide-react";
+import { Card, CardHeader, CardTitle } from "../components/ui/Card";
+import { Input } from "../components/ui/Input";
+import { Button } from "../components/ui/Button";
+import { authService } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 
 const Login: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth(); //form context
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !password) {
-      setError('Please enter both username and password.');
+      setError("Please enter both username and password.");
       return;
     }
 
     try {
       setLoading(true);
-      setError('');
-      const { token } = await authService.login(username, password);
-      localStorage.setItem('token', token);
-      navigate('/');
+      setError("");
+      const { token, user } = await authService.login(username, password);
+
+      // Check if user is activated (only for employees)
+      if (user.roles.includes("EMPLOYEE") && !user.isActivated) {
+        setError(
+          "Your account has been deactivated. Please contact the administrator.",
+        );
+        return;
+      }
+
+      login(token, user); //to stor token && user & roles
+
+      if (user.roles.includes("EMPLOYEE")) {
+        navigate("/e-dashboard"); // Employee Dashboard
+      } else if (user.roles.includes("ADMIN")) {
+        navigate("/"); //Admin Dashboard
+      } else {
+        navigate("/"); //else
+      }
     } catch (err: any) {
       const serverMessage = err.response?.data?.message;
-      setError(serverMessage || 'Invalid username or password.');
+      setError(serverMessage || "Invalid username or password.");
     } finally {
       setLoading(false);
     }
@@ -57,7 +75,7 @@ const Login: React.FC = () => {
               placeholder="Enter your username or phone"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              error={error ? ' ' : undefined} // trigger red border without duplicated message
+              error={error ? " " : undefined} // trigger red border without duplicated message
             />
             <Input
               label="Password"
@@ -73,14 +91,9 @@ const Login: React.FC = () => {
               </div>
             )}
 
-            <Button
-              type="submit"
-              fullWidth
-              disabled={loading}
-              className="mt-6"
-            >
+            <Button type="submit" fullWidth disabled={loading} className="mt-6">
               {loading ? (
-                'Signing in...'
+                "Signing in..."
               ) : (
                 <>
                   <LogIn className="w-4 h-4 mr-2" />

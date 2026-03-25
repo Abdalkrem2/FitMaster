@@ -3,8 +3,8 @@ export interface Package {
   name: string;
   price: number;
   durationInDays: number;
-  status:string;
-  description:string;
+  status: string;
+  description: string;
 }
 
 export interface CreatePackageRequest {
@@ -12,7 +12,7 @@ export interface CreatePackageRequest {
   price: number;
   durationDays: number;
   description: string;
-  status:string;
+  status: string;
 }
 
 export interface UpdatePackageRequest {

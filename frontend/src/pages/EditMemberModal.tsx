@@ -13,6 +13,7 @@ interface Props {
 }
 
 export default function EditMemberModal({ open, onClose, member, onUpdated }: Props) {
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showCamera, setShowCamera] = useState(false);
