@@ -1,26 +1,10 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import {
-  IdCard,
-  SquareActivity,
-  LayoutDashboard,
-  Users,
-  Package,
-  DollarSign,
-  Settings,
-  Activity,
-} from "lucide-react";
+import { Users, Settings, Activity } from "lucide-react";
 
-const navItems = [
-  { name: "Overview", path: "/", icon: LayoutDashboard },
-  { name: "Members", path: "/members", icon: Users },
-  { name: "Packages", path: "/packages", icon: Package },
-  { name: "Revenue", path: "/revenue", icon: DollarSign },
-  { name: "Activity Log", path: "/activity", icon: SquareActivity },
-  { name: "Employees", path: "/employees", icon: IdCard },
-];
+const navItems = [{ name: "Members", path: "/members", icon: Users }];
 
-export const Sidebar: React.FC = () => {
+export const EmployeeSidebar: React.FC = () => {
   return (
     <aside className="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 flex flex-col z-20 shadow-soft">
       <div className="h-16 flex items-center px-6 border-b border-gray-100">
