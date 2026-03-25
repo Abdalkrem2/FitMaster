@@ -52,6 +52,7 @@ export const employeeService = {
     employee: UpdateEmployeeRequest,
   ): Promise<Employee> => {
     const res = await api.patch(`/employees/${id}`, employee);
+    console.log(res.data);
     return res.data;
   },
 
