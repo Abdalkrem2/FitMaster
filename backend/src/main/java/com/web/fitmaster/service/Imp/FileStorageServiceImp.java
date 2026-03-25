@@ -21,7 +21,7 @@ public class FileStorageServiceImp implements FileStorageService {
         try {
             File directory = new File(uploadDir);
             if (!directory.exists()) {
-                directory.mkdirs();
+                directory.mkdirs();//
             }
 
             String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
