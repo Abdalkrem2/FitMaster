@@ -26,8 +26,8 @@ public class MemberController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
-    public ResponseEntity<MemberDTOs.MemberResponse> getAllMembers(Pageable pageable){
-        MemberDTOs.MemberResponse memberUsers=memberService.getAllMembers(pageable);
+    public ResponseEntity<MemberDTOs.MemberResponse> getAllMembers(Pageable pageable, @RequestParam(required = false) String search){
+        MemberDTOs.MemberResponse memberUsers=memberService.getAllMembers(pageable,search);
         return new ResponseEntity<>(memberUsers, HttpStatus.OK);
     }
 

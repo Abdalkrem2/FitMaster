@@ -6,12 +6,13 @@ import { useAuth } from "../context/AuthContext";
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import Members from "../pages/Members";
-import MemberDetails from "../pages/MemberDetails";
+
 import Packages from "../pages/Packages";
 import Revenue from "../pages/Revenue";
 import ActivityLog from "../pages/ActivityLog";
 import Employees from "../pages/Employees";
 import EmployeeDashboard from "@/pages/EmployeeDashboard";
+import MemberDetails from "@/pages/MemberDetails";
 
 //Guard: ADMIN only
 // if not admin return to tha main page

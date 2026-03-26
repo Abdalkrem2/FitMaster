@@ -4,7 +4,7 @@ export interface Member {
   fullName: string;
   phone: string;
   debt: number;
-  addedBy: string;
+  addedByName: string;
   endDate:string;
   gender: 'Male' | 'Female';
 }

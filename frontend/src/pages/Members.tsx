@@ -8,6 +8,7 @@ import { Table, type Column } from '../components/ui/Table';
 import type { Member } from '../types/member';
 import AddMemberModal from '../components/AddMemberModal';
 import { getRemainingDays } from '@/utils/date';
+import { useDebounce } from '@/hooks/useDebounce';
 
 const Members: React.FC = () => {
   const [members, setMembers] = useState<Member[]>([]);
@@ -18,13 +19,14 @@ const Members: React.FC = () => {
   const navigate = useNavigate();
 
   const [page,setPage]=useState(0);
-  console.log(page);
   const [totalPages,setTotalPages]=useState(0);
+
+  const debouncedSearchTerm = useDebounce(searchTerm);
 
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const data = await memberService.getAllMembers(page);
+        const data = await memberService.getAllMembers(page,20,debouncedSearchTerm);
         setMembers(data.content);
         setTotalPages(data.totalPages);
       } catch (err) {
@@ -34,7 +36,7 @@ const Members: React.FC = () => {
       }
     };
     fetchMembers();
-  }, [page]);
+  }, [page,debouncedSearchTerm]);
 
 
 
@@ -83,7 +85,7 @@ const Members: React.FC = () => {
     )}},
 
 
-    { key: 'addedBy', header: 'Added By' },
+    { key: 'addedByName', header: 'Added By' },
    
 
     {
@@ -121,7 +123,9 @@ const Members: React.FC = () => {
               type="text"
               placeholder="Search members by name or phone..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) =>{setSearchTerm(e.target.value);
+                setPage(0);
+              }}
               className="pl-10 mb-0"
               fullWidth
             />

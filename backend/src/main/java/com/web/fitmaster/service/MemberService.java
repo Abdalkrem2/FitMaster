@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface MemberService {
-    MemberDTOs.MemberResponse getAllMembers(Pageable pageable);
+    MemberDTOs.MemberResponse getAllMembers(Pageable pageable,String search);
     MemberDTOs.MemberDetailsDTO getMemberDetails(Long id);
 
     MemberDTOs.MemberDTO createMember(MemberDTOs.MemberRequest memberDTO);

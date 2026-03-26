@@ -7,6 +7,8 @@ import com.web.fitmaster.model.enums.AppRole;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
@@ -22,6 +24,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
     Optional<User> findByIdAndRoles_RoleNameIn(Long id, Set<AppRole> employee);
+
+    @Query("SELECT u FROM User u JOIN u.roles r WHERE r.roleName IN :roles " +
+            "AND (LOWER(u.fullName) LIKE LOWER(CONCAT('%',:search,'%')) " +
+            "OR u.phone LIKE CONCAT('%',:search,'%'))")
+    Page<User> searchMembers(@Param("roles") Set<AppRole> roles,@Param("search") String search, Pageable pageable);
 
     Page<User> findByRoles_roleNameIn(Set<AppRole> employee, Pageable pageable);
 }

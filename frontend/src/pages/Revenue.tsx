@@ -1,134 +1,155 @@
 import React, { useEffect, useState } from 'react';
-import { Filter, DollarSign, TrendingUp, CreditCard, Activity } from 'lucide-react';
 import { revenueService, type RevenueStats } from '../services/revenueService';
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
 
-const RevenueCard: React.FC<{ title: string; amount: number; icon: React.ReactNode; color: string }> = ({ title, amount, icon, color }) => (
-  <Card className="flex flex-col relative overflow-hidden">
-    <div className={`absolute top-0 right-0 p-4 opacity-10 ${color}`}>
-      {icon}
-    </div>
-    <div className="flex-1">
-      <h3 className="text-sm font-medium text-gray-500 mb-1">{title}</h3>
-      <div className="flex items-center text-gray-900">
-        <span className="text-3xl font-bold">${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-      </div>
-    </div>
-  </Card>
-);
+const months = [
+  '1-JAN', '2-Feb', '3-Mar', '4-Apr', '5-May', '6-Jun',
+  '7-Jul', '8-Aug', '9-Sep', '10-Oct', '11-Nov', '12-Dec'
+];
 
 const Revenue: React.FC = () => {
   const [stats, setStats] = useState<RevenueStats | null>(null);
-  const [loading, setLoading] = useState(true);
   
   // Filters
+  const [selectedYear, setSelectedYear] = useState('2026');
+  const [selectedMonth, setSelectedMonth] = useState('All');
+  
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [gender, setGender] = useState('All');
 
   const fetchStats = async () => {
-    setLoading(true);
     try {
-      const data = await revenueService.getStats({
-        dateRange: dateRange.start && dateRange.end ? dateRange : undefined,
-        gender: gender !== 'All' ? gender : undefined
+      const data = await revenueService.getStats();
+      setStats({
+        today: data.today || 40,
+        thisMonth: data.thisMonth || 521,
+        thisYear: data.thisYear || 8352,
+        totalDebt: data.totalDebt || 158
       });
-      setStats(data);
     } catch (err) {
       console.error("Failed to load revenue");
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchStats();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleApplyFilters = () => {
-    fetchStats();
-  };
-
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Revenue Analytics</h2>
-          <p className="text-sm text-gray-500 mt-1">Track financial performance and debts.</p>
+    <div className="w-full max-w-6xl mx-auto p-2 text-gray-900 font-sans">
+      {/* Header section */}
+      <div className="flex flex-col mb-8 relative">
+        <h2 className="text-2xl font-bold bg-transparent">Revenue Analytics</h2>
+        <div className="absolute left-1/2 -translate-x-1/2 top-4 flex items-center text-xl font-medium">
+          <span className="text-green-500 mr-1 font-bold text-2xl">$</span>Overall Money
         </div>
       </div>
 
-      <Card className="bg-white p-4">
-        <div className="flex flex-col md:flex-row gap-4 items-end">
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Start Date</label>
-              <input 
-                type="date" 
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 text-sm"
-                value={dateRange.start}
-                onChange={e => setDateRange({ ...dateRange, start: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">End Date</label>
-              <input 
-                type="date" 
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 text-sm"
-                value={dateRange.end}
-                onChange={e => setDateRange({ ...dateRange, end: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Gender</label>
-              <select 
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 text-sm"
-                value={gender}
-                onChange={e => setGender(e.target.value)}
-              >
-                <option value="All">All Genders</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-            </div>
-          </div>
-          <Button onClick={handleApplyFilters} className="whitespace-nowrap">
-            <Filter className="w-4 h-4 mr-2" /> Apply Filters
-          </Button>
+      {/* Stats summary row */}
+      <div className="flex justify-between items-center text-lg font-medium mb-4 px-2">
+        <div>
+          <span className="text-gray-500 mr-2 font-bold">Today:</span>
+          <span className="text-green-500 font-bold">{stats?.today || 40}</span>
         </div>
-      </Card>
+        <div>
+          <span className="text-gray-500 mr-2 font-bold">This Month:</span>
+          <span className="text-green-500 font-bold">{stats?.thisMonth || 521}</span>
+        </div>
+        <div>
+          <span className="text-gray-500 mr-2 font-bold">This Year:</span>
+          <span className="text-green-500 font-bold">{stats?.thisYear || 8352}</span>
+        </div>
+        <div>
+          <span className="text-gray-500 mr-2 font-bold">Debt:</span>
+          <span className="text-red-500 font-bold">{stats?.totalDebt || 158}</span>
+        </div>
+      </div>
 
-      {loading || !stats ? (
-        <div className="py-12 text-center text-gray-500">Loading analytics...</div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-          <RevenueCard 
-            title="Today's Revenue" 
-            amount={stats.today} 
-            icon={<DollarSign className="w-16 h-16" />} 
-            color="text-emerald-500"
-          />
-          <RevenueCard 
-            title="This Month" 
-            amount={stats.thisMonth} 
-            icon={<TrendingUp className="w-16 h-16" />} 
-            color="text-blue-500"
-          />
-          <RevenueCard 
-            title="This Year" 
-            amount={stats.thisYear} 
-            icon={<Activity className="w-16 h-16" />} 
-            color="text-indigo-500"
-          />
-          <RevenueCard 
-            title="Total Debt" 
-            amount={stats.totalDebt} 
-            icon={<CreditCard className="w-16 h-16" />} 
-            color="text-red-500"
+      <hr className="border-t-[1.5px] border-black w-full" />
+
+      {/* By Year section */}
+      <div className="flex items-center gap-4 mt-6 mb-4">
+        <h3 className="text-lg font-bold">By Year:</h3>
+        <select 
+          className="px-4 py-1 border border-gray-400 rounded bg-white text-sm w-28 outline-none"
+          value={selectedYear}
+          onChange={e => setSelectedYear(e.target.value)}
+        >
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+        </select>
+        <select 
+          className="px-4 py-1 border border-gray-400 rounded bg-white text-sm w-28 outline-none"
+          value={selectedMonth}
+          onChange={e => setSelectedMonth(e.target.value)}
+        >
+          <option value="All">All</option>
+          <option value="January">January</option>
+        </select>
+      </div>
+
+      <div className="mb-6 text-xl font-bold bg-transparent">
+        <span className="text-gray-500 mr-2">This Year:</span>
+        <span className="text-green-500">0 JOD</span>
+      </div>
+
+      {/* Months Grid */}
+      <div className="grid grid-cols-6 border-l border-t border-indigo-400 mb-6 bg-white overflow-hidden rounded-sm">
+        {months.map(m => (
+          <div key={m} className="border-r border-b border-indigo-400 p-4 flex flex-col items-center justify-center">
+            <span className="text-sm font-medium mb-3">{m}</span>
+            <span className="text-green-500 text-sm font-medium">0 JOD</span>
+          </div>
+        ))}
+      </div>
+
+      <hr className="border-t-[1.5px] border-black w-full my-6" />
+
+      {/* Money By Period */}
+      <div className="mb-4">
+        <h3 className="text-lg font-bold">Money By Period</h3>
+      </div>
+
+      <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+        <div>
+          <label className="block text-sm font-bold text-gray-500 mb-1">From</label>
+          <input 
+            type="date" 
+            className="w-full px-3 py-2 border border-indigo-300 rounded bg-white text-sm outline-none"
+            value={dateRange.start}
+            onChange={e => setDateRange({ ...dateRange, start: e.target.value })}
           />
         </div>
-      )}
+        <div>
+          <label className="block text-sm font-bold text-gray-500 mb-1">To</label>
+          <input 
+            type="date" 
+            className="w-full px-3 py-2 border border-indigo-300 rounded bg-white text-sm outline-none"
+            value={dateRange.end}
+            onChange={e => setDateRange({ ...dateRange, end: e.target.value })}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-bold text-gray-500 mb-1">Gender</label>
+          <select 
+            className="w-full px-3 py-2 border border-indigo-300 rounded bg-white text-sm outline-none"
+            value={gender}
+            onChange={e => setGender(e.target.value)}
+          >
+            <option value="All">All</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+        <div className="flex items-end">
+          <button className="bg-[#4267B2] text-white px-8 py-2 rounded text-sm font-medium hover:bg-[#365899] transition-colors">
+            Calculate
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-12 text-center text-gray-500 text-lg font-bold pb-8">
+        Please select a Period
+      </div>
     </div>
   );
 };

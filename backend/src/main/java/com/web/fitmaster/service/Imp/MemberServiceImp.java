@@ -42,9 +42,14 @@ public class MemberServiceImp implements MemberService {
 
 
     @Override
-    public MemberDTOs.MemberResponse getAllMembers(Pageable pageable) {
-        Page<User> members =userRepository.findByRoles_roleNameIn(Set.of(AppRole.MEMBER), pageable);
-
+    public MemberDTOs.MemberResponse getAllMembers(Pageable pageable,String search) {
+        Page<User> members;
+        if(search !=null && !search.isBlank()){
+           members=userRepository.searchMembers(Set.of(AppRole.MEMBER),search,pageable);
+        }
+        else{
+         members =userRepository.findByRoles_roleNameIn(Set.of(AppRole.MEMBER), pageable);
+        }
         List<MemberDTOs.MemberDTO> content= members.stream().map(this::mapToDTO).toList();
 
         MemberDTOs.MemberResponse memberResponse = new MemberDTOs.MemberResponse();
