@@ -5,8 +5,8 @@ import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
 import { Table, type Column } from "../components/ui/Table";
 import type { Employee } from "../types/employee";
-import AddEmployeeModal from "../components/AddEmployeeModel";
-import EditEmployeeModal from "../components/EditEmplyoeeModel";
+import AddEmployeeModal from "../components/AddEmployeeModal";
+import EditEmployeeModal from "../components/EditEmplyoeeModal";
 
 const Employees: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -76,7 +76,7 @@ const Employees: React.FC = () => {
       key: "roles",
       header: "Role",
       render: (row) => {
-        const isAdmin = row.roles?.some((r) => r.roleName === "ADMIN");
+        const isAdmin = row.roles?.some((r) => r === "ADMIN");
         return (
           <span
             className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${

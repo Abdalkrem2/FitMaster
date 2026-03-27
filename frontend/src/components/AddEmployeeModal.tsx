@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAddEmployee } from "../hooks/useAddEmployee";
 import { uploadService } from "@/services/uploadService";
-import CameraCaptureModal from "../components/CameraCaptureModal";
+import CameraCaptureModal from "./CameraCaptureModal";
 import { Camera } from "lucide-react";
 import type { AppRole } from "../types/employee";
 

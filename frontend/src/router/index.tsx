@@ -20,7 +20,7 @@ const AdminOnly = () => {
   return isAdmin() ? <Outlet /> : <Navigate to="/" replace />;
 };
 
-//Guard: Render the appropriate dashboard based on user role
+//Guard: Render the dashboard based on user role
 const DashboardRouter = () => {
   const { isAdmin } = useAuth();
   return isAdmin() ? <Dashboard /> : <EmployeeDashboard />;
@@ -34,7 +34,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <DashboardLayout />, // ← الـ DashboardLayout فيه الـ auth guard
+    element: <DashboardLayout />,
     children: [
       // pages for employee & admin
       { index: true, element: <DashboardRouter /> },
