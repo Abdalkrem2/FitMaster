@@ -34,19 +34,8 @@ public class Revenue {
     @Column(nullable = false)
     private BigDecimal amount;
 
-//    @Column(nullable = false,name = "payment_date")
-//    private LocalDate Date;
-
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private RevenueType revenueType;
-
     private String description;
-
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    private PaymentMethod paymentMethod;
-
+    
     @Column(name = "created_at")
     private LocalDate createdAt;
 

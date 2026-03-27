@@ -2,6 +2,7 @@ package com.web.fitmaster.service;
 
 import com.web.fitmaster.dto.RevenueDTOs;
 import jakarta.validation.Valid;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -10,15 +11,9 @@ import java.util.List;
 @Service
 public interface RevenueService {
 
-    RevenueDTOs.RevenueDTO createRevenue(@Valid RevenueDTOs.RevenueRequest revenueRequest);
+    RevenueDTOs.statsResponse getRevenueStats();
 
-    RevenueDTOs.RevenueResponse getRevenues(Pageable pageable);
+    RevenueDTOs.monthlyResponse getRevenueMonthly(int year);
 
-    RevenueDTOs.RevenueDTO getRevenue(Long id);
-
-    RevenueDTOs.RevenueDTO updateRevenue(Long id, RevenueDTOs.RevenueUpdateRequest revenueRequest);
-
-    String deleteRevenue(Long id);
-
-    List<RevenueDTOs.RevenueDTO> getRevenueByDateRange(LocalDate start, LocalDate end);
+    RevenueDTOs.periodResponse getRevenueByPeriod(LocalDate start, LocalDate end, String gender);
 }

@@ -9,6 +9,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class RevenueDTOs {
 
@@ -17,24 +18,11 @@ public class RevenueDTOs {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class RevenueRequest {
-        @NotNull(message = "memberId is required")
-        private Long memberId;
-
-        @NotNull(message = "Amount is required")
-        @Positive(message = "Amount must be positive")
-        private BigDecimal amount;
-//
-//        @NotNull(message = "Date is required")
-//        private LocalDate date;
-
-//        @NotNull(message = "Revenue type is required")
-//        private RevenueType revenueType;
-
-//        @NotNull(message = "Payment method is required")
-//        private PaymentMethod paymentMethod;
-
-        private String description;
+    public static class statsResponse {
+    private BigDecimal today;
+    private BigDecimal thisMonth;
+    private BigDecimal thisYear;
+    private BigDecimal debt;
     }
 
     @Setter
@@ -42,12 +30,9 @@ public class RevenueDTOs {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class RevenueUpdateRequest {
-        private BigDecimal amount;
-//        private LocalDate date;
-//        private RevenueType revenueType;
-//        private PaymentMethod paymentMethod;
-        private String description;
+    public static class monthlyResponse {
+        private BigDecimal yearTotal;
+        private Map<Integer, BigDecimal>months;
     }
 
     @Setter
@@ -55,27 +40,23 @@ public class RevenueDTOs {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class RevenueDTO {
+    public static class periodResponse {
+        private BigDecimal periodTotal;
+        private List<RevenueRow>revenues;
+    }
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class RevenueRow {
         private Long id;
-        private Long memberId;
-        private BigDecimal amount;
-//        private LocalDate date;
-//        private RevenueType revenueType;
-//        private PaymentMethod paymentMethod;
+        private String addedByName;
+        private String memberName;
+        private BigDecimal debt;
         private String description;
+        private BigDecimal amount;
+        private LocalDate createdAt;
     }
 
-    @Setter
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Builder
-    public static class RevenueResponse {
-        private List<RevenueDTO> content;
-        private Integer pageNumber;
-        private Integer pageSize;
-        private Long totalElements;
-        private Integer totalPages;
-        private Boolean lastPage;
-    }
 }
