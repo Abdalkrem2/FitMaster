@@ -1,8 +1,11 @@
 package com.web.fitmaster.security;
 
+import com.web.fitmaster.model.Package;
 import com.web.fitmaster.model.enums.AppRole;
 import com.web.fitmaster.model.Role;
 import com.web.fitmaster.model.User;
+import com.web.fitmaster.model.enums.PackageStatus;
+import com.web.fitmaster.repository.PackageRepository;
 import com.web.fitmaster.repository.RoleRepository;
 import com.web.fitmaster.repository.UserRepository;
 import com.web.fitmaster.security.jwt.AuthEntryPointJwt;
@@ -30,6 +33,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -123,7 +127,7 @@ public class WebSecurityConfig {
     @Bean
     public CommandLineRunner initData(RoleRepository roleRepository,
                                       UserRepository userRepository,
-                                      PasswordEncoder passwordEncoder) {
+                                      PasswordEncoder passwordEncoder, PackageRepository packageRepository) {
 
         return args -> {
 
@@ -181,6 +185,17 @@ public class WebSecurityConfig {
                     userRepository.save(member);
                 }
             }
+
+            //====Packages====
+            Package pkg= Package.builder()
+                    .price(BigDecimal.valueOf(60))
+                    .name("1 Month")
+                    .description("premium offer")
+                    .status(PackageStatus.ACTIVE)
+                    .durationInDays(30)
+                    .build();
+            packageRepository.save(pkg);
+
 
 
         };
