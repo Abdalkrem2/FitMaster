@@ -24,15 +24,17 @@ private String fullName;
 private String phone;
 @JsonIgnore//إذا ما استخدمت @JsonIgnore، رح يطلع الـ password بالـ JSON response.
 private String password;
+    private Boolean isActivated;
 
 private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImp(Long id, String fullName, String phone, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImp(Long id, String fullName, String phone, String password, Collection<? extends GrantedAuthority> authorities,Boolean isActivated) {
         this.id = id;
         this.fullName = fullName;
         this.phone = phone;
         this.password = password;
         this.authorities = authorities;
+        this.isActivated = isActivated;
     }
 
     public static UserDetailsImp build(User user) {
@@ -40,7 +42,7 @@ private Collection<? extends GrantedAuthority> authorities;
                 .map(role -> new SimpleGrantedAuthority(role.getRoleName().name())).collect(Collectors.toList());
 
 
-        return new UserDetailsImp(user.getId(), user.getFullName(), user.getPhone(), user.getPassword(),authorities);
+        return new UserDetailsImp(user.getId(), user.getFullName(), user.getPhone(), user.getPassword(),authorities,user.getIsActivated());
     }
 
     @Override
@@ -60,7 +62,7 @@ private Collection<? extends GrantedAuthority> authorities;
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isActivated != null ? isActivated : true;
     }
 
     @Override

@@ -45,8 +45,7 @@ const Login: React.FC = () => {
         navigate("/"); //else
       }
     } catch (err: any) {
-      const serverMessage = err.response?.data?.message;
-      setError(serverMessage || "Invalid username or password.");
+      setError("Invalid username or password.");
     } finally {
       setLoading(false);
     }

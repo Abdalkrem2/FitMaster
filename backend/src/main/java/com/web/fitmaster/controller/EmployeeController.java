@@ -10,7 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
-@RequestMapping("/api/employees")
+@RequestMapping("api/employees")
 @RequiredArgsConstructor
 public class EmployeeController {
     private final EmployeeService employeeService;

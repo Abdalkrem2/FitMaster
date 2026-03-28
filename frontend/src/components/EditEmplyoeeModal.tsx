@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { uploadService } from "@/services/uploadService";
 import { employeeService } from "@/services/employeeService";
-import CameraCaptureModal from "../components/CameraCaptureModal";
+import CameraCaptureModal from "./CameraCaptureModal";
 import { Camera } from "lucide-react";
 import type { Employee, AppRole } from "../types/employee";
 
@@ -35,13 +35,13 @@ export default function EditEmployeeModal({
   useEffect(() => {
     if (employee) {
       const currentRole = employee.roles?.find(
-        (r) => r.roleName === "ADMIN" || r.roleName === "EMPLOYEE",
+        (r) => r === "ADMIN" || r === "EMPLOYEE",
       );
       setFormData({
         fullName: employee.fullName || "",
         phone: employee.phone || "",
         password: "",
-        role: (currentRole?.roleName as AppRole) ?? "EMPLOYEE",
+        role: (currentRole as AppRole) ?? "EMPLOYEE",
         isActivated: employee.isActivated ?? true,
       });
       setPreview(employee.profilePicture || null);

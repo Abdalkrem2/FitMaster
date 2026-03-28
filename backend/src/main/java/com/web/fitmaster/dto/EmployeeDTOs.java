@@ -55,7 +55,7 @@ public class EmployeeDTOs {
 
         private AppRole role;
 
-        private Boolean isActivated = true;
+        private Boolean isActivated;
     }
 
 

@@ -7,7 +7,7 @@ export interface Employee {
   gender: string;
   isActivated: boolean;
   profilePicture?: string;
-  roles: { roleId: number; roleName: AppRole }[];
+  roles: string[];
 }
 
 export interface CreateEmployeeRequest {

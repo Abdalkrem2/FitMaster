@@ -4,6 +4,7 @@ interface AuthUser {
   id: number;
   name: string;
   roles: string[];
+  isActivated?: boolean;
 }
 
 interface AuthContextType {
