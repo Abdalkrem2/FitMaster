@@ -15,10 +15,10 @@ export interface MonthlyRevenue {
 export interface RevenueByPeriod {
   periodTotal:number
   periodDebt:number
- revenues:Revenue[]
+ revenues:RevenueRow[]
 }
 
-export interface Revenue{
+export interface RevenueRow{
 id:number
 addedByName:string
 memberName:string

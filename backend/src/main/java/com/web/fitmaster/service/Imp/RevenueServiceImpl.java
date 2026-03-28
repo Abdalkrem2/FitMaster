@@ -36,13 +36,13 @@ public class RevenueServiceImpl implements RevenueService {
 
 
     @Override
-    public RevenueDTOs.statsResponse getRevenueStats() {
+    public RevenueDTOs.StatsResponse getRevenueStats() {
     LocalDate today = LocalDate.now();
     LocalDate month=today.withDayOfMonth(1);//اول يوم بالشهر
     LocalDate year=today.withDayOfYear(1);//اول يوم بالسنة
 
 
-        return RevenueDTOs.statsResponse.builder()
+        return RevenueDTOs.StatsResponse.builder()
                 .today(revenueRepository.sumByDate(today))
                 .thisMonth(revenueRepository.sumBetweenDates(month,today))
                 .thisYear(revenueRepository.sumBetweenDates(year,today))
@@ -52,7 +52,7 @@ public class RevenueServiceImpl implements RevenueService {
 
 
     @Override
-    public RevenueDTOs.monthlyResponse getRevenueMonthly(int year) {
+    public RevenueDTOs.MonthlyResponse getRevenueMonthly(int year) {
         List<MonthlyRevenue>row=revenueRepository.monthlyBreakdown(year);
 
         Map<Integer,BigDecimal>months=new HashMap<>();
@@ -67,11 +67,11 @@ public class RevenueServiceImpl implements RevenueService {
         }
 
 
-        return RevenueDTOs.monthlyResponse.builder().months(months).yearTotal(yearTotal).build();
+        return RevenueDTOs.MonthlyResponse.builder().months(months).yearTotal(yearTotal).build();
     }
 
     @Override
-    public RevenueDTOs.periodResponse getRevenueByPeriod(LocalDate start, LocalDate end, String gender) {
+    public RevenueDTOs.PeriodResponse getRevenueByPeriod(LocalDate start, LocalDate end, String gender) {
         List<Revenue> revenues;
         if (gender == null || "All".equals(gender)) {
             revenues = revenueRepository.findByCreatedAtBetweenOrderByCreatedAtDesc(start, end);
@@ -102,7 +102,7 @@ public class RevenueServiceImpl implements RevenueService {
         ).toList();
 
 
-        return RevenueDTOs.periodResponse.builder().periodTotal(periodTotal)
+        return RevenueDTOs.PeriodResponse.builder().periodTotal(periodTotal)
                 .periodDebt(periodDebt)
                 .revenues(rows).build();
     }

@@ -18,7 +18,7 @@ public class RevenueDTOs {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class statsResponse {
+    public static class StatsResponse {
     private BigDecimal today;
     private BigDecimal thisMonth;
     private BigDecimal thisYear;
@@ -30,7 +30,7 @@ public class RevenueDTOs {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class monthlyResponse {
+    public static class MonthlyResponse {
         private BigDecimal yearTotal;
         private Map<Integer, BigDecimal>months;
     }
@@ -40,7 +40,7 @@ public class RevenueDTOs {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class periodResponse {
+    public static class PeriodResponse {
         private BigDecimal periodTotal;
         private BigDecimal periodDebt;
         private List<RevenueRow>revenues;

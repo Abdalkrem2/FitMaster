@@ -11,9 +11,9 @@ import java.util.List;
 @Service
 public interface RevenueService {
 
-    RevenueDTOs.statsResponse getRevenueStats();
+    RevenueDTOs.StatsResponse getRevenueStats();
 
-    RevenueDTOs.monthlyResponse getRevenueMonthly(int year);
+    RevenueDTOs.MonthlyResponse getRevenueMonthly(int year);
 
-    RevenueDTOs.periodResponse getRevenueByPeriod(LocalDate start, LocalDate end, String gender);
+    RevenueDTOs.PeriodResponse getRevenueByPeriod(LocalDate start, LocalDate end, String gender);
 }

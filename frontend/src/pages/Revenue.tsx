@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { revenueService } from '../services/revenueService';
-import type { MonthlyRevenue, RevenueByPeriod, RevenueStats ,Revenue} from '../types/revenue';
+import type { MonthlyRevenue, RevenueByPeriod, RevenueStats ,RevenueRow} from '../types/revenue';
 import { Table, type Column } from '@/components/ui/Table';
 
 const months = [

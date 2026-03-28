@@ -22,17 +22,17 @@ public class RevenueController {
     private final RevenueService revenueService;
 
 @GetMapping("/stats")
-    public ResponseEntity<RevenueDTOs.statsResponse> getRevenueStats() {
+    public ResponseEntity<RevenueDTOs.StatsResponse> getRevenueStats() {
     return ResponseEntity.ok(revenueService.getRevenueStats());
 }
 
 @GetMapping("/monthly")
-    public ResponseEntity<RevenueDTOs.monthlyResponse> getRevenueMonthly(@RequestParam(defaultValue = "2026") int year) {
+    public ResponseEntity<RevenueDTOs.MonthlyResponse> getRevenueMonthly(@RequestParam(defaultValue = "2026") int year) {
 return ResponseEntity.ok(revenueService.getRevenueMonthly(year));
 }
 
 @GetMapping("/period")
-    public ResponseEntity<RevenueDTOs.periodResponse> getRevenueByPeriod(@RequestParam LocalDate start,
+    public ResponseEntity<RevenueDTOs.PeriodResponse> getRevenueByPeriod(@RequestParam LocalDate start,
                                                           @RequestParam LocalDate end,@RequestParam(defaultValue = "All") String gender) {
     return ResponseEntity.ok(revenueService.getRevenueByPeriod(start,end,gender));
 
