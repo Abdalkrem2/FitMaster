@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Package as PackageIcon, Plus, Calendar, DollarSign } from 'lucide-react';
+import { Package as PackageIcon, Plus, Calendar, DollarSign, BookText } from 'lucide-react';
 import { packageService } from '../services/packageService';
 import EditPackageModal from '../components/EditPackageModal';
 import type { Package } from '../types/package';
@@ -114,7 +114,7 @@ const validate = () => {
       {loading ? (
         <div className="text-center py-12 text-gray-500">Loading packages...</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {packages.map((pkg) => (
             <Card key={pkg.id} className="hover:-translate-y-1 transition-transform border border-gray-100 shadow-soft relative overflow-hidden group border-gray-300">
               <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -136,6 +136,10 @@ const validate = () => {
               <div className="flex items-center text-gray-600 font-medium">
                 <Calendar className="w-5 h-5 mr-2" />
                 {pkg.durationInDays} days Duration
+              </div>
+              <div className="flex items-center text-black-400 font-small">
+          
+                <BookText className="w-5 h-5 mr-2" /> {pkg.description}
               </div>
               <div className="flex gap-3 mt-2 ">
              <Button  onClick={() => handleDelete(pkg.id)}>Delete</Button>
