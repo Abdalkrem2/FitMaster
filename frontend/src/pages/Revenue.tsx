@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { revenueService, type RevenueStats } from '../services/revenueService';
+import { revenueService } from '../services/revenueService';
+import type { MonthlyRevenue, RevenueByPeriod, RevenueStats ,Revenue} from '../types/revenue';
+import { Table, type Column } from '@/components/ui/Table';
 
 const months = [
   '1-JAN', '2-Feb', '3-Mar', '4-Apr', '5-May', '6-Jun',
@@ -7,32 +9,80 @@ const months = [
 ];
 
 const Revenue: React.FC = () => {
-  const [stats, setStats] = useState<RevenueStats | null>(null);
+  const [stats, setStats] = useState<RevenueStats>({
+    today: 0,
+    thisMonth: 0,
+    thisYear: 0,
+    debt: 0
+  });
   
   // Filters
   const [selectedYear, setSelectedYear] = useState('2026');
   const [selectedMonth, setSelectedMonth] = useState('All');
+  const [monthlyRevenue, setMonthlyRevenue] = useState<MonthlyRevenue|null>(null);
+  const [revenueByPeriod, setRevenueByPeriod] = useState<RevenueByPeriod|null>(null);
+  const [error,setError] = useState<Error|null>(null);
   
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [gender, setGender] = useState('All');
-
+  
+ const [isClicked,setIsClicked]=useState(false);
   const fetchStats = async () => {
     try {
       const data = await revenueService.getStats();
       setStats({
-        today: data.today || 40,
-        thisMonth: data.thisMonth || 521,
-        thisYear: data.thisYear || 8352,
-        totalDebt: data.totalDebt || 158
+        today: data.today,
+        thisMonth: data.thisMonth,
+        thisYear: data.thisYear,
+        debt: data.debt 
       });
+      console.log(data);
     } catch (err) {
-      console.error("Failed to load revenue");
+      setError(err as Error);
+    }
+
+  };
+
+  const fetchMonthlyRevenue = async () => {
+    try {
+      const data = await revenueService.monthlyRevenue(Number(selectedYear));
+      setMonthlyRevenue(data);
+      console.log(data);
+    } catch (err) {
+      setError(err as Error);
     }
   };
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
+  const fetchRevenueByPeriod = async () => {
+    try {
+      const data = await revenueService.revenueByPeriod(dateRange.start,dateRange.end,gender);
+      setRevenueByPeriod(data);
+      setIsClicked(true);
+    } catch (err) {
+      setError(err as Error);
+    }
+  };
+
+
+useEffect(() => {
+  fetchStats();
+  fetchMonthlyRevenue();
+}, [selectedYear]);
+
+
+const columns: Column<Revenue>[] = [
+  {key:'id',header: 'id'},
+  {key:'memberName',header: 'Member Name'},
+  { key: 'amount', header: 'Amount' },
+  {key:'debt',header: 'Debt'},
+  {key:'pkg',header: 'Package'},
+  {key:'addedByName',header: 'Added By'},
+  {key:'createdAt',header: 'Created At'},
+  {key:'description',header: 'Description'},
+
+];
+
+
 
   return (
     <div className="w-full max-w-6xl mx-auto p-2 text-gray-900 font-sans">
@@ -48,19 +98,19 @@ const Revenue: React.FC = () => {
       <div className="flex justify-between items-center text-lg font-medium mb-4 px-2">
         <div>
           <span className="text-gray-500 mr-2 font-bold">Today:</span>
-          <span className="text-green-500 font-bold">{stats?.today || 40}</span>
+          <span className="text-green-500 font-bold">{stats?.today||0}</span>
         </div>
         <div>
           <span className="text-gray-500 mr-2 font-bold">This Month:</span>
-          <span className="text-green-500 font-bold">{stats?.thisMonth || 521}</span>
+          <span className="text-green-500 font-bold">{stats?.thisMonth||0}</span>
         </div>
         <div>
           <span className="text-gray-500 mr-2 font-bold">This Year:</span>
-          <span className="text-green-500 font-bold">{stats?.thisYear || 8352}</span>
+          <span className="text-green-500 font-bold">{stats?.thisYear||0}</span>
         </div>
         <div>
           <span className="text-gray-500 mr-2 font-bold">Debt:</span>
-          <span className="text-red-500 font-bold">{stats?.totalDebt || 158}</span>
+          <span className="text-red-500 font-bold">{stats?.debt||0}</span>
         </div>
       </div>
 
@@ -77,19 +127,19 @@ const Revenue: React.FC = () => {
           <option value="2026">2026</option>
           <option value="2025">2025</option>
         </select>
-        <select 
+        {/* <select 
           className="px-4 py-1 border border-gray-400 rounded bg-white text-sm w-28 outline-none"
           value={selectedMonth}
           onChange={e => setSelectedMonth(e.target.value)}
         >
           <option value="All">All</option>
           <option value="January">January</option>
-        </select>
+        </select> */}
       </div>
 
       <div className="mb-6 text-xl font-bold bg-transparent">
         <span className="text-gray-500 mr-2">This Year:</span>
-        <span className="text-green-500">0 JOD</span>
+        <span className="text-green-500">{monthlyRevenue?.yearTotal||0} JOD</span>
       </div>
 
       {/* Months Grid */}
@@ -97,7 +147,7 @@ const Revenue: React.FC = () => {
         {months.map(m => (
           <div key={m} className="border-r border-b border-indigo-400 p-4 flex flex-col items-center justify-center">
             <span className="text-sm font-medium mb-3">{m}</span>
-            <span className="text-green-500 text-sm font-medium">0 JOD</span>
+            <span className="text-green-500 text-sm font-medium">{monthlyRevenue?.months[Number(m.split('-')[0])]} JOD</span> {/*understand this line*/}
           </div>
         ))}
       </div>
@@ -141,15 +191,39 @@ const Revenue: React.FC = () => {
           </select>
         </div>
         <div className="flex items-end">
-          <button className="bg-[#4267B2] text-white px-8 py-2 rounded text-sm font-medium hover:bg-[#365899] transition-colors">
+          <button onClick={fetchRevenueByPeriod}
+          disabled={dateRange.start===""||dateRange.end===""}
+          className="bg-[#4267B2] text-white px-8 py-2 rounded text-sm font-medium hover:bg-[#365899] transition-colors">
             Calculate
           </button>
-        </div>
-      </div>
 
-      <div className="mt-12 text-center text-gray-500 text-lg font-bold pb-8">
+        </div>
+        
+      </div>
+      {!isClicked&&
+      <div  className="mt-12 text-center text-gray-500 text-lg font-bold pb-8">
         Please select a Period
       </div>
+      }
+   
+
+      <div className={isClicked?'mt-12':'hidden'} >
+        <div className="flex justify-between items-center text-lg font-medium mb-4 px-2">
+            <div>
+              <span className="text-gray-500 mr-2 font-bold">Total:</span>
+              <span className="text-green-500 font-bold">{revenueByPeriod?.periodTotal||0}</span>
+            </div>
+            <div>
+              <span className="text-gray-500 mr-2 font-bold">Debt:</span>
+              <span className="text-red-500 font-bold">{revenueByPeriod?.periodDebt||0}</span>
+            </div>
+            
+           
+          </div>
+
+        <Table  data={revenueByPeriod?.revenues||[]} columns={columns} keyExtractor={(row) => row.id} />
+      </div>
+
     </div>
   );
 };
