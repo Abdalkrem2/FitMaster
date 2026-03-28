@@ -29,7 +29,7 @@ public class MembershipDTOs {
         @NotNull
         private BigDecimal price;
 
-        private BigDecimal debt;
+//        private BigDecimal debt;
 
         private String description;
     }

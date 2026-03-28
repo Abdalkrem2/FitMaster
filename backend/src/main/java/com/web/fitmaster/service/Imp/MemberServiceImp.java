@@ -168,12 +168,13 @@ public class MemberServiceImp implements MemberService {
            .pkg(pkg)
                 .endDate(startDate.plusDays(pkg.getDurationInDays()))
                         .description(request.getDescription())
-                                .debt(request.getDebt())
+                                .debt(pkg.getPrice().subtract(request.getPrice()))
                                         .member(member)
                 .status(MembershipStatus.ACTIVE)
                 .build();
 
         Revenue revenue=new Revenue().builder()
+                .membership(membership)
                 .member(member)
                 .createdBy(authUtil.loggedInUser())
                 .amount(request.getPrice())
