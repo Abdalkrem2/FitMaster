@@ -20,4 +20,6 @@ public interface MemberService {
     void addMembership(Long id, MembershipDTOs.MembershipRequest request);
 
     List<MembershipDTOs.MembershipHistory> getMemberships(Long id);
+    long countActiveMembers();
+    long countExpiringSoon();
 }

@@ -30,7 +30,7 @@ export const employeeService = {
         gender: e.gender,
         isActivated: e.isActivated,
         profilePicture: e.profilePicture,
-        roles: e.roles ?? [],
+        roles: (e.roles ?? []).map((r: any) => r.roleName ?? r),
       })),
       pageNumber: data.pageNumber ?? 0,
       pageSize: data.pageSize ?? size,
