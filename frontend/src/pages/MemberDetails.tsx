@@ -258,7 +258,7 @@ const MemberDetails: React.FC = () => {
                         .filter((p) => p.status === "ACTIVE")
                         .map((pkg) => (
                           <SelectItem key={pkg.id} value={String(pkg.id)}>
-                            {pkg.name}
+                            {pkg.name} ({pkg.price} JD)
                           </SelectItem>
                         ))}
                     </SelectGroup>
@@ -292,14 +292,7 @@ const MemberDetails: React.FC = () => {
                   required
                 />
               </div>
-              <div className="col-span-1">
-                <Input
-                  label="Debt ($)"
-                  type="number"
-                  value={debt}
-                  onChange={(e) => setDebt(e.target.value)}
-                />
-              </div>
+            
               <div className="col-span-1">
                 <Input
                   label="Description"
