@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -26,6 +27,10 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
 
     List<Membership> findMembershipByMemberIdOrderByEndDateDesc(Long memberId);
 
-    @Query("select sum (m.price) from Membership m ")
+    @Query("select sum (m.pkg.price) from Membership m ")
     BigDecimal sumAllPrices();
+
+    List<Membership> findByCreatedAtBetweenOrderByCreatedAtDesc(LocalDate start, LocalDate end);
+
+    List<Membership> findByCreatedAtBetweenAndMemberGenderOrderByCreatedAtDesc(LocalDate start, LocalDate end, String gender);
 }
