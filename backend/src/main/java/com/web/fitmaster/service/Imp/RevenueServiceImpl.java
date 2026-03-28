@@ -2,9 +2,11 @@ package com.web.fitmaster.service.Imp;
 
 import com.web.fitmaster.dto.MonthlyRevenue;
 import com.web.fitmaster.exceptions.NotFoundException;
+import com.web.fitmaster.model.Membership;
 import com.web.fitmaster.model.Revenue;
 import com.web.fitmaster.model.User;
 import com.web.fitmaster.repository.MembershipRepository;
+import com.web.fitmaster.repository.PackageRepository;
 import com.web.fitmaster.repository.RevenueRepository;
 import com.web.fitmaster.repository.UserRepository;
 import com.web.fitmaster.dto.RevenueDTOs;
@@ -30,6 +32,7 @@ public class RevenueServiceImpl implements RevenueService {
     private final RevenueRepository revenueRepository;
     private final UserRepository userRepository;
     private final MembershipRepository membershipRepository;
+    private final PackageRepository packageRepository;
 
 
     @Override
@@ -78,21 +81,30 @@ public class RevenueServiceImpl implements RevenueService {
 
         BigDecimal periodTotal=revenues.stream().map(Revenue::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        List<RevenueDTOs.RevenueRow>rows=revenues.stream().map(r->RevenueDTOs.RevenueRow.builder()
-                .id(r.getId())
-                .memberName(r.getMember().getFullName())
-                .addedByName(r.getCreatedBy()!=null?r.getCreatedBy().getFullName():"Unknown")
-                .amount(r.getAmount())
-                .debt(calculateDebt(r.getMember().getId()))
-                .createdAt(r.getCreatedAt())
-                .description(r.getDescription())
-                .build()
+        BigDecimal periodDebt=revenues.stream().map(revenue -> revenue.getMembership().getDebt()).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        List<RevenueDTOs.RevenueRow>rows=revenues.stream().map(
+
+
+
+                r -> RevenueDTOs.RevenueRow.builder()
+                        .id(r.getId())
+                        .memberName(r.getMember().getFullName())
+                        .addedByName(r.getCreatedBy() != null ? r.getCreatedBy().getFullName() : "Unknown")
+                        .amount(r.getAmount())
+                        .debt(r.getMembership().getDebt())
+                        .pkg(r.getMembership().getPkg().getName())
+                        .createdAt(r.getCreatedAt())
+                        .description(r.getDescription())
+                        .build()
 
 
         ).toList();
 
 
-        return RevenueDTOs.periodResponse.builder().periodTotal(periodTotal).revenues(rows).build();
+        return RevenueDTOs.periodResponse.builder().periodTotal(periodTotal)
+                .periodDebt(periodDebt)
+                .revenues(rows).build();
     }
 
     private BigDecimal calculateTotalDebt() {

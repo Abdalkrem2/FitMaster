@@ -42,6 +42,7 @@ public class RevenueDTOs {
     @Builder
     public static class periodResponse {
         private BigDecimal periodTotal;
+        private BigDecimal periodDebt;
         private List<RevenueRow>revenues;
     }
     @Setter
@@ -53,6 +54,7 @@ public class RevenueDTOs {
         private Long id;
         private String addedByName;
         private String memberName;
+        private String pkg;
         private BigDecimal debt;
         private String description;
         private BigDecimal amount;
