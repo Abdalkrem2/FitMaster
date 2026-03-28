@@ -117,20 +117,6 @@ public class RevenueServiceImpl implements RevenueService {
     }
 
 
-    public BigDecimal calculateDebt(Long memberId) {
-        BigDecimal cost= membershipRepository.sumPackagePriceByMemberId(memberId);
-        if(cost==null) {
-            cost=BigDecimal.ZERO;
-        }
 
-
-        BigDecimal totalPaid= revenueRepository.sumAmountByMemberId(memberId);
-        if(totalPaid==null) {
-            totalPaid=BigDecimal.ZERO;
-        }
-
-        return  cost.subtract(totalPaid);
-
-    }
 
 }
