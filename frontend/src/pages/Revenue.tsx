@@ -18,15 +18,12 @@ const Revenue: React.FC = () => {
   
   // Filters
   const [selectedYear, setSelectedYear] = useState('2026');
-  const [selectedMonth, setSelectedMonth] = useState('All');
   const [monthlyRevenue, setMonthlyRevenue] = useState<MonthlyRevenue|null>(null);
   const [revenueByPeriod, setRevenueByPeriod] = useState<RevenueByPeriod|null>(null);
   const [error,setError] = useState<Error|null>(null);
   
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [gender, setGender] = useState('All');
-  
- const [isClicked,setIsClicked]=useState(false);
   const fetchStats = async () => {
     try {
       const data = await revenueService.getStats();
@@ -36,7 +33,7 @@ const Revenue: React.FC = () => {
         thisYear: data.thisYear,
         debt: data.debt 
       });
-      console.log(data);
+     
     } catch (err) {
       setError(err as Error);
     }
@@ -47,7 +44,7 @@ const Revenue: React.FC = () => {
     try {
       const data = await revenueService.monthlyRevenue(Number(selectedYear));
       setMonthlyRevenue(data);
-      console.log(data);
+      
     } catch (err) {
       setError(err as Error);
     }
@@ -57,7 +54,7 @@ const Revenue: React.FC = () => {
     try {
       const data = await revenueService.revenueByPeriod(dateRange.start,dateRange.end,gender);
       setRevenueByPeriod(data);
-      setIsClicked(true);
+   
     } catch (err) {
       setError(err as Error);
     }
@@ -65,12 +62,17 @@ const Revenue: React.FC = () => {
 
 
 useEffect(() => {
-  fetchStats();
+
   fetchMonthlyRevenue();
 }, [selectedYear]);
 
+useEffect(() => {
+  fetchStats();
+}, []);
 
-const columns: Column<Revenue>[] = [
+
+
+const columns: Column<RevenueRow>[] = [
   {key:'id',header: 'id'},
   {key:'memberName',header: 'Member Name'},
   { key: 'amount', header: 'Amount' },
@@ -98,19 +100,19 @@ const columns: Column<Revenue>[] = [
       <div className="flex justify-between items-center text-lg font-medium mb-4 px-2">
         <div>
           <span className="text-gray-500 mr-2 font-bold">Today:</span>
-          <span className="text-green-500 font-bold">{stats?.today||0}</span>
+          <span className="text-green-500 font-bold">{stats?.today ?? 0}</span>
         </div>
         <div>
           <span className="text-gray-500 mr-2 font-bold">This Month:</span>
-          <span className="text-green-500 font-bold">{stats?.thisMonth||0}</span>
+          <span className="text-green-500 font-bold">{stats?.thisMonth ?? 0}</span>
         </div>
         <div>
           <span className="text-gray-500 mr-2 font-bold">This Year:</span>
-          <span className="text-green-500 font-bold">{stats?.thisYear||0}</span>
+          <span className="text-green-500 font-bold">{stats?.thisYear ?? 0}</span>
         </div>
         <div>
           <span className="text-gray-500 mr-2 font-bold">Debt:</span>
-          <span className="text-red-500 font-bold">{stats?.debt||0}</span>
+          <span className="text-red-500 font-bold">{stats?.debt ?? 0}</span>
         </div>
       </div>
 
@@ -127,14 +129,6 @@ const columns: Column<Revenue>[] = [
           <option value="2026">2026</option>
           <option value="2025">2025</option>
         </select>
-        {/* <select 
-          className="px-4 py-1 border border-gray-400 rounded bg-white text-sm w-28 outline-none"
-          value={selectedMonth}
-          onChange={e => setSelectedMonth(e.target.value)}
-        >
-          <option value="All">All</option>
-          <option value="January">January</option>
-        </select> */}
       </div>
 
       <div className="mb-6 text-xl font-bold bg-transparent">
@@ -200,14 +194,14 @@ const columns: Column<Revenue>[] = [
         </div>
         
       </div>
-      {!isClicked&&
+      {revenueByPeriod === null
+  ?
       <div  className="mt-12 text-center text-gray-500 text-lg font-bold pb-8">
+
         Please select a Period
       </div>
-      }
-   
-
-      <div className={isClicked?'mt-12':'hidden'} >
+      :
+       <div className="mt-12" >
         <div className="flex justify-between items-center text-lg font-medium mb-4 px-2">
             <div>
               <span className="text-gray-500 mr-2 font-bold">Total:</span>
@@ -223,6 +217,10 @@ const columns: Column<Revenue>[] = [
 
         <Table  data={revenueByPeriod?.revenues||[]} columns={columns} keyExtractor={(row) => row.id} />
       </div>
+      }
+   
+
+     
 
     </div>
   );
