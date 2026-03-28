@@ -148,7 +148,7 @@ public class WebSecurityConfig {
             // ===== Create Admin =====
             if (!userRepository.existsByPhone("0780000000")) {
                 User admin = new User("admin", "0780000000",
-                        passwordEncoder.encode("admin"), "male", true);
+                        passwordEncoder.encode("admin"), "Male", true);
                 admin.setRoles(adminRoles);
                 admin.setCreatedBy(admin);
                 userRepository.save(admin);
@@ -162,7 +162,7 @@ public class WebSecurityConfig {
 
                 if (!userRepository.existsByPhone(phone)) {
                     User emp = new User("employee" + i, phone,
-                            passwordEncoder.encode("emp123"), "male", true);
+                            passwordEncoder.encode("emp123"), "Male", true);
 
                     emp.setRoles(employeeRoles);
                     emp.setCreatedBy(adminUser); // 🔥 مهم
@@ -177,7 +177,7 @@ public class WebSecurityConfig {
 
                 if (!userRepository.existsByPhone(phone)) {
                     User member = new User("member" + i, phone,
-                            passwordEncoder.encode("123456"), "male", true);
+                            passwordEncoder.encode("123456"), "Male", true);
 
                     member.setRoles(memberRoles);
                     member.setCreatedBy(adminUser); // 🔥 مهم
