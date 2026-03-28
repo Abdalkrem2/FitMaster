@@ -1,17 +1,25 @@
-export interface RevenueStats {
-  today: number;
-  thisMonth: number;
-  thisYear: number;
-  totalDebt: number;
-}
+
+import type { MonthlyRevenue, RevenueByPeriod, RevenueStats } from "../types/revenue";
+import { api } from "./api";
 
 export const revenueService = {
-  getStats: async (filters?: { dateRange?: { start: string, end: string }, gender?: string }): Promise<RevenueStats> => {
-    return {
-      today: 0,
-      thisMonth: 0,
-      thisYear: 0,
-      totalDebt: 0
-    };
-  }
+  getStats: async (): Promise<RevenueStats> => {
+    const response = await api.get("/revenue/stats");
+    return response.data;
+    
+  },
+
+  monthlyRevenue: async (year:number): Promise<MonthlyRevenue> => {
+    const response = await api.get(`/revenue/monthly`,
+      {params:{year}
+    });
+    return response.data;
+  },
+
+
+
+ revenueByPeriod: async (start:string,end:string,gender:string): Promise<RevenueByPeriod> => {
+    const response = await api.get("/revenue/period",{params:{start,end,gender}});
+    return response.data;
+  },
 };
