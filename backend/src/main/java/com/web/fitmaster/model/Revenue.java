@@ -27,12 +27,12 @@ public class Revenue {
     @JoinColumn(name = "member_id", nullable = false)
     private User member;
 
-    @OneToOne()
-    @JoinColumn(name = "membership_id")
+    @ManyToOne()
+    @JoinColumn(name = "membership_id",nullable = false)
     private Membership membership;
 
     @ManyToOne
-    @JoinColumn(name = "created_by", referencedColumnName = "user_id", nullable = true)
+    @JoinColumn(name = "created_by", referencedColumnName = "user_id", nullable = false)
     private User createdBy;
 
     @Column(nullable = false)

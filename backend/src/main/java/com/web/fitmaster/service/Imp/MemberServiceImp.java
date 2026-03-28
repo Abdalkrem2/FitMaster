@@ -181,10 +181,11 @@ public class MemberServiceImp implements MemberService {
                 .description(request.getDescription())
                 .build();
 
-                revenueRepository.save(revenue);
+
 
 
         membershipRepository.save(membership);
+        revenueRepository.save(revenue);
 
     }
 
