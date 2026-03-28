@@ -87,6 +87,16 @@ const columns: Column<RevenueRow>[] = [
 
 
   return (
+    <div className='w-full max-w-6xl mx-auto p-2'>
+ {error && (
+      <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">
+        Something went wrong. Please try again.
+      </div>
+    )}
+
+  
+
+
     <div className="w-full max-w-6xl mx-auto p-2 text-gray-900 font-sans">
       {/* Header section */}
       <div className="flex flex-col mb-8 relative">
@@ -221,7 +231,7 @@ const columns: Column<RevenueRow>[] = [
    
 
      
-
+  </div>
     </div>
   );
 };
