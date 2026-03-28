@@ -147,7 +147,7 @@ public class MemberServiceImp implements MemberService {
     public void addMembership(Long id, MembershipDTOs.MembershipRequest request) {
         User member= userRepository.findByIdAndRoles_RoleNameIn(id,Set.of( AppRole.MEMBER)).orElseThrow(()->new NotFoundException(String.format( "Member with id '%s' not found",id)));
 
-        Package pkg=packageRepository.findById(request.getPackageId()).orElseThrow(()->new NotFoundException(String.format( "Package with id '%s' not found",id)));
+        Package pkg=packageRepository.findById(request.getPackageId()).orElseThrow(()->new NotFoundException(String.format( "Package with id '%s' not found",request.getPackageId())));
 
         Optional<Membership> activeMembership = membershipRepository
                 .findTopByMemberIdOrderByEndDateDesc(id)

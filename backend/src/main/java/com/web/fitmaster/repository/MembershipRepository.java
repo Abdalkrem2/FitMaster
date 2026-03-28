@@ -20,9 +20,12 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
 
     Optional<Membership> findTopByMemberIdOrderByStartDateDesc(Long memberId);
 
-    List<Membership> findMembershipByMemberId(Long id);
+
 
     List<Membership> findAllByMemberId(Long memberId);
 
     List<Membership> findMembershipByMemberIdOrderByEndDateDesc(Long memberId);
+
+    @Query("select sum (m.price) from Membership m ")
+    BigDecimal sumAllPrices();
 }

@@ -14,49 +14,30 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/revenues")
+@RequestMapping("/api/revenue")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class RevenueController {
 
     private final RevenueService revenueService;
 
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<RevenueDTOs.RevenueResponse> getAllRevenues(Pageable pageable) {
-        return ResponseEntity.ok(revenueService.getRevenues(pageable));
-    }
+@GetMapping("/stats")
+    public ResponseEntity<RevenueDTOs.statsResponse> getRevenueStats() {
+    return ResponseEntity.ok(revenueService.getRevenueStats());
+}
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<RevenueDTOs.RevenueDTO> getRevenue(@PathVariable Long id) {
-        return ResponseEntity.ok(revenueService.getRevenue(id));
-    }
+@GetMapping("/monthly")
+    public ResponseEntity<RevenueDTOs.monthlyResponse> getRevenueMonthly(@RequestParam(defaultValue = "2026") int year) {
+return ResponseEntity.ok(revenueService.getRevenueMonthly(year));
+}
 
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<RevenueDTOs.RevenueDTO> createRevenue(@Valid @RequestBody RevenueDTOs.RevenueRequest request) {
-        return new ResponseEntity<>(revenueService.createRevenue(request), HttpStatus.CREATED);
-    }
+@GetMapping("/period")
+    public ResponseEntity<RevenueDTOs.periodResponse> getRevenueByPeriod(@RequestParam LocalDate start,
+                                                          @RequestParam LocalDate end,@RequestParam(defaultValue = "All") String gender) {
+    return ResponseEntity.ok(revenueService.getRevenueByPeriod(start,end,gender));
 
-    @PatchMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<RevenueDTOs.RevenueDTO> updateRevenue(
-            @PathVariable Long id,
-            @RequestBody RevenueDTOs.RevenueUpdateRequest request) {
-        return ResponseEntity.ok(revenueService.updateRevenue(id, request));
-    }
+}
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteRevenue(@PathVariable Long id) {
-        return ResponseEntity.ok(revenueService.deleteRevenue(id));
-    }
 
-    @GetMapping("/range")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<RevenueDTOs.RevenueDTO>> getRevenueByRange(
-            @RequestParam("start") LocalDate start,
-            @RequestParam("end") LocalDate end) {
-        return ResponseEntity.ok(revenueService.getRevenueByDateRange(start, end));
-    }
+
 }

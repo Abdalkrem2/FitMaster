@@ -23,7 +23,7 @@ public class MembershipDTOs {
         @NotNull
         private Long packageId;
 
-        @NotNull
+//        @NotNull
         private LocalDate startDate;
 
         @NotNull
