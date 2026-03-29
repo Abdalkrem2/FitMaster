@@ -146,7 +146,7 @@ public class WebSecurityConfig {
             Set<Role> employeeRoles = Set.of(employeeRole);
 
             // ===== Create Admin =====
-            if (!userRepository.existsByPhone("0780000000")) {
+            if (!userRepository.existsByPhoneAndDeletedFalse("0780000000")) {
                 User admin = new User("admin", "0780000000",
                         passwordEncoder.encode("admin"), "Male", true);
                 admin.setRoles(adminRoles);
@@ -154,13 +154,13 @@ public class WebSecurityConfig {
                 userRepository.save(admin);
             }
             // بعد إنشاء الأدمن
-            User adminUser = userRepository.findByPhone("0780000000").orElseThrow();
+            User adminUser = userRepository.findByPhoneAndDeletedFalse("0780000000").orElseThrow();
 
 // ===== Employees =====
             for (int i = 1; i <= 3; i++) {
                 String phone = "079000000" + i;
 
-                if (!userRepository.existsByPhone(phone)) {
+                if (!userRepository.existsByPhoneAndDeletedFalse(phone)) {
                     User emp = new User("employee" + i, phone,
                             passwordEncoder.encode("emp123"), "Male", true);
 
@@ -175,7 +175,7 @@ public class WebSecurityConfig {
             for (int i = 1; i <= 100; i++) {
                 String phone = "077000" + String.format("%04d", i);
 
-                if (!userRepository.existsByPhone(phone)) {
+                if (!userRepository.existsByPhoneAndDeletedFalse(phone)) {
                     User member = new User("member" + i, phone,
                             passwordEncoder.encode("123456"), "Male", true);
 

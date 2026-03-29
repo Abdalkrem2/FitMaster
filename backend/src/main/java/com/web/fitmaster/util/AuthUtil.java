@@ -41,7 +41,7 @@ public class AuthUtil {
 
     public User loggedInUser() {
         String phone = loggedInPhone();
-        return userRepository.findByPhone(phone)
+        return userRepository.findByPhoneAndDeletedFalse(phone)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with phone: " + phone));
     }
 
