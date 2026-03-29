@@ -18,17 +18,18 @@ import java.util.Set;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     
-    Optional<User> findByPhone(String phone);
-    boolean existsByPhone(String phone);
+    Optional<User> findByPhoneAndDeletedFalse(String phone);
+    boolean existsByPhoneAndDeletedFalse(String phone);
 
 
 
-    Optional<User> findByIdAndRoles_RoleNameIn(Long id, Set<AppRole> employee);
+    Optional<User> findByIdAndRoles_RoleNameInAndDeletedFalse(Long id, Set<AppRole> employee);
 
     @Query("SELECT u FROM User u JOIN u.roles r WHERE r.roleName IN :roles " +
+            "AND u.deleted=false "+
             "AND (LOWER(u.fullName) LIKE LOWER(CONCAT('%',:search,'%')) " +
             "OR u.phone LIKE CONCAT('%',:search,'%'))")
     Page<User> searchMembers(@Param("roles") Set<AppRole> roles,@Param("search") String search, Pageable pageable);
 
-    Page<User> findByRoles_roleNameIn(Set<AppRole> employee, Pageable pageable);
+    Page<User> findByRoles_roleNameInAndDeletedFalse(Set<AppRole> employee, Pageable pageable);
 }
