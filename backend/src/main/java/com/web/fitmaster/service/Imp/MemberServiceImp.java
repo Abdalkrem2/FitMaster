@@ -48,7 +48,7 @@ public class MemberServiceImp implements MemberService {
            members=userRepository.searchMembers(Set.of(AppRole.MEMBER),search,pageable);
         }
         else{
-         members =userRepository.findByRoles_roleNameIn(Set.of(AppRole.MEMBER), pageable);
+         members =userRepository.findByRoles_roleNameInAndDeletedFalse(Set.of(AppRole.MEMBER), pageable);
         }
         List<MemberDTOs.MemberDTO> content= members.stream().map(this::mapToDTO).toList();
 
@@ -66,7 +66,7 @@ public class MemberServiceImp implements MemberService {
 
     @Override
     public MemberDTOs.MemberDetailsDTO getMemberDetails(Long id) {
-    User member = userRepository.findByIdAndRoles_RoleNameIn(id,Set.of(AppRole.MEMBER)).orElseThrow(()->new NotFoundException(String.format( "Member with id '%s' not found",id)));
+    User member = userRepository.findByIdAndRoles_RoleNameInAndDeletedFalse(id,Set.of(AppRole.MEMBER)).orElseThrow(()->new NotFoundException(String.format( "Member with id '%s' not found",id)));
 
     List<Membership> memberships=membershipRepository.findMembershipByMemberIdOrderByEndDateDesc(id);
 
@@ -92,7 +92,7 @@ public class MemberServiceImp implements MemberService {
     @Override
     @Transactional
     public MemberDTOs.MemberDTO createMember(MemberDTOs.MemberRequest memberDTO) {
-        if(userRepository.existsByPhone(memberDTO.getPhone())) {
+        if(userRepository.existsByPhoneAndDeletedFalse(memberDTO.getPhone())) {
             throw new BadRequestException(String.format( "Phone '%s' is already registered",memberDTO.getPhone()));
         }
         User user = new User();
@@ -113,7 +113,7 @@ public class MemberServiceImp implements MemberService {
     @Override
     @Transactional
     public MemberDTOs.MemberDTO updateMember(MemberDTOs.@Valid MemberUpdateRequest memberDTO, Long id) {
-        User user= userRepository.findByIdAndRoles_RoleNameIn(id,Set.of(AppRole.MEMBER)).orElseThrow(()->new NotFoundException(String.format( "Member with id '%s' not found",id)));
+        User user= userRepository.findByIdAndRoles_RoleNameInAndDeletedFalse(id,Set.of(AppRole.MEMBER)).orElseThrow(()->new NotFoundException(String.format( "Member with id '%s' not found",id)));
 
 
             if (memberDTO.getPhone() != null&& !memberDTO.getPhone().isBlank()) {
@@ -136,16 +136,17 @@ public class MemberServiceImp implements MemberService {
     @Override
     @Transactional
     public String deleteMember(Long id) {
-        User member =userRepository.findByIdAndRoles_RoleNameIn(id,Set.of(AppRole.MEMBER))
+        User member =userRepository.findByIdAndRoles_RoleNameInAndDeletedFalse(id,Set.of(AppRole.MEMBER))
                 .orElseThrow(()->new NotFoundException(String.format( "Member with id '%s' not found",id)));
-        userRepository.delete(member);
+        member.setDeleted(true);
+        userRepository.save(member);
         return "Member with id '"+id+"' deleted";
     }
 
     @Override
     @Transactional
     public void addMembership(Long id, MembershipDTOs.MembershipRequest request) {
-        User member= userRepository.findByIdAndRoles_RoleNameIn(id,Set.of( AppRole.MEMBER)).orElseThrow(()->new NotFoundException(String.format( "Member with id '%s' not found",id)));
+        User member= userRepository.findByIdAndRoles_RoleNameInAndDeletedFalse(id,Set.of( AppRole.MEMBER)).orElseThrow(()->new NotFoundException(String.format( "Member with id '%s' not found",id)));
 
         Package pkg=packageRepository.findById(request.getPackageId()).orElseThrow(()->new NotFoundException(String.format( "Package with id '%s' not found",request.getPackageId())));
 
@@ -191,7 +192,7 @@ public class MemberServiceImp implements MemberService {
 
     @Override
     public List<MembershipDTOs.MembershipHistory> getMemberships(Long id) {
-        User member= userRepository.findByIdAndRoles_RoleNameIn(id,Set.of( AppRole.MEMBER)).orElseThrow(()->new NotFoundException(String.format( "Member with id '%s' not found",id)));
+        User member= userRepository.findByIdAndRoles_RoleNameInAndDeletedFalse(id,Set.of( AppRole.MEMBER)).orElseThrow(()->new NotFoundException(String.format( "Member with id '%s' not found",id)));
         List<Membership> memberships= membershipRepository.findAllByMemberId(id);
       List<  MembershipDTOs.MembershipHistory> dto =memberships.stream().map(this::mapMembershipToDTO).toList();
         return dto;
