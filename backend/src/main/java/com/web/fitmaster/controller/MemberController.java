@@ -14,7 +14,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController()
 @RequestMapping("/api/members")
@@ -68,6 +71,15 @@ public class MemberController {
     public ResponseEntity<List< MembershipDTOs.MembershipHistory>> getMemberships(@PathVariable Long id){
         List<MembershipDTOs.MembershipHistory> response= memberService.getMemberships(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/stats")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<?> getStats() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("activeMembers", memberService.countActiveMembers());
+        stats.put("expiringSoon", memberService.countExpiringSoon());
+        return ResponseEntity.ok(stats);
     }
 
 

@@ -33,4 +33,6 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
     List<Membership> findByCreatedAtBetweenOrderByCreatedAtDesc(LocalDate start, LocalDate end);
 
     List<Membership> findByCreatedAtBetweenAndMemberGenderOrderByCreatedAtDesc(LocalDate start, LocalDate end, String gender);
+    long countDistinctMemberByEndDateAfter(LocalDate date);
+    long countDistinctMemberByEndDateBetween(LocalDate start, LocalDate end);
 }
