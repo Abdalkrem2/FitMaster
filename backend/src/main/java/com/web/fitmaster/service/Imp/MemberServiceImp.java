@@ -187,6 +187,9 @@ public class MemberServiceImp implements MemberService {
         membershipRepository.save(membership);
         revenueRepository.save(revenue);
 
+        member.setIsActivated(true);
+        userRepository.save(member);
+
     }
 
     @Override
@@ -197,6 +200,19 @@ public class MemberServiceImp implements MemberService {
         return dto;
     }
 
+    @Override
+    public long countActiveMembers() {
+        return membershipRepository
+                .countDistinctMemberByEndDateAfter(LocalDate.now());
+    }
+
+    @Override
+    public long countExpiringSoon() {
+        LocalDate today = LocalDate.now();
+        LocalDate threeDaysLater = today.plusDays(3);
+        return membershipRepository
+                .countDistinctMemberByEndDateBetween(today, threeDaysLater);
+    }
 
     public MemberDTOs.MemberDTO mapToDTO(User member) {
         MemberDTOs.MemberDTO memberDTO = new MemberDTOs.MemberDTO();
