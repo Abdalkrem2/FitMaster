@@ -21,6 +21,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String phone;
 
+    @Column(nullable = false)
+    private boolean deleted = false;
+
     @Column(name = "password_hash", nullable = false)
     private String password;
 
