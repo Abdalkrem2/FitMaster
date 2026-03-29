@@ -32,7 +32,7 @@ public class EmployeeServiceImp implements EmployeeService {
 
     @Override
     public EmployeeDTOs.EmployeeResponse getAllEmployees(Pageable pageable) {
-        Page<User>content=userRepository.findByRoles_roleNameIn(Set.of(AppRole.EMPLOYEE,AppRole.ADMIN),pageable);
+        Page<User>content=userRepository.findByRoles_roleNameInAndDeletedFalse(Set.of(AppRole.EMPLOYEE,AppRole.ADMIN),pageable);
 
         List<EmployeeDTOs.EmployeeDTO> dto = content.stream().map(this::mapToDTO).toList();
 
@@ -49,7 +49,7 @@ public class EmployeeServiceImp implements EmployeeService {
     @Override
     @Transactional
     public EmployeeDTOs.EmployeeDTO createEmployee(EmployeeDTOs.EmployeeRequest req) {
-       if(userRepository.existsByPhone(req.getPhone()))
+       if(userRepository.existsByPhoneAndDeletedFalse(req.getPhone()))
            throw new NotFoundException("Phone number already exists");
 
        User user = new User();
@@ -125,9 +125,10 @@ public class EmployeeServiceImp implements EmployeeService {
 
     @Override
     public String deleteEmployee(Long id) {
-        if(!userRepository.existsById(id))
-            throw new NotFoundException("User not found");
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
+
+        user.setDeleted(true);
+        userRepository.save(user);
 
         return "Employee with id= "+id+" was deleted successfully";
     }
