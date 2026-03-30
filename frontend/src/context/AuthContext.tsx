@@ -14,6 +14,7 @@ interface AuthContextType {
   logout: () => void;
   isAdmin: () => boolean;
   isEmployee: () => boolean;
+  isMember: () => boolean;
 }
 
 //Context
@@ -53,9 +54,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const isEmployee = () => user?.roles?.includes("EMPLOYEE") ?? false;
 
+  const isMember = () => user?.roles?.includes("MEMBER") ?? false;
+
   return (
     <AuthContext.Provider
-      value={{ user, token, login, logout, isAdmin, isEmployee }}
+      value={{ user, token, login, logout, isAdmin, isEmployee, isMember }}
     >
       {children}
     </AuthContext.Provider>
