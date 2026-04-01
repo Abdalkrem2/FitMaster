@@ -13,6 +13,8 @@ import ActivityLog from "../pages/ActivityLog";
 import Employees from "../pages/Employees";
 import EmployeeDashboard from "@/pages/EmployeeDashboard";
 import MemberDetails from "@/pages/MemberDetails";
+import { MemberLayout } from "../layouts/MemberLayout";
+import MemberDashboard from "../pages/MemberDashboard";
 
 //Guard: ADMIN only
 // if not admin return to tha main page
@@ -32,6 +34,11 @@ export const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/member-dashboard",
+    element: <MemberLayout />,
+    children: [{ index: true, element: <MemberDashboard /> }],
   },
   {
     path: "/",

@@ -4,7 +4,9 @@ package com.web.fitmaster.controller;
 import com.web.fitmaster.dto.MemberDTOs;
 import com.web.fitmaster.dto.MembershipDTOs;
 import com.web.fitmaster.model.Membership;
+import com.web.fitmaster.model.User;
 import com.web.fitmaster.service.MemberService;
+import com.web.fitmaster.util.AuthUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +27,7 @@ import java.util.Objects;
 public class MemberController {
 
     private final MemberService memberService;
+    private final AuthUtil authUtil;
 
 
     @GetMapping
@@ -80,6 +83,22 @@ public class MemberController {
         stats.put("activeMembers", memberService.countActiveMembers());
         stats.put("expiringSoon", memberService.countExpiringSoon());
         return ResponseEntity.ok(stats);
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('MEMBER')")
+    public ResponseEntity<MemberDTOs.MemberDetailsDTO> getMyDetails() {
+        User loggedIn = authUtil.loggedInUser();
+        MemberDTOs.MemberDetailsDTO details = memberService.getMemberDetails(loggedIn.getId());
+        return ResponseEntity.ok(details);
+    }
+
+    @PatchMapping("/me/password")
+    @PreAuthorize("hasRole('MEMBER')")
+    public ResponseEntity<String> changePassword(@RequestBody Map<String, String> body) {
+        User loggedIn = authUtil.loggedInUser();
+        memberService.changePassword(loggedIn.getId(), body.get("newPassword"));
+        return ResponseEntity.ok("Password changed successfully");
     }
 
 
