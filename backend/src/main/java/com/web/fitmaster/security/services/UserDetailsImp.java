@@ -24,7 +24,7 @@ private String fullName;
 private String phone;
 @JsonIgnore//إذا ما استخدمت @JsonIgnore، رح يطلع الـ password بالـ JSON response.
 private String password;
-    private Boolean isActivated;
+private Boolean isActivated;
 
 private Collection<? extends GrantedAuthority> authorities;
 

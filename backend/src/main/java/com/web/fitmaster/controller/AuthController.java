@@ -91,11 +91,11 @@ public class AuthController {
     }
 
 
-    @PostMapping("/signout")
-    public ResponseEntity<?> signOutUser(){
-
-        ResponseCookie cookie=jwtUtils.getCleanJwtCookie();
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(new MessageResponse("Signed out successfully"));
-    }
+//    @PostMapping("/signout")
+//    public ResponseEntity<?> signOutUser(){
+//
+//        ResponseCookie cookie=jwtUtils.getCleanJwtCookie();
+//        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(new MessageResponse("Signed out successfully"));
+//    }
 
 }
