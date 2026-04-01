@@ -22,4 +22,5 @@ public interface MemberService {
     List<MembershipDTOs.MembershipHistory> getMemberships(Long id);
     long countActiveMembers();
     long countExpiringSoon();
+    void changePassword(Long id, String newPassword);
 }

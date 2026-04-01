@@ -98,7 +98,9 @@ public class MemberServiceImp implements MemberService {
         User user = new User();
         user.setPhone(memberDTO.getPhone());
         user.setCreatedBy(authUtil.loggedInUser());
-        user.setPassword(passwordEncoder.encode("abdalkremn@123"));
+//        user.setPassword(passwordEncoder.encode("abdalkremn@123"));
+        //the member will use his phone number as password until the first login
+        user.setPassword(passwordEncoder.encode(memberDTO.getPhone()));
         user.setGender(memberDTO.getGender());
         user.setFullName(memberDTO.getFullName());
         user.setProfilePicture(memberDTO.getProfilePicture());
@@ -275,5 +277,13 @@ public class MemberServiceImp implements MemberService {
             startDate= lastMembership.get().getStartDate();
         }
         return startDate;
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(Long id, String newPassword) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Member not found"));
+        user.setPassword(passwordEncoder.encode(newPassword));
     }
 }

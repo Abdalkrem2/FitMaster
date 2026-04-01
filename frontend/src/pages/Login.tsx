@@ -41,8 +41,8 @@ const Login: React.FC = () => {
         navigate("/e-dashboard"); // Employee Dashboard
       } else if (user.roles.includes("ADMIN")) {
         navigate("/"); //Admin Dashboard
-      } else {
-        navigate("/"); //else
+      } else if (user.roles.includes("MEMBER")) {
+        navigate("/member-dashboard"); //Member Dashboard
       }
     } catch (err: any) {
       setError("Invalid username or password.");
