@@ -31,7 +31,7 @@ public class ActivityLog {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "preformed_by", nullable = false)
-    private User preformedBy;
+    private User performedBy;
 
     @Column(nullable = false,length = 50)
     @Enumerated(EnumType.STRING)

@@ -18,7 +18,7 @@ public void handleActivityEvent(ActivityEvent event) {
 ActivityLog activityLog = ActivityLog.builder()
         .entityType(event.getEntityType())
         .action(event.getAction())
-        .preformedBy(event.getPerformedBy())
+        .performedBy(event.getPerformedBy())
         .details(event.getDetails())
         .entityId(event.getEntityId())
         .build();
