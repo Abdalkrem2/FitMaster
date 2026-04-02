@@ -7,10 +7,12 @@ export interface DashboardStats {
 }
 
 export interface ActivityItem {
-  id: string;
-  type: "joined" | "payment" | "renewed";
-  description: string;
-  time: string;
+actionType:String;
+entityType:String;
+entityId:number;
+performedByName:String;
+createdAt:String;
+details:String;
 }
 
 export const dashboardService = {
