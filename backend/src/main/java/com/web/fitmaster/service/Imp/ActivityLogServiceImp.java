@@ -20,11 +20,11 @@ public class ActivityLogServiceImp implements ActivityLogService {
     public ActivityLogDTOs.LogsResponse getLogs(Long performedBy, EntityType entityType, Pageable pageable) {
         Page<ActivityLog>activityLogs;
         if(performedBy != null &&entityType != null) {
-            activityLogs=activityLogRepository.findByEntityTypeAndPreformedBy_IdOrderByCreatedAtDesc(entityType, performedBy, pageable);
+            activityLogs=activityLogRepository.findByEntityTypeAndPerformedBy_IdOrderByCreatedAtDesc(entityType, performedBy, pageable);
         }else if(performedBy != null) {
-            activityLogs=activityLogRepository.findByPreformedBy_IdOrderByCreatedAtDesc(performedBy, pageable);
+            activityLogs=activityLogRepository.findByPerformedBy_IdOrderByCreatedAtDesc(performedBy, pageable);
         }else if(entityType != null) {
-            activityLogs=activityLogRepository.findByEntityType(entityType, pageable);
+            activityLogs=activityLogRepository.findByEntityTypeOrderByCreatedAtDesc(entityType, pageable);
         }else{
             activityLogs=activityLogRepository.findAllByOrderByCreatedAtDesc(pageable);
         }
@@ -45,7 +45,7 @@ public class ActivityLogServiceImp implements ActivityLogService {
         return new ActivityLogDTOs.LogsDTO().builder()
                 .createdAt(activityLog.getCreatedAt())
                 .entityType(activityLog.getEntityType())
-                .performedByName(activityLog.getPreformedBy().getFullName())
+                .performedByName(activityLog.getPerformedBy().getFullName())
                 .actionType(activityLog.getAction())
                 .entityId(activityLog.getEntityId())
                 .details(activityLog.getDetails())
