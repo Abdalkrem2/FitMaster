@@ -2,17 +2,22 @@ package com.web.fitmaster.service.Imp;
 
 import com.web.fitmaster.dto.EmployeeDTOs;
 
+import com.web.fitmaster.event.ActivityEvent;
 import com.web.fitmaster.exceptions.NotFoundException;
 import com.web.fitmaster.model.Role;
 import com.web.fitmaster.model.User;
+import com.web.fitmaster.model.enums.ActionType;
 import com.web.fitmaster.model.enums.AppRole;
+import com.web.fitmaster.model.enums.EntityType;
 import com.web.fitmaster.repository.RoleRepository;
 import com.web.fitmaster.repository.UserRepository;
 import com.web.fitmaster.service.EmployeeService;
+import com.web.fitmaster.util.AuthUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.internal.bytebuddy.implementation.bytecode.Throw;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +34,8 @@ public class EmployeeServiceImp implements EmployeeService {
  private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final ApplicationEventPublisher eventPublisher;
+    private final AuthUtil authUtil;
 
     @Override
     public EmployeeDTOs.EmployeeResponse getAllEmployees(Pageable pageable) {
@@ -73,10 +80,19 @@ public class EmployeeServiceImp implements EmployeeService {
            user.setRoles(Set.of(adminRole));
 
 
-       userRepository.save(user);
+         User savedUser= userRepository.save(user);
+
+        eventPublisher.publishEvent(ActivityEvent.builder()
+                .action(ActionType.CREATE)
+                .performedBy(authUtil.loggedInUser())
+                .entityType(EntityType.EMPLOYEE)
+                .details("Created employee: " + savedUser.getFullName())
+                .entityId(savedUser.getId())
+                .build()
+        );
 
 
-        return mapToDTO(user);
+        return mapToDTO(savedUser);
     }
 
     @Override
@@ -119,7 +135,16 @@ public class EmployeeServiceImp implements EmployeeService {
 
             }
         }
-        userRepository.save(user);
+            User savedUser=userRepository.save(user);
+        eventPublisher.publishEvent(ActivityEvent.builder()
+                .action(ActionType.UPDATE)
+                .performedBy(authUtil.loggedInUser())
+                .entityType(EntityType.EMPLOYEE)
+                .details("Updated employee: " + savedUser.getFullName())
+                .entityId(savedUser.getId())
+                .build()
+        );
+
         return mapToDTO(user);
     }
 
@@ -130,6 +155,14 @@ public class EmployeeServiceImp implements EmployeeService {
         user.setDeleted(true);
         userRepository.save(user);
 
+        eventPublisher.publishEvent(ActivityEvent.builder()
+                .action(ActionType.DELETE)
+                .performedBy(authUtil.loggedInUser())
+                .entityType(EntityType.EMPLOYEE)
+                .details("Deleted employee: " + user.getFullName())
+                .entityId(user.getId())
+                .build()
+        );
         return "Employee with id= "+id+" was deleted successfully";
     }
 
