@@ -77,6 +77,7 @@ public class MemberServiceImp implements MemberService {
 
         new MemberDTOs.MemberDetailsDTO();
         return MemberDTOs.MemberDetailsDTO.builder()
+                .id(member.getId())
                 .phone(member.getPhone())
                 .gender(member.getGender())
                 .fullName(member.getFullName())

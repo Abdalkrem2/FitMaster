@@ -14,6 +14,7 @@ public class ActivityLogDTOs {
 @NoArgsConstructor
 @Builder
     public static class LogsDTO {
+        private Long id;
         private ActionType actionType;
         private String performedByName;
         private EntityType entityType;

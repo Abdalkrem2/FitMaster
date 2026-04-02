@@ -75,6 +75,7 @@ public class MemberDTOs {
     @NoArgsConstructor
     @Builder
     public static class MemberDetailsDTO {
+        private Long id;
         private String phone;
         private String fullName;
         private String gender;
