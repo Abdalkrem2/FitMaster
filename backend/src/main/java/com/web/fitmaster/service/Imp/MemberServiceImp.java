@@ -2,19 +2,19 @@ package com.web.fitmaster.service.Imp;
 
 import com.web.fitmaster.dto.MemberDTOs;
 import com.web.fitmaster.dto.MembershipDTOs;
+import com.web.fitmaster.event.ActivityEvent;
 import com.web.fitmaster.exceptions.BadRequestException;
 import com.web.fitmaster.exceptions.NotFoundException;
 import com.web.fitmaster.model.*;
 import com.web.fitmaster.model.Package;
-import com.web.fitmaster.model.enums.AppRole;
-import com.web.fitmaster.model.enums.MemberStatus;
-import com.web.fitmaster.model.enums.MembershipStatus;
+import com.web.fitmaster.model.enums.*;
 import com.web.fitmaster.repository.*;
 import com.web.fitmaster.service.MemberService;
 import com.web.fitmaster.util.AuthUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,6 +39,7 @@ public class MemberServiceImp implements MemberService {
     private final RevenueRepository revenueRepository;
     private final AuthUtil authUtil;
     private final PackageRepository packageRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     @Override
@@ -108,8 +109,19 @@ public class MemberServiceImp implements MemberService {
                 .orElseThrow(() -> new RuntimeException("Role not found"));
 
         user.getRoles().add(role);
+            User savedUser = userRepository.save(user);
 
-        return mapToDTO(userRepository.save(user));
+
+        eventPublisher.publishEvent(ActivityEvent.builder()
+                .action(ActionType.CREATE)
+                .performedBy(authUtil.loggedInUser())
+                .entityType(EntityType.MEMBER)
+                .details("Created member: " + savedUser.getFullName())
+                .entityId(savedUser.getId())
+                .build()
+        );
+
+        return mapToDTO(savedUser);
     }
 
     @Override
@@ -128,6 +140,17 @@ public class MemberServiceImp implements MemberService {
                 user.setProfilePicture(memberDTO.getProfilePicture());
             }
 
+        eventPublisher.publishEvent(ActivityEvent.builder()
+                .action(ActionType.UPDATE)
+                .performedBy(authUtil.loggedInUser())
+                .entityType(EntityType.MEMBER)
+                .details("Updated member: " + user.getFullName())
+                .entityId(user.getId())
+                .build()
+        );
+
+
+
             return mapToDTO(user);
 
 
@@ -142,6 +165,15 @@ public class MemberServiceImp implements MemberService {
                 .orElseThrow(()->new NotFoundException(String.format( "Member with id '%s' not found",id)));
         member.setDeleted(true);
         userRepository.save(member);
+        eventPublisher.publishEvent(ActivityEvent.builder()
+                .action(ActionType.DELETE)
+                .performedBy(authUtil.loggedInUser())
+                .entityType(EntityType.MEMBER)
+                .details("Deleted member: " + member.getFullName())
+                .entityId(member.getId())
+                .build()
+        );
+
         return "Member with id '"+id+"' deleted";
     }
 
@@ -192,6 +224,15 @@ public class MemberServiceImp implements MemberService {
 
         member.setIsActivated(true);
         userRepository.save(member);
+
+        eventPublisher.publishEvent(ActivityEvent.builder()
+                .action(ActionType.CREATE)
+                .performedBy(authUtil.loggedInUser())
+                .entityType(EntityType.MEMBERSHIP)
+                .details("Created membership: " + member.getFullName())
+                .entityId(member.getId())
+                .build()
+        );
 
     }
 
