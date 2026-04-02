@@ -1,6 +1,7 @@
 package com.web.fitmaster.model;
 
 import com.web.fitmaster.model.enums.ActionType;
+import com.web.fitmaster.model.enums.EntityType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,12 +15,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "activity_logs",
-indexes = {
-@Index(name="idx_log_user", columnList="user_id"),
-@Index(name="idx_log_created", columnList="created_at"),
-@Index(name="idx_log_user_created", columnList="user_id,created_at")
-  })
+@Table(name = "activity_logs"
+//indexes = {
+//@Index(name="idx_log_user", columnList="user_id"),
+//@Index(name="idx_log_created", columnList="created_at"),
+//@Index(name="idx_log_user_created", columnList="user_id,created_at")
+//  }
+  )
 public class ActivityLog {
 
     @Id
@@ -28,19 +30,20 @@ public class ActivityLog {
     private Long logId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "preformed_by", nullable = false)
+    private User preformedBy;
 
     @Column(nullable = false,length = 50)
     @Enumerated(EnumType.STRING)
     private ActionType action;
 
     @Column(length=50)
-    private String entityType;
+    @Enumerated(EnumType.STRING)
+    private EntityType entityType;
 
+    @Column(nullable = false)
     private Long entityId;
 
-    @Column(columnDefinition = "TEXT")
     private String details;
 
     @Column(name="created_at",nullable = false, updatable = false)
