@@ -25,6 +25,7 @@ export default function EditMemberModal({ open, onClose, member, onUpdated }: Pr
   });
 
   useEffect(() => {
+   
     if (member) {
       setFormData({
         fullName: member.fullName || "",

@@ -43,6 +43,7 @@ public class ActivityLogServiceImp implements ActivityLogService {
 
     private ActivityLogDTOs.LogsDTO mapToDTO(ActivityLog activityLog) {
         return new ActivityLogDTOs.LogsDTO().builder()
+                .id(activityLog.getLogId())
                 .createdAt(activityLog.getCreatedAt())
                 .entityType(activityLog.getEntityType())
                 .performedByName(activityLog.getPerformedBy().getFullName())
