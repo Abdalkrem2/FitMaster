@@ -1,6 +1,6 @@
 import type { Membership } from "./membership";
 export interface Member {
-  id: number;
+  id: string;
   fullName: string;
   phone: string;
   debt: number;
