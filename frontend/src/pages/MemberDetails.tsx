@@ -7,26 +7,21 @@ import {
   Calendar,
   CreditCard,
   Activity,
+  Edit3,
+  Trash2,
+  AlertCircle,
+  Plus
 } from "lucide-react";
 import { memberService } from "../services/memberService";
 import { membershipService } from "../services/membershipService";
 import type { MemberDetails } from "../types/member";
 import { Button } from "../components/ui/Button";
-import { Card, CardHeader, CardTitle } from "../components/ui/Card";
+import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
 import { Table, type Column } from "../components/ui/Table";
 import { packageService } from "../services/packageService";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type { Package } from "@/types/package";
-import type { Membership, MembershipHistory } from "@/types/membership";
+import type { MembershipHistory } from "@/types/membership";
 import EditMemberModal from "../components/EditMemberModal";
 
 const MemberDetails: React.FC = () => {
@@ -69,9 +64,6 @@ const MemberDetails: React.FC = () => {
         packageId: selectedPackageId,
       });
       console.log(debt);
-      // FIX: The page was not rerendering because we weren't updating the state
-      // after adding a membership. We need to re-fetch the member data
-      // and update both member and memberships state.
       const updatedMemberData = await memberService.getMemberById(id as string);
       if (updatedMemberData) {
         setMember(updatedMemberData);
@@ -108,9 +100,6 @@ const MemberDetails: React.FC = () => {
     const fetchData = async () => {
       try {
         const memberData = await memberService.getMemberById(id);
-
-        // FIX: The billing history was not working because the memberships state
-        // was never initialized with the fetched memberData.memberships
         if (memberData) {
           setMember(memberData);
           setMemberships(memberData.memberships || []);
@@ -127,103 +116,148 @@ const MemberDetails: React.FC = () => {
   const handleDeleteMember = async () => {
     if (!member) return;
     try {
-      await memberService.deleteMember(String(id));
-      navigate("/members");
+      if(window.confirm("Are you sure you want to delete this member?")){
+        await memberService.deleteMember(String(id));
+        navigate("/members");
+      }
     } catch (err) {
       console.log(err);
     }
   };
 
   if (loading)
-    return <div className="text-center py-12">Loading member details...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-3">
+        <div className="w-8 h-8 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+        <p className="text-sm text-slate-400 font-medium">Loading details...</p>
+      </div>
+    );
+    
   if (!member)
     return (
-      <div className="text-center py-12 text-red-500">Member not found</div>
+      <div className="text-center py-24">
+         <div className="w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-rose-100">
+             <AlertCircle className="text-rose-400 w-8 h-8" />
+          </div>
+          <h3 className="text-sm font-semibold text-slate-800">Member not found</h3>
+          <p className="text-xs text-slate-500 mt-1">The requested member ID does not exist.</p>
+          <Button onClick={() => navigate("/members")} variant="outline" className="mt-4">
+             Back to Members
+          </Button>
+      </div>
     );
 
   const billColumns: Column<MembershipHistory>[] = [
     { key: "timestamp", header: "Date" },
     { key: "packageName", header: "Package" },
-    { key: "price", header: "Price", render: (row) => `$${row.price}` },
+    { 
+      key: "price", 
+      header: "Price", 
+      render: (row) => <span className="font-semibold text-emerald-600">${row.price}</span> 
+    },
     {
       key: "debt",
       header: "Debt",
       render: (row) =>
         row.debt > 0 ? (
-          <span className="text-red-500 font-medium">${row.debt}</span>
+          <span className="inline-flex px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-50 text-rose-600 border border-rose-200/50">
+            ${row.debt}
+          </span>
         ) : (
-          "$0"
+          <span className="text-slate-400 font-medium">-</span>
         ),
     },
-
-    { key: "description", header: "Description" },
+    { key: "description", header: "Notes" },
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center space-x-4">
-        <Button
-          variant="secondary"
-          onClick={() => navigate("/members")}
-          className="p-2 rounded-full"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Header Actions */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={() => navigate("/members")}
+            className="p-2 border border-slate-200 bg-white rounded-xl shadow-sm text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all focus:outline-none"
+            title="Go Back"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Member Details</h2>
+            <p className="text-sm text-slate-500 mt-1">View profile and billing history.</p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+           <button
+             onClick={() => setIsEditModalOpen(true)}
+             className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-semibold bg-white text-indigo-600 border border-indigo-200 shadow-sm rounded-xl hover:bg-indigo-50 hover:border-indigo-300 transition-all focus:outline-none"
+           >
+             <Edit3 className="w-3.5 h-3.5" /> Edit Profile
+           </button>
+           <button
+             onClick={handleDeleteMember}
+             className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-semibold bg-white text-rose-600 border border-rose-200 shadow-sm rounded-xl hover:bg-rose-50 hover:border-rose-300 transition-all focus:outline-none"
+           >
+             <Trash2 className="w-3.5 h-3.5" /> Delete
+           </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Profile Card */}
         <div className="lg:col-span-1 space-y-6">
-          <Card className="flex flex-col items-center text-center">
-            <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-4">
-              {member.profilePicture ? (
-                <img
-                  src={member.profilePicture}
-                  className="w-full h-full object-cover rounded-full"
-                />
-              ) : (
-                <User size={48} />
-              )}
+          <Card className="flex flex-col items-center text-center p-8 relative overflow-hidden">
+            {/* Background decorative header */}
+            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-br from-indigo-50 via-slate-50 to-white -z-10 border-b border-slate-100" />
+            
+            <div className="w-28 h-28 bg-white p-1.5 rounded-full shadow-sm border border-slate-100 mb-4 flex items-center justify-center text-slate-400 z-10">
+              <div className="w-full h-full rounded-full bg-slate-100 flex items-center justify-center overflow-hidden">
+                {member.profilePicture ? (
+                  <img
+                    src={member.profilePicture}
+                    className="w-full h-full object-cover"
+                    alt={member.fullName}
+                  />
+                ) : (
+                  <User size={48} />
+                )}
+              </div>
             </div>
 
-            <h3 className="text-xl font-bold text-gray-900">
+            <h3 className="text-xl font-bold text-slate-900 tracking-tight">
               {member.fullName}
             </h3>
+            <span className="inline-flex px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 font-medium text-[11px] uppercase tracking-wider mt-2 border border-slate-200">
+               {member.gender}
+            </span>
 
-            <div className="w-full mt-6 space-y-4 text-left border-t border-gray-100 pt-6">
-              <div className="flex items-center text-gray-700">
-                <Phone className="w-5 h-5 mr-3 text-gray-400" /> {member.phone}
+            <div className="w-full mt-6 space-y-3 text-left">
+              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="flex items-center text-slate-600 text-[13px] font-medium">
+                  <Phone className="w-4 h-4 mr-2.5 text-slate-400" /> Phone
+                </div>
+                <span className="text-[13px] font-bold text-slate-800">{member.phone}</span>
               </div>
-              <div className="flex items-center text-gray-700">
-                <User className="w-5 h-5 mr-3 text-gray-400" /> {member.gender}
-              </div>
-              <div className="flex items-center text-gray-700">
-                <Calendar className="w-5 h-5 mr-3 text-gray-400" /> Registered:{" "}
-                {member.startDate}
+              
+              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="flex items-center text-slate-600 text-[13px] font-medium">
+                  <Calendar className="w-4 h-4 mr-2.5 text-slate-400" /> Registered
+                </div>
+                <span className="text-[13px] font-bold text-slate-800">{member.startDate}</span>
               </div>
 
-              <div className="flex items-center text-gray-700">
-                <Activity className="w-5 h-5 mr-3 text-gray-400" /> Ends:{" "}
-                {member.endDate}
+              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="flex items-center text-slate-600 text-[13px] font-medium">
+                  <Activity className="w-4 h-4 mr-2.5 text-slate-400" /> End Date
+                </div>
+                <span className="text-[13px] font-bold text-slate-800">{member.endDate || "-"}</span>
               </div>
-              <div className="flex items-center text-red-600 font-medium pt-2 border-t border-gray-50">
-                <CreditCard className="w-5 h-5 mr-3" /> Total Debt: $
-                {member.debt}
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button
-                  onClick={() => setIsEditModalOpen(true)}
-                  className="bg-black text-white"
-                >
-                  Edit
-                </Button>
-
-                <Button
-                  onClick={handleDeleteMember}
-                  className="bg-red-500 text-white"
-                >
-                  Delete
-                </Button>
+              
+              <div className="flex items-center justify-between p-3 bg-rose-50 rounded-xl border border-rose-100 mt-2">
+                <div className="flex items-center text-rose-600 text-[13px] font-medium">
+                  <CreditCard className="w-4 h-4 mr-2.5 opacity-80" /> Total Debt
+                </div>
+                <span className="text-[14px] font-bold text-rose-600">${member.debt}</span>
               </div>
             </div>
           </Card>
@@ -231,92 +265,106 @@ const MemberDetails: React.FC = () => {
 
         {/* Billing & Forms */}
         <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Add New Bill</CardTitle>
-            </CardHeader>
+          <Card padding="lg" className="border border-indigo-100 shadow-sm relative overflow-hidden">
+             {/* Subtle gradient overlay */}
+             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50/50 rounded-full blur-3xl -z-10 -mr-16 -mt-16 pointer-events-none" />
+
+            <div className="mb-6">
+              <h3 className="text-lg font-bold text-slate-900">Add New Subscription</h3>
+              <p className="text-sm text-slate-500 mt-0.5">Enroll member into a new package plan</p>
+            </div>
+
             <form
               onSubmit={handleAddMembership}
-              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+              className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4"
             >
-              <div className="col-span-1 mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Package
+              <div className="col-span-1 border-b border-slate-200/60 pb-2 md:border-b-0 md:pb-0">
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Select Package
                 </label>
-
-                <Select
-                  value={selectedPackageId}
-                  onValueChange={setSelectedPackageId}
+                <select
+                   value={selectedPackageId}
+                   onChange={(e) => setSelectedPackageId(e.target.value)}
+                   required
+                   className="w-full px-3 py-2 text-sm border border-slate-200 bg-slate-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 focus:bg-white transition-all h-10"
                 >
-                  <SelectTrigger className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:border-blue-500 focus:ring-blue-500 bg-white h-[42px]">
-                    <SelectValue placeholder="Select Package" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Packages</SelectLabel>
-                      {packages
-                        .filter((p) => p.status === "ACTIVE")
-                        .map((pkg) => (
-                          <SelectItem key={pkg.id} value={String(pkg.id)}>
-                            {pkg.name} ({pkg.price} JD)
-                          </SelectItem>
-                        ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                  <option value="" disabled>Select Package</option>
+                  {packages
+                    .filter((p) => p.status === "ACTIVE")
+                    .map((pkg) => (
+                      <option key={pkg.id} value={String(pkg.id)}>
+                        {pkg.name} (${pkg.price})
+                      </option>
+                  ))}
+                </select>
+
+                <div className="mt-4">
+                  <Input
+                    label="Duration (Read-only)"
+                    type="text"
+                    value={
+                      selectedPackageId
+                        ? `${packages.find((p) => String(p.id) === selectedPackageId)?.durationInDays ?? 0} Days`
+                        : "—"
+                    }
+                    disabled
+                    className="bg-slate-100 text-slate-500 border-slate-200"
+                  />
+                </div>
               </div>
 
               <div className="col-span-1">
-                <Input
-                  label="Duration (Days)"
-                  type="number"
-                  value={
-                    selectedPackageId
-                      ? String(
-                          packages.find(
-                            (p) => String(p.id) === selectedPackageId,
-                          )?.durationInDays ?? "",
-                        )
-                      : ""
-                  }
-                  disabled
-                />
+                 <Input
+                    label="Price ($)"
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="E.g. 150"
+                    required
+                  />
+                 <Input
+                    label="Extra Notice (Optional)"
+                    placeholder="Enter any notes"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="mb-0"
+                  />
               </div>
 
-              <div className="col-span-1">
-                <Input
-                  label="Price ($)"
-                  type="number"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  required
-                />
-              </div>
-            
-              <div className="col-span-1">
-                <Input
-                  label="Description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-              <div className="md:col-span-2 flex justify-end">
-                <Button type="submit" disabled={addingMembership}>
-                  {addingMembership ? "Adding..." : "Add Membership"}
-                </Button>
+              <div className="md:col-span-2 flex justify-end pt-4 mt-2 border-t border-slate-100">
+                <button 
+                  type="submit" 
+                  disabled={addingMembership}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-[13px] font-semibold text-white bg-gradient-to-r from-indigo-500 to-violet-600 rounded-xl shadow-sm shadow-indigo-500/20 hover:shadow-md hover:shadow-indigo-500/30 transition-all duration-200 focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {addingMembership ? (
+                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <Plus className="w-4 h-4" />
+                  )}
+                  {addingMembership ? "Enrolling..." : "Add Subscription"}
+                </button>
               </div>
             </form>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Billing History</CardTitle>
-            </CardHeader>
-            <Table
-              data={memberships}
-              columns={billColumns}
-              keyExtractor={(row) => row.id}
-            />
+          <Card padding="lg" className="border border-slate-200">
+            <div className="mb-4">
+               <h3 className="text-lg font-bold text-slate-900">Billing History</h3>
+            </div>
+            
+            {memberships.length === 0 ? (
+               <div className="py-12 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center text-slate-400">
+                  <CreditCard className="w-8 h-8 mb-2 text-slate-300" />
+                  <p className="text-sm font-medium">No past subscriptions found</p>
+               </div>
+            ) : (
+              <Table
+                data={memberships}
+                columns={billColumns}
+                keyExtractor={(row) => row.id}
+              />
+            )}
           </Card>
         </div>
       </div>
