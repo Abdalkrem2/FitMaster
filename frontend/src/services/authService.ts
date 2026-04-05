@@ -8,7 +8,8 @@ export const authService = {
         token: res.data.jwtToken,
         user: {
           id: res.data.id,
-          name: res.data.phone,
+          phone: res.data.phone,
+          name: res.data.fullName,
           roles: res.data.roles,
           isActivated: res.data.isActivated ?? true,
         },

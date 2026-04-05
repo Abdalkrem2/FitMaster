@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class LoginResponse {
     private Long id;
+    private String fullName;
     private String jwtToken;
     private String phone;
     private List<String> roles;

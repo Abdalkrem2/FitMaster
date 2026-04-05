@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState } from "react";
 
 interface AuthUser {
   id: number;
+  phone: string;
   name: string;
   roles: string[];
   isActivated?: boolean;
