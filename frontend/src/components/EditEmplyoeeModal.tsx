@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { uploadService } from "@/services/uploadService";
 import { employeeService } from "@/services/employeeService";
 import CameraCaptureModal from "./CameraCaptureModal";
-import { Camera } from "lucide-react";
+import { Camera, Upload, X, AlertCircle } from "lucide-react";
 import type { Employee, AppRole } from "../types/employee";
+import { Input } from "./ui/Input";
+import { Switch } from "@/components/ui/switch";
 
 interface Props {
   open: boolean;
@@ -21,6 +24,7 @@ export default function EditEmployeeModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showCamera, setShowCamera] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
@@ -59,8 +63,8 @@ export default function EditEmployeeModal({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleToggleActive = () => {
-    setFormData((prev) => ({ ...prev, isActivated: !prev.isActivated }));
+  const handleToggleActive = (checked: boolean) => {
+    setFormData((prev) => ({ ...prev, isActivated: checked }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,142 +119,146 @@ export default function EditEmployeeModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
-      <div className="bg-white rounded-2xl p-6 w-[420px] shadow-xl">
-        <h2 className="text-xl font-bold mb-4">Edit Employee</h2>
-
-        {/* Profile Picture Preview */}
-        <div className="flex justify-center mb-4">
-          <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-100 border flex items-center justify-center text-gray-400">
-            {preview ? (
-              <img
-                src={preview}
-                className="w-full h-full object-cover"
-                alt="Profile"
-              />
-            ) : (
-              <span className="text-xs">No Image</span>
-            )}
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Full Name
-            </label>
-            <input
-              name="fullName"
-              value={formData.fullName}
-              className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={handleChange}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Phone
-            </label>
-            <input
-              name="phone"
-              value={formData.phone}
-              className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={handleChange}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              New Password{" "}
-              <span className="text-gray-400 text-xs">
-                (leave blank to keep current)
-              </span>
-            </label>
-            <input
-              name="password"
-              type="password"
-              placeholder="New password"
-              value={formData.password}
-              className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={handleChange}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Role
-            </label>
-            <select
-              name="role"
-              value={formData.role}
-              className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={handleChange}
-            >
-              <option value="EMPLOYEE">Employee</option>
-              <option value="ADMIN">Admin</option>
-            </select>
-          </div>
-
-          {/* Active Toggle */}
-          <div className="flex items-center justify-between p-2 border rounded">
-            <span className="text-sm font-medium text-gray-700">
-              Account Status
-            </span>
-            <button
-              type="button"
-              onClick={handleToggleActive}
-              className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
-                formData.isActivated
-                  ? "bg-green-100 text-green-700 hover:bg-green-200"
-                  : "bg-red-100 text-red-700 hover:bg-red-200"
-              }`}
-            >
-              {formData.isActivated ? "Active" : "Inactive"}
-            </button>
-          </div>
-
-          {/* Profile Picture Upload */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Profile Picture
-            </label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="file"
-                accept="image/*"
-                className="flex-1 border p-2 rounded text-sm"
-                onChange={handleFileChange}
-              />
-              <button
-                type="button"
-                onClick={() => setShowCamera(true)}
-                className="p-2 border rounded hover:bg-gray-50 bg-gray-100 transition-colors"
-                title="Take Photo"
-              >
-                <Camera size={20} />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-
-        <div className="mt-5 space-y-2">
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:opacity-50 transition-colors font-medium"
-          >
-            {loading ? "Saving..." : "Save Changes"}
-          </button>
+  return createPortal(
+    <div 
+      onClick={onClose} 
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4 transition-opacity"
+    >
+      <div 
+        onClick={(e) => e.stopPropagation()} 
+        className="bg-white rounded-2xl w-full max-w-md shadow-elevated relative animate-fade-in-up max-h-[95vh] overflow-y-auto"
+      >
+        <div className="sticky top-0 bg-white/90 backdrop-blur-sm z-20 flex items-center justify-between px-6 py-4 border-b border-slate-100">
+          <h2 className="text-lg font-bold tracking-tight text-slate-900">
+            Edit Employee
+          </h2>
           <button
             onClick={onClose}
-            disabled={loading}
-            className="w-full text-gray-600 p-2 rounded hover:bg-gray-100 transition-colors"
+            className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors p-1.5 rounded-lg focus:outline-none"
           >
-            Cancel
+            <X size={18} />
           </button>
+        </div>
+
+        <div className="p-6">
+          <div className="flex flex-col items-center justify-center mb-6">
+            <div className="relative group mb-3">
+              <div 
+                className={`w-20 h-20 rounded-full border-2 border-dashed flex items-center justify-center overflow-hidden transition-all duration-200 cursor-pointer
+                  ${preview ? 'border-indigo-200' : 'border-slate-200 hover:border-indigo-400 bg-slate-50'}`}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {preview ? (
+                  <img src={preview} className="w-full h-full object-cover" alt="Preview" />
+                ) : (
+                  <Upload className="w-6 h-6 text-slate-300 group-hover:text-indigo-400 transition-colors" />
+                )}
+              </div>
+              
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setShowCamera(true); }}
+                className="absolute bottom-0 right-0 p-1.5 bg-white border border-slate-200 text-slate-500 rounded-full shadow-sm hover:text-indigo-600 hover:border-indigo-200 transition-colors"
+                title="Use Camera"
+              >
+                <Camera size={14} />
+              </button>
+            </div>
+            
+            <p className="text-[11px] font-medium text-slate-400">Click to update photo or use camera</p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+          </div>
+
+          <div className="space-y-4">
+            <Input
+              name="fullName"
+              label="Full Name"
+              value={formData.fullName}
+              onChange={handleChange}
+            />
+
+            <Input
+              name="phone"
+              label="Phone"
+              value={formData.phone}
+              onChange={handleChange}
+            />
+
+            <Input
+              name="password"
+              type="password"
+              label="New Password"
+              placeholder="(Leave blank to keep current password)"
+              value={formData.password}
+              onChange={handleChange}
+            />
+
+            <div>
+               <label className="block text-sm font-medium text-slate-700 mb-1">
+                 Role
+               </label>
+               <select
+                 name="role"
+                 value={formData.role}
+                 className="w-full px-3 py-2 text-sm border border-slate-200 bg-slate-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 focus:bg-white transition-all"
+                 onChange={handleChange}
+               >
+                 <option value="EMPLOYEE">Employee</option>
+                 <option value="ADMIN">Admin</option>
+               </select>
+            </div>
+
+            {/* Active Toggle */}
+            <div className="flex items-center justify-between px-3 py-2.5 border border-slate-200 bg-slate-50 rounded-lg mt-2">
+              <div>
+                <span className="text-sm font-medium text-slate-800 tracking-tight block">
+                  Account Status
+                </span>
+                <span className="text-[11px] text-slate-500 font-medium">Control system access</span>
+              </div>
+              <div className="flex items-center gap-3">
+                 <span className={`text-xs font-bold uppercase tracking-wider ${formData.isActivated ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    {formData.isActivated ? "Active" : "Inactive"}
+                 </span>
+                 <Switch 
+                   checked={formData.isActivated} 
+                   onCheckedChange={handleToggleActive} 
+                   className="data-[state=checked]:bg-emerald-500"
+                 />
+              </div>
+            </div>
+          </div>
+
+          {error && (
+            <div className="mt-4 p-3 rounded-lg bg-rose-50 border border-rose-100 flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-rose-500 mt-0.5 flex-shrink-0" />
+              <p className="text-sm font-medium text-rose-600">{error}</p>
+            </div>
+          )}
+
+          <div className="flex gap-3 mt-8">
+            <button
+              onClick={onClose}
+              className="flex-1 py-2.5 text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="flex-1 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-violet-600 rounded-xl shadow-sm shadow-indigo-500/20 hover:shadow-md hover:shadow-indigo-500/30 transition-all duration-200 disabled:opacity-70 flex items-center justify-center"
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : "Save Changes"}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -262,6 +270,7 @@ export default function EditEmployeeModal({
           setPreview(URL.createObjectURL(capturedFile));
         }}
       />
-    </div>
+    </div>,
+    document.body
   );
 }
