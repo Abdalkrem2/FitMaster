@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Package as PackageIcon, Plus, Calendar, DollarSign, BookText } from 'lucide-react';
+import { Package as PackageIcon, Plus, Calendar, DollarSign, BookText, Edit3, Trash2 } from 'lucide-react';
 import { packageService } from '../services/packageService';
 import EditPackageModal from '../components/EditPackageModal';
 import type { Package } from '../types/package';
@@ -8,12 +8,14 @@ import { Card } from '../components/ui/Card';
 import { Input } from '../components/ui/Input';
 import { Modal } from '../components/ui/Modal';
 import { Switch } from "@/components/ui/switch"
+
 const Packages: React.FC = () => {
   const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingPackage, setEditingPackage] = useState<Package | null>(null);
+  
   // Form State
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
@@ -40,22 +42,21 @@ const Packages: React.FC = () => {
     }
   };
 
-const validate = () => {
-  const newErrors: any = {};
+  const validate = () => {
+    const newErrors: any = {};
 
-  if (!name) newErrors.name = "Name is required";
-  if (!price) newErrors.price = "Price is required";
-  if (!durationInDays) newErrors.durationInDays = "Duration is required";
+    if (!name) newErrors.name = "Name is required";
+    if (!price) newErrors.price = "Price is required";
+    if (!durationInDays) newErrors.durationInDays = "Duration is required";
 
-  setErrors(newErrors);
+    setErrors(newErrors);
 
-  return Object.keys(newErrors).length === 0;
-};
-
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleCreatePackage = async (e: React.FormEvent) => {
     e.preventDefault();
-   if (!validate()) return;
+    if (!validate()) return;
     try {
       setIsSubmitting(true);
       const newPkg = await packageService.createPackage({
@@ -69,13 +70,13 @@ const validate = () => {
       setIsModalOpen(false);
       setName(''); setPrice(''); setdurationInDays('');
     } catch (error) {
-      console.error("Failed to default package",error);
+      console.error("Failed to create package",error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDelete =async (id: string)=>{
+  const handleDelete = async (id: string)=>{
     try {
       await packageService.deletePackage(id);
       setPackages(prev => prev.filter(pkg => pkg.id !== id));
@@ -93,63 +94,88 @@ const validate = () => {
       console.error("Failed to update status", error);
     }
   };
-  
-
-
-
- 
 
   return (
-    
-
-
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Membership Packages</h2>
-          <p className="text-sm text-gray-500 mt-1">Manage subscription plans and pricing.</p>
+          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Membership Packages</h2>
+          <p className="text-sm text-slate-500 mt-1">Manage subscription plans and pricing.</p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" /> Create New Package
-        </Button>
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="inline-flex items-center gap-2 px-4 py-2.5 text-[13px] font-medium text-white bg-gradient-to-r from-indigo-500 to-violet-600 rounded-xl shadow-sm shadow-indigo-500/20 hover:shadow-md hover:shadow-indigo-500/30 transition-all duration-200"
+        >
+          <Plus className="w-4 h-4" /> 
+          Create New Package
+        </button>
       </div>
 
       {loading ? (
-        <div className="text-center py-12 text-gray-500">Loading packages...</div>
+        <div className="flex flex-col items-center justify-center py-12 gap-3">
+          <div className="w-8 h-8 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+          <p className="text-sm text-slate-400 font-medium">Loading packages...</p>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {packages.map((pkg) => (
-            <Card key={pkg.id} className="hover:-translate-y-1 transition-transform border border-gray-100 shadow-soft relative overflow-hidden group border-gray-300">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <PackageIcon size={64} />
+            <Card key={pkg.id} hover padding="none" className="relative overflow-hidden group flex flex-col h-full border-t-4 border-t-indigo-500">
+              {/* Decorative faint icon */}
+              <div className="absolute top-4 right-4 text-slate-100 group-hover:text-indigo-50 transition-colors pointer-events-none transform translate-x-4 -translate-y-4">
+                <PackageIcon size={120} />
               </div>
-                   <div className="flex items-center justify-end space-x-2 ">
-                  <Switch 
-                    className='scale-125 ml-2' 
-                    id={pkg.id} 
-                    checked={pkg.status === 'ACTIVE'}
-                    onCheckedChange={() => handleStatusToggle(pkg.id, pkg.status)}
-                  />
-                    </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">{pkg.name}</h3>
-              <div className="flex items-end mb-4 text-blue-600">
-                <DollarSign className="w-6 h-6 mb-1" />
-                <span className="text-4xl font-extrabold">{pkg.price}</span>
+              
+              <div className="p-6 pb-5 flex-1 relative z-10 flex flex-col">
+                <div className="flex items-start justify-between mb-2">
+                  <h3 className="text-[17px] font-bold text-slate-900 leading-tight pr-4">{pkg.name}</h3>
+                  <div className="flex items-center mt-1">
+                    <Switch 
+                      id={pkg.id} 
+                      checked={pkg.status === 'ACTIVE'}
+                      onCheckedChange={() => handleStatusToggle(pkg.id, pkg.status)}
+                      className="data-[state=checked]:bg-emerald-500"
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex items-start text-indigo-600 mb-6">
+                  <span className="text-lg font-bold mt-1.5 mr-0.5">$</span>
+                  <span className="text-4xl font-extrabold tracking-tight">{pkg.price}</span>
+                </div>
+                
+                <div className="space-y-3 mt-auto flex-1">
+                  <div className="flex items-center text-[13px] text-slate-600 font-medium">
+                    <Calendar className="w-4 h-4 mr-2.5 text-slate-400" />
+                    {pkg.durationInDays} days duration
+                  </div>
+                  {pkg.description && (
+                     <div className="flex items-start text-[13px] text-slate-600 font-medium">
+                       <BookText className="w-4 h-4 mr-2.5 mt-0.5 text-slate-400 flex-shrink-0" /> 
+                       <span className="leading-snug">{pkg.description}</span>
+                     </div>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center text-gray-600 font-medium">
-                <Calendar className="w-5 h-5 mr-2" />
-                {pkg.durationInDays} days Duration
-              </div>
-              <div className="flex items-center text-black-400 font-small">
-          
-                <BookText className="w-5 h-5 mr-2" /> {pkg.description}
-              </div>
-              <div className="flex gap-3 mt-2 ">
-             <Button  onClick={() => handleDelete(pkg.id)}>Delete</Button>
-             <Button onClick={()=>{
-               setEditingPackage(pkg);
-               setIsEditModalOpen(true);
-             }}>Edit</Button>
+
+              {/* Actions Footer */}
+              <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex gap-2 relative z-10">
+                <button 
+                  onClick={() => {
+                    setEditingPackage(pkg);
+                    setIsEditModalOpen(true);
+                  }}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 text-[13px] font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg shadow-sm hover:text-indigo-600 hover:border-indigo-200 transition-colors"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  Edit
+                </button>
+                <button 
+                  onClick={() => handleDelete(pkg.id)}
+                  className="inline-flex items-center justify-center p-2 text-slate-400 bg-white border border-slate-200 rounded-lg shadow-sm hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-colors"
+                  title="Delete Package"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
               </div>
             </Card>
           ))}
@@ -162,41 +188,50 @@ const validate = () => {
         onClose={() => setIsModalOpen(false)}
         title="Create New Package"
       >
-        <form  onSubmit={handleCreatePackage}className="space-y-4">
+        <form onSubmit={handleCreatePackage} className="space-y-4">
           <Input 
             label="Plan Name" 
             placeholder="e.g. 1 Year Premium"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            required
+            error={errors.name}
           />
-          {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
-          <Input 
-            label="Price ($)" 
-            type="number" 
-            placeholder="e.g. 200"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            required
-          />
-          {errors.price && <p className="text-red-500 text-sm">{errors.price}</p>}
-          <Input 
-            label="Duration (days)" 
-            type="number" 
-            placeholder="e.g. 30"
-            value={durationInDays}
-            onChange={(e) => setdurationInDays(e.target.value)}
-            required
-          />
-          {errors.durationInDays && <p className="text-red-500 text-sm">{errors.durationInDays}</p>}
-          <div className="flex justify-end pt-4 mt-6 border-t border-gray-100">
-  
-            <Button type="button" variant="outline" className="mr-3" onClick={() => setIsModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <Input 
+              label="Price ($)" 
+              type="number" 
+              placeholder="e.g. 200"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              error={errors.price}
+            />
+            
+            <Input 
+              label="Duration (days)" 
+              type="number" 
+              placeholder="e.g. 30"
+              value={durationInDays}
+              onChange={(e) => setdurationInDays(e.target.value)}
+              error={errors.durationInDays}
+            />
+          </div>
+          
+          <div className="flex gap-3 pt-6 flex-row-reverse">
+            <button 
+              type="submit" 
+              disabled={isSubmitting}
+              className="flex-1 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-violet-600 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-70"
+            >
               {isSubmitting ? 'Creating...' : 'Create Package'}
-            </Button>
+            </button>
+            <button 
+              type="button" 
+              onClick={() => setIsModalOpen(false)}
+              className="flex-1 py-2.5 text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
+            >
+              Cancel
+            </button>
           </div>
         </form>
       </Modal>
@@ -212,7 +247,6 @@ const validate = () => {
           setPackages(prev => prev.map(p => p.id === updatedPkg.id ? updatedPkg : p));
         }}
       />
-
     </div>
   );
 };
