@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { revenueService } from '../services/revenueService';
 import type { MonthlyRevenue, RevenueByPeriod, RevenueStats ,RevenueRow} from '../types/revenue';
 import { Table, type Column } from '@/components/ui/Table';
+import { Card } from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import { TrendingUp, AlertCircle, Calendar, BarChart3, Filter } from 'lucide-react';
 
 const months = [
   '1-JAN', '2-Feb', '3-Mar', '4-Apr', '5-May', '6-Jun',
@@ -24,6 +28,7 @@ const Revenue: React.FC = () => {
   
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [gender, setGender] = useState('All');
+  
   const fetchStats = async () => {
     try {
       const data = await revenueService.getStats();
@@ -37,14 +42,12 @@ const Revenue: React.FC = () => {
     } catch (err) {
       setError(err as Error);
     }
-
   };
 
   const fetchMonthlyRevenue = async () => {
     try {
       const data = await revenueService.monthlyRevenue(Number(selectedYear));
       setMonthlyRevenue(data);
-      
     } catch (err) {
       setError(err as Error);
     }
@@ -54,184 +57,203 @@ const Revenue: React.FC = () => {
     try {
       const data = await revenueService.revenueByPeriod(dateRange.start,dateRange.end,gender);
       setRevenueByPeriod(data);
-   
     } catch (err) {
       setError(err as Error);
     }
   };
 
+  useEffect(() => {
+    fetchMonthlyRevenue();
+  }, [selectedYear]);
 
-useEffect(() => {
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
-  fetchMonthlyRevenue();
-}, [selectedYear]);
-
-useEffect(() => {
-  fetchStats();
-}, []);
-
-
-
-const columns: Column<RevenueRow>[] = [
-  {key:'id',header: 'id'},
-  {key:'memberName',header: 'Member Name'},
-  { key: 'amount', header: 'Amount' },
-  {key:'debt',header: 'Debt'},
-  {key:'pkg',header: 'Package'},
-  {key:'addedByName',header: 'Added By'},
-  {key:'createdAt',header: 'Created At'},
-  {key:'description',header: 'Description'},
-
-];
-
-
+  const columns: Column<RevenueRow>[] = [
+    {key:'id',header: 'ID'},
+    {
+      key:'memberName',
+      header: 'Member Name',
+      render: (row) => <span className="font-semibold text-slate-800">{row.memberName}</span> 
+    },
+    { 
+      key: 'amount', 
+      header: 'Amount',
+      render: (row) => <span className="text-emerald-600 font-bold">${row.amount}</span>
+    },
+    {
+      key:'debt',
+      header: 'Debt',
+      render: (row) => {
+        if(row.debt > 0)
+          return (
+            <span className="inline-flex px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-50 text-rose-600 border border-rose-200/50">
+              ${row.debt}
+            </span>
+          );
+        return <span className="text-slate-400 font-medium">-</span>;
+      }
+    },
+    {
+      key:'pkg',
+      header: 'Package',
+      render: (row) => <span className="text-slate-600 text-sm font-medium">{row.pkg}</span>
+    },
+    {key:'addedByName',header: 'Added By'},
+    {key:'createdAt',header: 'Date'},
+    {key:'description',header: 'Description'},
+  ];
 
   return (
-    <div className='w-full max-w-6xl mx-auto p-2'>
- {error && (
-      <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">
-        Something went wrong. Please try again.
-      </div>
-    )}
-
-  
-
-
-    <div className="w-full max-w-6xl mx-auto p-2 text-gray-900 font-sans">
-      {/* Header section */}
-      <div className="flex flex-col mb-8 relative">
-        <h2 className="text-2xl font-bold bg-transparent">Revenue Analytics</h2>
-        <div className="absolute left-1/2 -translate-x-1/2 top-4 flex items-center text-xl font-medium">
-          <span className="text-green-500 mr-1 font-bold text-2xl">$</span>Overall Money
-        </div>
-      </div>
-
-      {/* Stats summary row */}
-      <div className="flex justify-between items-center text-lg font-medium mb-4 px-2">
+    <div className='max-w-7xl mx-auto space-y-6'>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span className="text-gray-500 mr-2 font-bold">Today:</span>
-          <span className="text-green-500 font-bold">{stats?.today ?? 0}</span>
-        </div>
-        <div>
-          <span className="text-gray-500 mr-2 font-bold">This Month:</span>
-          <span className="text-green-500 font-bold">{stats?.thisMonth ?? 0}</span>
-        </div>
-        <div>
-          <span className="text-gray-500 mr-2 font-bold">This Year:</span>
-          <span className="text-green-500 font-bold">{stats?.thisYear ?? 0}</span>
-        </div>
-        <div>
-          <span className="text-gray-500 mr-2 font-bold">Debt:</span>
-          <span className="text-red-500 font-bold">{stats?.debt ?? 0}</span>
+          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Revenue Analytics</h2>
+          <p className="text-sm text-slate-500 mt-1">Track payments, financial growth, and open debts.</p>
         </div>
       </div>
 
-      <hr className="border-t-[1.5px] border-black w-full" />
+      {error && (
+        <div className="bg-rose-50 border border-rose-200 text-rose-600 p-3 rounded-xl text-sm font-medium flex items-center gap-2">
+          <AlertCircle className="w-5 h-5 text-rose-500" />
+          Something went wrong. Please try again.
+        </div>
+      )}
 
-      {/* By Year section */}
-      <div className="flex items-center gap-4 mt-6 mb-4">
-        <h3 className="text-lg font-bold">By Year:</h3>
-        <select 
-          className="px-4 py-1 border border-gray-400 rounded bg-white text-sm w-28 outline-none"
-          value={selectedYear}
-          onChange={e => setSelectedYear(e.target.value)}
-        >
-          <option value="2026">2026</option>
-          <option value="2025">2025</option>
-        </select>
+      {/* Top Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card variant="gradient" padding="md">
+          <h3 className="text-white/80 font-medium text-sm">Today</h3>
+          <p className="text-white text-3xl font-bold mt-1 tracking-tight">${stats.today}</p>
+        </Card>
+        <Card padding="md">
+          <h3 className="text-slate-500 font-medium text-sm">This Month</h3>
+          <p className="text-slate-900 text-3xl font-bold mt-1 tracking-tight">${stats.thisMonth}</p>
+        </Card>
+        <Card padding="md">
+          <h3 className="text-slate-500 font-medium text-sm">This Year</h3>
+          <p className="text-slate-900 text-3xl font-bold mt-1 tracking-tight">${stats.thisYear}</p>
+        </Card>
+        <Card padding="md" className="border-t-4 border-t-rose-400">
+          <h3 className="text-slate-500 font-medium text-sm flex items-center gap-2">
+             Outstanding Debt
+             <AlertCircle className="w-4 h-4 text-rose-400" />
+          </h3>
+          <p className="text-rose-600 text-3xl font-bold mt-1 tracking-tight">${stats.debt}</p>
+        </Card>
       </div>
 
-      <div className="mb-6 text-xl font-bold bg-transparent">
-        <span className="text-gray-500 mr-2">This Year:</span>
-        <span className="text-green-500">{monthlyRevenue?.yearTotal||0} JOD</span>
-      </div>
-
-      {/* Months Grid */}
-      <div className="grid grid-cols-6 border-l border-t border-indigo-400 mb-6 bg-white overflow-hidden rounded-sm">
-        {months.map(m => (
-          <div key={m} className="border-r border-b border-indigo-400 p-4 flex flex-col items-center justify-center">
-            <span className="text-sm font-medium mb-3">{m}</span>
-            <span className="text-green-500 text-sm font-medium">{monthlyRevenue?.months[Number(m.split('-')[0])]} JOD</span> {/*understand this line*/}
+      {/* Monthly Breakdown */}
+      <Card padding="lg" className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
+          <div className="flex items-center gap-3">
+             <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+                <BarChart3 className="w-5 h-5" />
+             </div>
+             <div>
+               <h3 className="text-lg font-bold text-slate-900">Monthly Breakdown</h3>
+               <p className="text-sm text-slate-500 flex items-center gap-2 mt-0.5">
+                  <span className="font-semibold text-emerald-600">Total: ${monthlyRevenue?.yearTotal || 0}</span> in {selectedYear}
+               </p>
+             </div>
           </div>
-        ))}
-      </div>
-
-      <hr className="border-t-[1.5px] border-black w-full my-6" />
-
-      {/* Money By Period */}
-      <div className="mb-4">
-        <h3 className="text-lg font-bold">Money By Period</h3>
-      </div>
-
-      <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-        <div>
-          <label className="block text-sm font-bold text-gray-500 mb-1">From</label>
-          <input 
-            type="date" 
-            className="w-full px-3 py-2 border border-indigo-300 rounded bg-white text-sm outline-none"
-            value={dateRange.start}
-            onChange={e => setDateRange({ ...dateRange, start: e.target.value })}
-          />
+          <div className="flex items-center gap-3">
+             <span className="text-sm font-medium text-slate-500">Year:</span>
+             <select 
+              className="px-3 py-1.5 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all font-medium"
+              value={selectedYear}
+              onChange={e => setSelectedYear(e.target.value)}
+            >
+              <option value="2026">2026</option>
+              <option value="2025">2025</option>
+            </select>
+          </div>
         </div>
-        <div>
-          <label className="block text-sm font-bold text-gray-500 mb-1">To</label>
-          <input 
-            type="date" 
-            className="w-full px-3 py-2 border border-indigo-300 rounded bg-white text-sm outline-none"
-            value={dateRange.end}
-            onChange={e => setDateRange({ ...dateRange, end: e.target.value })}
-          />
+
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          {months.map(m => (
+            <div key={m} className="p-4 border border-slate-100 rounded-xl bg-slate-50 hover:bg-white hover:shadow-sm hover:border-indigo-100 transition-all text-center group">
+              <span className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 group-hover:text-indigo-500">{m.split('-')[1]}</span>
+              <span className="text-lg font-bold text-slate-800">${monthlyRevenue?.months[Number(m.split('-')[0])] || 0}</span>
+            </div>
+          ))}
         </div>
-        <div>
-          <label className="block text-sm font-bold text-gray-500 mb-1">Gender</label>
-          <select 
-            className="w-full px-3 py-2 border border-indigo-300 rounded bg-white text-sm outline-none"
-            value={gender}
-            onChange={e => setGender(e.target.value)}
+      </Card>
+
+      {/* Period Analysis */}
+      <Card padding="lg" className="space-y-6">
+        <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+           <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+              <Calendar className="w-5 h-5" />
+           </div>
+           <div>
+             <h3 className="text-lg font-bold text-slate-900">Custom Period Analysis</h3>
+             <p className="text-sm text-slate-500 mt-0.5">Filter revenue by specific dates and demographics</p>
+           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          <Input 
+             type="date"
+             label="Start Date"
+             value={dateRange.start}
+             onChange={e => setDateRange({ ...dateRange, start: e.target.value })}
+             className="mb-0"
+          />
+          <Input 
+             type="date"
+             label="End Date"
+             value={dateRange.end}
+             onChange={e => setDateRange({ ...dateRange, end: e.target.value })}
+             className="mb-0"
+          />
+          <div className="w-full">
+            <label className="block text-sm font-medium text-slate-700 mb-1">Gender</label>
+            <select 
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg shadow-sm text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all h-9"
+              value={gender}
+              onChange={e => setGender(e.target.value)}
+            >
+              <option value="All">All</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+          <Button 
+             onClick={fetchRevenueByPeriod}
+             disabled={dateRange.start === "" || dateRange.end === ""}
+             className="w-full h-9 bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow-sm hover:shadow-md"
           >
-            <option value="All">All</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
-        </div>
-        <div className="flex items-end">
-          <button onClick={fetchRevenueByPeriod}
-          disabled={dateRange.start===""||dateRange.end===""}
-          className="bg-[#4267B2] text-white px-8 py-2 rounded text-sm font-medium hover:bg-[#365899] transition-colors">
+            <Filter className="w-4 h-4 mr-2" />
             Calculate
-          </button>
-
+          </Button>
         </div>
         
-      </div>
-      {revenueByPeriod === null
-  ?
-      <div  className="mt-12 text-center text-gray-500 text-lg font-bold pb-8">
-
-        Please select a Period
-      </div>
-      :
-       <div className="mt-12" >
-        <div className="flex justify-between items-center text-lg font-medium mb-4 px-2">
-            <div>
-              <span className="text-gray-500 mr-2 font-bold">Total:</span>
-              <span className="text-green-500 font-bold">{revenueByPeriod?.periodTotal||0}</span>
+        <div className="pt-2">
+          {revenueByPeriod === null ? (
+            <div className="py-12 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center text-slate-400">
+               <TrendingUp className="w-8 h-8 mb-2 text-slate-300" />
+               <p className="text-sm font-medium">Select a period to generate report</p>
             </div>
-            <div>
-              <span className="text-gray-500 mr-2 font-bold">Debt:</span>
-              <span className="text-red-500 font-bold">{revenueByPeriod?.periodDebt||0}</span>
+          ) : (
+            <div className="space-y-4 animate-fade-in-up">
+              <div className="flex gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                 <div className="flex flex-col">
+                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Revenue</span>
+                   <span className="text-xl font-bold text-emerald-600">${revenueByPeriod?.periodTotal || 0}</span>
+                 </div>
+                 <div className="w-px h-10 bg-slate-200 my-auto hidden sm:block"></div>
+                 <div className="flex flex-col">
+                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Period Debt</span>
+                   <span className="text-xl font-bold text-rose-600">${revenueByPeriod?.periodDebt || 0}</span>
+                 </div>
+              </div>
+              <Table data={revenueByPeriod?.revenues || []} columns={columns} keyExtractor={(row) => row.id} />
             </div>
-            
-           
-          </div>
-
-        <Table  data={revenueByPeriod?.revenues||[]} columns={columns} keyExtractor={(row) => row.id} />
-      </div>
-      }
-   
-
-     
-  </div>
+          )}
+        </div>
+      </Card>
     </div>
   );
 };
