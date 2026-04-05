@@ -50,7 +50,7 @@ const Dashboard: React.FC = () => {
 const getActivityIcon = (type: string) => {
     switch (type) {
       case 'CREATE': return <UserPlus className="w-5 h-5 text-blue-600" />;
-      case 'MEMBERSHIP': return <DollarSign className="w-5 h-5 text-emerald-600" />;
+      case 'ADD': return <DollarSign className="w-5 h-5 text-emerald-600" />;
       case 'UPDATE': return <RefreshCw className="w-5 h-5 text-indigo-600" />;
       case 'DELETE': return <Trash2 className="w-5 h-5 text-red-600" />;
       default: return <ActivityIcon className="w-5 h-5 text-gray-600" />;

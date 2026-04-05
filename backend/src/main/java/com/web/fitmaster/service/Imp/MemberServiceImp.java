@@ -227,10 +227,10 @@ public class MemberServiceImp implements MemberService {
         userRepository.save(member);
 
         eventPublisher.publishEvent(ActivityEvent.builder()
-                .action(ActionType.CREATE)
+                .action(ActionType.ADD)
                 .performedBy(authUtil.loggedInUser())
                 .entityType(EntityType.MEMBERSHIP)
-                .details("Created membership: " + member.getFullName())
+                .details("Added membership to : " + member.getFullName())
                 .entityId(member.getId())
                 .build()
         );
