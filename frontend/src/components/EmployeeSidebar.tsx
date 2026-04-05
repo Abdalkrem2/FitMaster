@@ -1,49 +1,100 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Users, Settings, Activity, LayoutDashboard } from "lucide-react";
+import { Users, Settings, Activity, LayoutDashboard, X } from "lucide-react";
 
 const navItems = [
-  { name: "E-Dashboard", path: "/e-dashboard", icon: LayoutDashboard }, //dashboard for Employee
+  { name: "Dashboard", path: "/e-dashboard", icon: LayoutDashboard },
   { name: "Members", path: "/members", icon: Users },
 ];
 
-export const EmployeeSidebar: React.FC = () => {
+interface EmployeeSidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export const EmployeeSidebar: React.FC<EmployeeSidebarProps> = ({
+  isOpen = true,
+  onClose,
+}) => {
   return (
-    <aside className="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 flex flex-col z-20 shadow-soft">
-      <div className="h-16 flex items-center px-6 border-b border-gray-100">
-        <h1 className="flex  items-center gap-1 text-xl font-bold">
-          <Activity className="text-blue-600 drop-shadow-sm" />
-          <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            FitMaster
-          </span>
-        </h1>
-      </div>
+    <>
+      {/* Mobile overlay */}
+      {isOpen && onClose && (
+        <div
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 lg:hidden"
+          onClick={onClose}
+        />
+      )}
 
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.name}
-            to={item.path}
-            className={({ isActive }) =>
-              `flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
-                isActive
-                  ? "bg-blue-50 text-blue-600"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              }`
-            }
-          >
-            <item.icon className="h-5 w-5 mr-3" />
-            {item.name}
-          </NavLink>
-        ))}
-      </nav>
+      <aside
+        className={`fixed inset-y-0 left-0 w-[260px] bg-white border-r border-slate-200/60 flex flex-col z-40 transition-transform duration-300 ease-out
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+          lg:translate-x-0`}
+      >
+        {/* Logo */}
+        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-100">
+          <h1 className="flex items-center gap-2 text-xl font-bold tracking-tight">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-500/20">
+              <Activity className="w-4.5 h-4.5 text-white" />
+            </div>
+            <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+              FitMaster
+            </span>
+          </h1>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="lg:hidden p-1 rounded-lg hover:bg-slate-100 text-slate-400"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
+        </div>
 
-      <div className="p-4 border-t border-gray-100 mt-auto">
-        <button className="flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors w-full">
-          <Settings className="h-5 w-5 mr-3" />
-          Settings
-        </button>
-      </div>
-    </aside>
+        {/* Navigation */}
+        <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-1">
+          <p className="px-4 text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
+            Main
+          </p>
+          {navItems.map((item) => (
+            <NavLink
+              key={item.name}
+              to={item.path}
+              className={({ isActive }) =>
+                `group flex items-center gap-3 px-4 py-2.5 text-[13px] font-medium rounded-xl transition-all duration-200 relative ${
+                  isActive
+                    ? "bg-indigo-50 text-indigo-600"
+                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-indigo-500 rounded-r-full" />
+                  )}
+                  <item.icon
+                    className={`h-[18px] w-[18px] flex-shrink-0 transition-colors ${
+                      isActive
+                        ? "text-indigo-500"
+                        : "text-slate-400 group-hover:text-slate-600"
+                    }`}
+                  />
+                  {item.name}
+                </>
+              )}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* Settings footer */}
+        <div className="p-3 border-t border-slate-100">
+          <button className="flex items-center gap-3 px-4 py-2.5 text-[13px] font-medium rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 w-full">
+            <Settings className="h-[18px] w-[18px] text-slate-400" />
+            Settings
+          </button>
+        </div>
+      </aside>
+    </>
   );
 };
