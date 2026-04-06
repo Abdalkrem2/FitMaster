@@ -181,6 +181,7 @@ export default function EditEmployeeModal({
               label="Full Name"
               value={formData.fullName}
               onChange={handleChange}
+              autoComplete="off"
             />
 
             <Input
@@ -188,6 +189,7 @@ export default function EditEmployeeModal({
               label="Phone"
               value={formData.phone}
               onChange={handleChange}
+              autoComplete="off"
             />
 
             <Input
@@ -197,6 +199,7 @@ export default function EditEmployeeModal({
               placeholder="(Leave blank to keep current password)"
               value={formData.password}
               onChange={handleChange}
+              autoComplete="new-password"
             />
 
             <div>
