@@ -64,8 +64,14 @@ export default function AddMemberModal({ open, onClose, onSuccess }: Props) {
     if (!formData.fullName) return "Full name is required";
     if (!formData.phone) return "Phone number is required";
     if (!formData.gender) return "Gender is required";
+    if(!validatePhone(formData.phone)) return "Invalid phone number format";
     return null;
   };
+
+ const validatePhone = (phone:string) => {
+  const regex = /^07\d{8}$/;
+  return regex.test(phone);
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +80,7 @@ export default function AddMemberModal({ open, onClose, onSuccess }: Props) {
       setValidationError(validationErr);
       return;
     }
+    
     setValidationError(null);
     try {
       let imageUrl = "";
@@ -156,15 +163,18 @@ export default function AddMemberModal({ open, onClose, onSuccess }: Props) {
               value={formData.fullName}
               onChange={handleChange}
               error={validationError === "Full name is required" ? " " : undefined}
+              autoComplete="off"
             />
 
             <Input
               name="phone"
               label="Phone Number"
-              placeholder="e.g. +1 234 567 890"
+              type="number"
+              placeholder="07XXXXXXXX"
               value={formData.phone}
               onChange={handleChange}
-              error={validationError === "Phone number is required" ? " " : undefined}
+              error={validationError === "Phone number is required" ? " " :undefined}
+              autoComplete="off"
             />
 
             <div className="mb-4 w-full">

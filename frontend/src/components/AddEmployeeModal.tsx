@@ -65,13 +65,17 @@ export default function AddEmployeeModal({ open, onClose, onCreated }: Props) {
     setFile(null);
     setValidationError(null);
   };
+  const validatePhone = (phone:string) => {
+    const regex = /^07\d{8}$/;
+    return regex.test(phone);
+  };
 
   const validate = () => {
     if (!formData.fullName) return "Full name is required";
     if (!formData.phone) return "Phone is required";
     if (!formData.gender) return "Gender is required";
-    if (!formData.password || formData.password.length < 6)
-      return "Password must be at least 6 characters";
+    if(!validatePhone(formData.phone)) return "Invalid phone number format";
+    if (!formData.password) return "Password is required";
     return null;
   };
 
@@ -162,25 +166,28 @@ export default function AddEmployeeModal({ open, onClose, onCreated }: Props) {
               value={formData.fullName}
               onChange={handleChange}
               error={validationError === "Full name is required" ? " " : undefined}
+              autoComplete="off"
             />
 
             <Input
               name="phone"
               label="Phone"
-              placeholder="e.g. +1 234 567 890"
+              type="number"
+              placeholder="07XXXXXXXX"
               value={formData.phone}
               onChange={handleChange}
-              error={validationError === "Phone is required" ? " " : undefined}
+              error={validationError === "Phone is required" ? " " :undefined}
+              autoComplete="off"
             />
 
             <Input
               name="password"
               type="password"
               label="Password"
-              placeholder="Min 6 characters"
               value={formData.password}
               onChange={handleChange}
-              error={validationError === "Password must be at least 6 characters" ? " " : undefined}
+              error={validationError === "Password is required" ? " " : undefined}
+              autoComplete="new-password"
             />
 
             <div className="grid grid-cols-2 gap-4">
