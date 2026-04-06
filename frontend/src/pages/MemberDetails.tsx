@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -37,6 +38,7 @@ const MemberDetails: React.FC = () => {
   const [description, setDescription] = useState("");
   const [addingMembership, setAddingMembership] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const [selectedPackageId, setSelectedPackageId] = useState("");
   const [packages, setPackages] = useState<Package[]>([]);
@@ -116,10 +118,8 @@ const MemberDetails: React.FC = () => {
   const handleDeleteMember = async () => {
     if (!member) return;
     try {
-      if(window.confirm("Are you sure you want to delete this member?")){
-        await memberService.deleteMember(String(id));
-        navigate("/members");
-      }
+      await memberService.deleteMember(String(id));
+      navigate("/members");
     } catch (err) {
       console.log(err);
     }
@@ -195,7 +195,7 @@ const MemberDetails: React.FC = () => {
              <Edit3 className="w-3.5 h-3.5" /> Edit Profile
            </button>
            <button
-             onClick={handleDeleteMember}
+             onClick={() => setDeleteConfirmOpen(true)}
              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-semibold bg-white text-rose-600 border border-rose-200 shadow-sm rounded-xl hover:bg-rose-50 hover:border-rose-300 transition-all focus:outline-none"
            >
              <Trash2 className="w-3.5 h-3.5" /> Delete
@@ -375,6 +375,38 @@ const MemberDetails: React.FC = () => {
         member={member}
         onUpdated={loadMemberData}
       />
+
+      {/* Delete Confirm Dialog */}
+      {deleteConfirmOpen && createPortal(
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl p-6 w-[380px] shadow-elevated relative animate-fade-in-up">
+            <div className="w-12 h-12 bg-rose-50 border-8 border-rose-50/50 rounded-full flex items-center justify-center mx-auto mb-4 text-rose-500">
+              <Trash2 className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 text-center mb-1">
+              Delete Member
+            </h3>
+            <p className="text-sm text-slate-500 text-center mb-6">
+              Are you sure you want to delete this member? All associated records will be removed.
+            </p>
+            <div className="flex gap-3">
+               <button
+                onClick={() => setDeleteConfirmOpen(false)}
+                className="flex-1 text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl py-2.5 hover:bg-slate-50 transition-colors"
+               >
+                Cancel
+               </button>
+               <button
+                onClick={handleDeleteMember}
+                className="flex-1 text-sm font-semibold text-white bg-rose-600 rounded-xl py-2.5 shadow-sm hover:shadow-md hover:bg-rose-700 transition-all font-medium"
+               >
+                Delete
+               </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };
