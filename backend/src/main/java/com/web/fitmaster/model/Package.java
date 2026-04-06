@@ -24,6 +24,8 @@ public class Package {
     @Column(nullable = false)
     private String name;
 
+    private boolean deleted=false;//add not null
+
     private String description;
 
     @Column(nullable = false)

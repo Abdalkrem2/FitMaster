@@ -2,6 +2,7 @@ package com.web.fitmaster.service.Imp;
 
 import com.web.fitmaster.dto.PackageDTOs;
 import com.web.fitmaster.exceptions.APIException;
+import com.web.fitmaster.exceptions.NotFoundException;
 import com.web.fitmaster.model.Package;
 import com.web.fitmaster.model.enums.PackageStatus;
 import com.web.fitmaster.repository.PackageRepository;
@@ -20,16 +21,16 @@ public class PackageServiceImp implements PackageService {
 
     @Override
     public List<PackageDTOs.PackageDTO> getAllPackages() {
-        List<Package> pkg= packageRepository.findAll();
+        List<Package> pkg= packageRepository.findAllByDeletedFalse();
         return pkg.stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
     @Override
     public String deletePackage(Long id) {
-        if (!packageRepository.existsById(id)) {
-            throw new RuntimeException("Package not found");
-        }
-        packageRepository.deleteById(id);
+        Package pkg= packageRepository.findByPackageIdAndDeletedFalse(id).orElseThrow(()->new NotFoundException("Package not found"));
+
+    pkg.setDeleted(true);
+    packageRepository.save(pkg);
         return "Package with id= "+id+" was deleted successfully";
     }
 
@@ -47,8 +48,8 @@ public class PackageServiceImp implements PackageService {
 
     @Override
     public PackageDTOs.PackageDTO updatePackage(Long id, PackageDTOs.UpdatePackageRequest req) {
-        Package pkg = packageRepository.findById(id)
-                .orElseThrow(() -> new APIException("Package with id= "+id+" not found"));
+        Package pkg = packageRepository.findByPackageIdAndDeletedFalse(id)
+                .orElseThrow(() -> new NotFoundException("Package with id= "+id+" not found"));
         if (req.getName() != null)
             pkg.setName(req.getName());
         if (req.getDescription() != null)
@@ -63,14 +64,14 @@ public class PackageServiceImp implements PackageService {
 
     @Override
     public PackageDTOs.@Nullable PackageDTO getPackage(Long id) {
-      Package pkg=packageRepository.findById(id).orElseThrow(() -> new APIException("Package with id= "+id+" not found"));
+      Package pkg=packageRepository.findByPackageIdAndDeletedFalse(id).orElseThrow(() -> new NotFoundException("Package with id= "+id+" not found"));
         return mapToDto(pkg);
     }
 
     @Override
     public PackageDTOs.@Nullable PackageDTO updateStatus(Long id, PackageDTOs.UpdatePackageStatus status) {
-        Package pkg = packageRepository.findById(id)
-                .orElseThrow(() -> new APIException("Not found"));
+        Package pkg = packageRepository.findByPackageIdAndDeletedFalse(id)
+                .orElseThrow(() -> new NotFoundException("Not found"));
 
         pkg.setStatus(status.getStatus());
         return mapToDto(packageRepository.save(pkg));
