@@ -113,7 +113,8 @@ public class RevenueServiceImpl implements RevenueService {
         BigDecimal totalPaid = revenueRepository.sumAllAmounts();
         if (totalCost == null) totalCost = BigDecimal.ZERO;
         if (totalPaid == null) totalPaid = BigDecimal.ZERO;
-        return totalCost.subtract(totalPaid);
+        BigDecimal debt= totalCost.subtract(totalPaid);
+        return debt.compareTo(BigDecimal.ZERO)<0?BigDecimal.ZERO:debt;
     }
 
 
