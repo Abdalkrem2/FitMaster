@@ -197,14 +197,14 @@ public class MemberServiceImp implements MemberService {
         }else {
             startDate=LocalDate.now();
         }
-
+        BigDecimal debt=pkg.getPrice().subtract(request.getPrice());
         Membership membership = new Membership().builder()
       .startDate(startDate)
            .price(request.getPrice())
            .pkg(pkg)
                 .endDate(startDate.plusDays(pkg.getDurationInDays()))
                         .description(request.getDescription())
-                                .debt(pkg.getPrice().subtract(request.getPrice()))
+                                .debt(debt.compareTo(BigDecimal.ZERO)<0?BigDecimal.ZERO:debt)
                                         .member(member)
                 .status(MembershipStatus.ACTIVE)
                 .build();
@@ -307,8 +307,8 @@ public class MemberServiceImp implements MemberService {
         if(totalPaid==null) {
             totalPaid=BigDecimal.ZERO;
         }
-
-        return  cost.subtract(totalPaid);
+            BigDecimal debt= cost.subtract(totalPaid);
+        return debt.compareTo(BigDecimal.ZERO)<0?BigDecimal.ZERO:debt;
 
     }
 
