@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Search, Plus, Pencil, Trash2, ShieldCheck, User } from "lucide-react";
 import { employeeService } from "../services/employeeService";
 import { Input } from "../components/ui/Input";
@@ -196,7 +197,7 @@ const Employees: React.FC = () => {
       />
 
       {/* Delete Confirm Dialog */}
-      {deleteConfirmId !== null && (
+      {deleteConfirmId !== null && createPortal(
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl p-6 w-[380px] shadow-elevated relative animate-fade-in-up">
             <div className="w-12 h-12 bg-rose-50 border-8 border-rose-50/50 rounded-full flex items-center justify-center mx-auto mb-4 text-rose-500">
@@ -224,7 +225,8 @@ const Employees: React.FC = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
