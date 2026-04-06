@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from "react-dom";
 import { Package as PackageIcon, Plus, Calendar, DollarSign, BookText, Edit3, Trash2 } from 'lucide-react';
 import { packageService } from '../services/packageService';
 import EditPackageModal from '../components/EditPackageModal';
@@ -15,6 +16,7 @@ const Packages: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingPackage, setEditingPackage] = useState<Package | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   
   // Form State
   const [name, setName] = useState('');
@@ -76,10 +78,15 @@ const Packages: React.FC = () => {
     }
   };
 
+
+
   const handleDelete = async (id: string)=>{
+    const pkg = packages.find(pkg => pkg.id === id);
+    if(!pkg) return;
     try {
       await packageService.deletePackage(id);
       setPackages(prev => prev.filter(pkg => pkg.id !== id));
+      setDeleteConfirmId(null);
     } catch (error) {
       console.error("Failed to delete package",error);
     }
@@ -170,7 +177,7 @@ const Packages: React.FC = () => {
                   Edit
                 </button>
                 <button 
-                  onClick={() => handleDelete(pkg.id)}
+                  onClick={() => setDeleteConfirmId(pkg.id)}
                   className="inline-flex items-center justify-center p-2 text-slate-400 bg-white border border-slate-200 rounded-lg shadow-sm hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-colors"
                   title="Delete Package"
                 >
@@ -247,6 +254,38 @@ const Packages: React.FC = () => {
           setPackages(prev => prev.map(p => p.id === updatedPkg.id ? updatedPkg : p));
         }}
       />
+
+      {/* Delete Confirm Dialog */}
+      {deleteConfirmId && createPortal(
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl p-6 w-[380px] shadow-elevated relative animate-fade-in-up">
+            <div className="w-12 h-12 bg-rose-50 border-8 border-rose-50/50 rounded-full flex items-center justify-center mx-auto mb-4 text-rose-500">
+              <Trash2 className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 text-center mb-1">
+              Delete Package
+            </h3>
+            <p className="text-sm text-slate-500 text-center mb-6">
+              Are you sure you want to delete this package? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+               <button
+                onClick={() => setDeleteConfirmId(null)}
+                className="flex-1 text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl py-2.5 hover:bg-slate-50 transition-colors"
+               >
+                Cancel
+               </button>
+               <button
+                onClick={() => handleDelete(deleteConfirmId)}
+                className="flex-1 text-sm font-semibold text-white bg-rose-600 rounded-xl py-2.5 shadow-sm hover:shadow-md hover:bg-rose-700 transition-all font-medium"
+               >
+                Delete
+               </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };
