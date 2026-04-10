@@ -12,6 +12,7 @@ import com.web.fitmaster.model.enums.EntityType;
 import com.web.fitmaster.repository.RoleRepository;
 import com.web.fitmaster.repository.UserRepository;
 import com.web.fitmaster.service.EmployeeService;
+import com.web.fitmaster.service.NotificationService;
 import com.web.fitmaster.util.AuthUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -36,6 +37,7 @@ public class EmployeeServiceImp implements EmployeeService {
     private final RoleRepository roleRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final AuthUtil authUtil;
+    private final NotificationService notificationService;
 
     @Override
     public EmployeeDTOs.EmployeeResponse getAllEmployees(Pageable pageable) {
@@ -82,6 +84,9 @@ public class EmployeeServiceImp implements EmployeeService {
 
          User savedUser= userRepository.save(user);
 
+        if (req.getRole() == AppRole.ADMIN) {
+            notificationService.assignNotificationsToUser(savedUser.getId());
+        }
         eventPublisher.publishEvent(ActivityEvent.builder()
                 .action(ActionType.CREATE)
                 .performedBy(authUtil.loggedInUser())
@@ -130,9 +135,10 @@ public class EmployeeServiceImp implements EmployeeService {
 
             if (req.getRole() == AppRole.ADMIN) {
                 user.getRoles().add(adminRole);
+                notificationService.assignNotificationsToUser(user.getId());
             } else {
                 user.getRoles().add(employeeRole);
-
+                user.setAdminRoleAssignedAt(null);
             }
         }
             User savedUser=userRepository.save(user);

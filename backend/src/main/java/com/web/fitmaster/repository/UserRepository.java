@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -32,4 +33,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> searchMembers(@Param("roles") Set<AppRole> roles,@Param("search") String search, Pageable pageable);
 
     Page<User> findByRoles_roleNameInAndDeletedFalse(Set<AppRole> employee, Pageable pageable);
+    List<User> findByRoles_roleNameInAndDeletedFalse(Set<AppRole> roles);
 }

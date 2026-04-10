@@ -35,6 +35,9 @@ public class User {
 
     private String gender;
 
+    @Column(name = "admin_role_assigned_at")
+    private LocalDateTime adminRoleAssignedAt;
+
 
     @Column(name = "is_activated")
     private Boolean isActivated = false;
