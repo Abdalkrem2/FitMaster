@@ -77,7 +77,9 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests.requestMatchers("/api/auth/**").permitAll()
+//                        .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated());
 
 http.authenticationProvider(authenticationProvider());
@@ -120,16 +122,21 @@ http.headers(headers ->headers.frameOptions(
             // Retrieve or create roles
 
 
-            Role memberRole = roleRepository.findByRoleName(AppRole.ROLE_MEMBER)
+            Role memberRole = roleRepository.findByRoleName(AppRole.MEMBER)
                     .orElseGet(() -> {
-                        Role newSellerRole = new Role(AppRole.ROLE_MEMBER);
+                        Role newSellerRole = new Role(AppRole.MEMBER);
                         return roleRepository.save(newSellerRole);
                     });
 
-            Role adminRole = roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
+            Role adminRole = roleRepository.findByRoleName(AppRole.ADMIN)
                     .orElseGet(() -> {
-                        Role newAdminRole = new Role(AppRole.ROLE_ADMIN);
+                        Role newAdminRole = new Role(AppRole.ADMIN);
                         return roleRepository.save(newAdminRole);
+                    });
+            Role employeeRole = roleRepository.findByRoleName(AppRole.EMPLOYEE)
+                    .orElseGet(() -> {
+                        Role newEmpRole = new Role(AppRole.EMPLOYEE);
+                        return roleRepository.save(newEmpRole);
                     });
 
 
