@@ -36,6 +36,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -159,6 +160,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                         passwordEncoder.encode("admin"), "Male", true);
                 admin.setRoles(adminRoles);
                 admin.setCreatedBy(admin);
+                admin.setAdminRoleAssignedAt(LocalDateTime.now());
                 userRepository.save(admin);
             }
             // بعد إنشاء الأدمن

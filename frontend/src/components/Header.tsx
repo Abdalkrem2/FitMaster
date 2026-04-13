@@ -1,7 +1,10 @@
 import React from "react";
-import { Bell, LogOut, Search, Menu } from "lucide-react";
+import { Bell, LogOut, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useNotificationContext } from "@/context/NotificationContext";
+import { NotificationPanel } from "@/components/NotificationPanel";
+import { useState } from "react";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -10,6 +13,8 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const { user, logout, isAdmin, isEmployee } = useAuth();
+  const { unreadCount } = useNotificationContext();
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -44,13 +49,29 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
       {/* Right side — notifications + profile + logout */}
       <div className="flex items-center gap-1 sm:gap-2">
         {/* Notification bell */}
-        <button
-          className="relative p-2.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all duration-200"
-          title="Notifications"
-        >
-          <Bell className="h-[18px] w-[18px]" />
-          <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white" />
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => setShowNotifications((v) => !v)}
+            className="relative p-2.5 rounded-xl text-slate-400 hover:text-slate-600
+                       hover:bg-slate-100 transition-all duration-200"
+            title="Notifications"
+          >
+            <Bell className="h-[18px] w-[18px]" />
+            {unreadCount > 0 && (
+              <span
+                className="absolute top-1.5 right-1.5 h-4 w-4 flex items-center
+                               justify-center rounded-full bg-rose-500 text-white
+                               text-[9px] font-bold ring-2 ring-white"
+              >
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
+          </button>
+
+          {showNotifications && (
+            <NotificationPanel onClose={() => setShowNotifications(false)} />
+          )}
+        </div>
 
         {/* Divider */}
         <div className="h-6 w-px bg-slate-200 mx-1 hidden sm:block" />

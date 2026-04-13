@@ -8,9 +8,11 @@ export const activityLogService = {
     size: number,
   ) => {
     const params: any = { page, size };
-    if (performedBy !== null && performedBy !== undefined) params.performedBy = performedBy;
-    if (entityType !== null && entityType !== undefined && entityType !== "") params.entityType = entityType;
-    
+    if (performedBy !== null && performedBy !== undefined)
+      params.performedBy = performedBy;
+    if (entityType !== null && entityType !== undefined && entityType !== "")
+      params.entityType = entityType;
+
     const res = await api.get("/logs", { params });
     return res.data;
   },
