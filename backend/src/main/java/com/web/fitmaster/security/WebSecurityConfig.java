@@ -133,82 +133,82 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 
     // to create user data when we launch project because h2 database doesnt keep
     // data when it shut off
-    @Bean
-    public CommandLineRunner initData(RoleRepository roleRepository,
-                                      UserRepository userRepository,
-                                      PasswordEncoder passwordEncoder, PackageRepository packageRepository) {
-
-        return args -> {
-
-            // ===== Roles =====
-            Role memberRole = roleRepository.findByRoleName(AppRole.MEMBER)
-                    .orElseGet(() -> roleRepository.save(new Role(AppRole.MEMBER)));
-
-            Role adminRole = roleRepository.findByRoleName(AppRole.ADMIN)
-                    .orElseGet(() -> roleRepository.save(new Role(AppRole.ADMIN)));
-
-            Role employeeRole = roleRepository.findByRoleName(AppRole.EMPLOYEE)
-                    .orElseGet(() -> roleRepository.save(new Role(AppRole.EMPLOYEE)));
-
-            Set<Role> memberRoles = Set.of(memberRole);
-            Set<Role> adminRoles = Set.of(adminRole);
-            Set<Role> employeeRoles = Set.of(employeeRole);
-
-            // ===== Create Admin =====
-            if (!userRepository.existsByPhoneAndDeletedFalse("0780000000")) {
-                User admin = new User("admin", "0780000000",
-                        passwordEncoder.encode("admin"), "Male", true);
-                admin.setRoles(adminRoles);
-                admin.setCreatedBy(admin);
-                admin.setAdminRoleAssignedAt(LocalDateTime.now());
-                userRepository.save(admin);
-            }
-            // بعد إنشاء الأدمن
-            User adminUser = userRepository.findByPhoneAndDeletedFalse("0780000000").orElseThrow();
-
-// ===== Employees =====
-            for (int i = 1; i <= 3; i++) {
-                String phone = "079000000" + i;
-
-                if (!userRepository.existsByPhoneAndDeletedFalse(phone)) {
-                    User emp = new User("employee" + i, phone,
-                            passwordEncoder.encode("emp123"), "Male", true);
-
-                    emp.setRoles(employeeRoles);
-                    emp.setCreatedBy(adminUser); // 🔥 مهم
-
-                    userRepository.save(emp);
-                }
-            }
-
-// ===== Members =====
-            for (int i = 1; i <= 100; i++) {
-                String phone = "077000" + String.format("%04d", i);
-
-                if (!userRepository.existsByPhoneAndDeletedFalse(phone)) {
-                    User member = new User("member" + i, phone,
-                            passwordEncoder.encode("123456"), "Male", true);
-
-                    member.setRoles(memberRoles);
-                    member.setCreatedBy(adminUser); // 🔥 مهم
-
-                    userRepository.save(member);
-                }
-            }
-
-            //====Packages====
-            Package pkg= Package.builder()
-                    .price(BigDecimal.valueOf(60))
-                    .name("1 Month")
-                    .description("premium offer")
-                    .status(PackageStatus.ACTIVE)
-                    .durationInDays(30)
-                    .build();
-            packageRepository.save(pkg);
-
-
-
-        };
-    }
+//    @Bean
+//    public CommandLineRunner initData(RoleRepository roleRepository,
+//                                      UserRepository userRepository,
+//                                      PasswordEncoder passwordEncoder, PackageRepository packageRepository) {
+//
+//        return args -> {
+//
+//            // ===== Roles =====
+//            Role memberRole = roleRepository.findByRoleName(AppRole.MEMBER)
+//                    .orElseGet(() -> roleRepository.save(new Role(AppRole.MEMBER)));
+//
+//            Role adminRole = roleRepository.findByRoleName(AppRole.ADMIN)
+//                    .orElseGet(() -> roleRepository.save(new Role(AppRole.ADMIN)));
+//
+//            Role employeeRole = roleRepository.findByRoleName(AppRole.EMPLOYEE)
+//                    .orElseGet(() -> roleRepository.save(new Role(AppRole.EMPLOYEE)));
+//
+//            Set<Role> memberRoles = Set.of(memberRole);
+//            Set<Role> adminRoles = Set.of(adminRole);
+//            Set<Role> employeeRoles = Set.of(employeeRole);
+//
+//            // ===== Create Admin =====
+//            if (!userRepository.existsByPhoneAndDeletedFalse("0780000000")) {
+//                User admin = new User("admin", "0780000000",
+//                        passwordEncoder.encode("admin"), "Male", true);
+//                admin.setRoles(adminRoles);
+//                admin.setCreatedBy(admin);
+//                admin.setAdminRoleAssignedAt(LocalDateTime.now());
+//                userRepository.save(admin);
+//            }
+//            // بعد إنشاء الأدمن
+//            User adminUser = userRepository.findByPhoneAndDeletedFalse("0780000000").orElseThrow();
+//
+//// ===== Employees =====
+//            for (int i = 1; i <= 3; i++) {
+//                String phone = "079000000" + i;
+//
+//                if (!userRepository.existsByPhoneAndDeletedFalse(phone)) {
+//                    User emp = new User("employee" + i, phone,
+//                            passwordEncoder.encode("emp123"), "Male", true);
+//
+//                    emp.setRoles(employeeRoles);
+//                    emp.setCreatedBy(adminUser); // 🔥 مهم
+//
+//                    userRepository.save(emp);
+//                }
+//            }
+//
+//// ===== Members =====
+//            for (int i = 1; i <= 100; i++) {
+//                String phone = "077000" + String.format("%04d", i);
+//
+//                if (!userRepository.existsByPhoneAndDeletedFalse(phone)) {
+//                    User member = new User("member" + i, phone,
+//                            passwordEncoder.encode("123456"), "Male", true);
+//
+//                    member.setRoles(memberRoles);
+//                    member.setCreatedBy(adminUser); // 🔥 مهم
+//
+//                    userRepository.save(member);
+//                }
+//            }
+//
+//            //====Packages====
+//            Package pkg= Package.builder()
+//                    .price(BigDecimal.valueOf(60))
+//                    .name("1 Month")
+//                    .description("premium offer")
+//                    .status(PackageStatus.ACTIVE)
+//                    .durationInDays(30)
+//                    .build();
+//            packageRepository.save(pkg);
+//
+//
+//
+//        };
+//    }
 
 }
