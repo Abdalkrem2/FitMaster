@@ -16,7 +16,7 @@ public class ExerciseEquipment {
 //    private ExerciseEquipmentId id;
 
     @Id
-    @Column(name = "exercise_id", columnDefinition = "VARBINARY(16)")
+    @Column(name = "exercise_id", columnDefinition = "BINARY(16)")
     private byte[] exerciseId;
 
     @Id
@@ -25,13 +25,11 @@ public class ExerciseEquipment {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("exerciseId")
-    @JoinColumn(name = "exercise_id")
+    @JoinColumn(name = "exercise_id", insertable = false, updatable = false)
     private Exercise exercise;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("equipmentId")
-    @JoinColumn(name = "equipment_id")
+    @JoinColumn(name = "equipment_id", insertable = false, updatable = false)
     private Equipment equipment;
 
 

@@ -17,7 +17,7 @@ public class ExerciseMuscle {
 //    private ExerciseMuscleId id;
 
     @Id
-    @Column(name = "exercise_id", columnDefinition = "VARBINARY(16)")
+    @Column(name = "exercise_id", columnDefinition = "BINARY(16)")
     private byte[] exerciseId;
 
     @Id
@@ -25,13 +25,11 @@ public class ExerciseMuscle {
     private Long muscleId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("exerciseId")//مشان ال composite key يعني قيمة exercise_id مأخوذة من ال composite key
-    @JoinColumn(name = "exercise_id")
+    @JoinColumn(name = "exercise_id", insertable = false, updatable = false)
     private Exercise exercise;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("muscleId")
-    @JoinColumn(name = "muscle_id")
+    @JoinColumn(name = "muscle_id", insertable = false, updatable = false)
     private Muscle muscle;
 //اعلملنا هاذ الكلاس بس مشان نعرف ال role
     @Enumerated(EnumType.STRING)
