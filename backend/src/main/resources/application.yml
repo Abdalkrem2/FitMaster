@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/fitmaster_db
     username: root
-    password: P@ssw0rd
+    password: 123444
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   flyway:
