@@ -2,6 +2,7 @@ package com.web.fitmaster.model;
 
 import com.web.fitmaster.model.enums.FitnessGoal;
 import com.web.fitmaster.model.enums.FitnessLevel;
+import com.web.fitmaster.model.enums.SplitType;
 import com.web.fitmaster.model.enums.WorkoutPlanStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,8 +36,9 @@ public class WorkoutPlan {
     @Column(nullable = false)
     private WorkoutPlanStatus status;
 
-    @Column(name = "days_per_week", nullable = false)
-    private Integer daysPerWeek;//يمكن ما نحتاجها
+    @Enumerated(EnumType.STRING)
+    @Column(name = "split_type", nullable = false)
+    private SplitType splitType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)

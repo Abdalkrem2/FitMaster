@@ -1,9 +1,6 @@
 package com.web.fitmaster.model;
 
-import com.web.fitmaster.model.enums.FitnessGoal;
-import com.web.fitmaster.model.enums.FitnessLevel;
-import com.web.fitmaster.model.enums.InjuryType;
-import com.web.fitmaster.model.enums.TrainingStyle;
+import com.web.fitmaster.model.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,8 +32,10 @@ public class MemberProfile {
     @Column(nullable = false)
     private FitnessLevel fitnessLevel;
 
-    @Column(name = "days_per_week", nullable = false)
-    private Integer daysPerWeek;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SplitType splitType;
+
 
     @ElementCollection//منستخدمها مشان ننشئ تيبل منفصل
     @Enumerated(EnumType.STRING)
@@ -50,12 +49,6 @@ public class MemberProfile {
 
     @Enumerated(EnumType.STRING)
     private TrainingStyle trainingStyle;
-
-
-
-
-
-
 
 
 }
