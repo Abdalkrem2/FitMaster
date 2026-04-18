@@ -2,9 +2,7 @@ package com.web.fitmaster.dto;
 
 import com.web.fitmaster.model.Membership;
 import com.web.fitmaster.model.Role;
-import com.web.fitmaster.model.enums.AppRole;
-import com.web.fitmaster.model.enums.MemberStatus;
-import com.web.fitmaster.model.enums.MembershipStatus;
+import com.web.fitmaster.model.enums.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -98,5 +96,43 @@ public class MemberDTOs {
         private Long totalElements;
         private Integer totalPages;
         private Boolean LastPage;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class MemberProfileDTO {
+        private FitnessGoal goal;
+        private FitnessLevel fitnessLevel;
+        private SplitType splitType;
+        private List<InjuryType> injuries;
+        private Double weight;
+        private Double height;
+        private Integer age;
+        private TrainingStyle trainingStyle;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class MemberProfileRequest {
+        @NotNull
+        private FitnessGoal goal;
+
+        @NotNull
+        private FitnessLevel fitnessLevel;
+
+        @NotNull
+        private SplitType splitType;
+
+        private List<InjuryType> injuries;
+
+        private Double weight;
+        private Double height;
+        private Integer age;
+
+        private TrainingStyle trainingStyle;
     }
 }

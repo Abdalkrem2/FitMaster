@@ -85,6 +85,24 @@ public class MemberController {
         return ResponseEntity.ok(stats);
     }
 
+    @PatchMapping("/me/profile")
+    @PreAuthorize("hasRole('MEMBER')")
+    public ResponseEntity<MemberDTOs.MemberProfileDTO> updateMyProfile(
+            @RequestBody @Valid MemberDTOs.MemberProfileRequest request) {
+        User loggedIn = authUtil.loggedInUser();
+        MemberDTOs.MemberProfileDTO profile = memberService.upsertMemberProfile(loggedIn.getId(), request);
+        return ResponseEntity.ok(profile);
+    }
+    @GetMapping("/me/profile")
+    @PreAuthorize("hasRole('MEMBER')")
+    public ResponseEntity<MemberDTOs.MemberProfileDTO> getMyProfile() {
+        User loggedIn = authUtil.loggedInUser();
+        MemberDTOs.MemberProfileDTO profile = memberService.getMemberProfile(loggedIn.getId());
+        return ResponseEntity.ok(profile);
+    }
+
+
+
     @GetMapping("/me")
     @PreAuthorize("hasRole('MEMBER')")
     public ResponseEntity<MemberDTOs.MemberDetailsDTO> getMyDetails() {
@@ -100,6 +118,8 @@ public class MemberController {
         memberService.changePassword(loggedIn.getId(), body.get("newPassword"));
         return ResponseEntity.ok("Password changed successfully");
     }
+
+
 
 
 
