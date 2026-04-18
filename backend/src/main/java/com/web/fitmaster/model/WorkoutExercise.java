@@ -31,6 +31,9 @@ public class WorkoutExercise {
 
     private Integer reps;
 
+    @Column(name = "reps_max")
+    private Integer repsMax;
+
     @Column(name = "duration_seconds")
     private Integer durationSeconds;  // بديل لـ reps في تمارين الـ cardio
 
