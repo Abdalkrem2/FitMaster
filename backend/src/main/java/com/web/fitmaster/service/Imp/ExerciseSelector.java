@@ -32,8 +32,15 @@ public class ExerciseSelector {
             List<Long> muscleIds = muscleGroupMapper.getMuscleIds(target.muscle());
 
             // جيب المرشحين من الـ DB
+            // جيب المرشحين
             List<Exercise> candidates = exerciseRepository
                     .findByPrimaryMusclesAndDifficulty(muscleIds, difficulty);
+
+// جيب الـ translations والـ media بشكل منفصل
+            if (!candidates.isEmpty()) {
+                exerciseRepository.fetchTranslations(candidates);
+                exerciseRepository.fetchMedia(candidates);
+            }
 
             // استبعد المكررة — نحول byte[] لـ String عشان المقارنة تشتغل
             candidates.removeIf(e -> excludedIds.contains(toHex(e.getId())));

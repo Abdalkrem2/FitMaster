@@ -23,4 +23,6 @@ public interface MemberService {
     long countActiveMembers();
     long countExpiringSoon();
     void changePassword(Long id, String newPassword);
+    MemberDTOs.MemberProfileDTO getMemberProfile(Long id);
+    MemberDTOs.MemberProfileDTO upsertMemberProfile(Long id, MemberDTOs.MemberProfileRequest request);
 }

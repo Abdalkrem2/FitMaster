@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface MemberProfileRepository extends JpaRepository<MemberProfile, Long> {
     Optional<MemberProfile> findByMemberIdAndMember_IsActivatedTrueAndMember_DeletedFalse(Long memberId);
+
+    Optional<MemberProfile> findByMemberId(Long id);
 }

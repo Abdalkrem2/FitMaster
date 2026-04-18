@@ -23,7 +23,11 @@ public class WorkoutPlanService {
     private final TrainingConfigFactory configFactory;
     private final ExerciseSelector exerciseSelector;
 
-
+    public WorkoutPlan getActivePlan(Long memberId) {
+        return workoutPlanRepository
+                .findByMember_IdAndStatus(memberId, WorkoutPlanStatus.ACTIVE)
+                .orElseThrow(() -> new RuntimeException("No active workout plan found"));
+    }
 
     @Transactional
     public WorkoutPlan generatePlan(Long memberId) {
