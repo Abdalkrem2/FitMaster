@@ -37,7 +37,7 @@ public class WorkoutPlanMapper {
     }
     private String toImageUrl(String dbUrl) {
         String code = dbUrl.substring(dbUrl.lastIndexOf("/") + 1);
-        return "http://localhost:8080/images/exercises/" + code + ".gif";
+        return "https://res.cloudinary.com/dakuwdt6l/image/upload/exercises/" + code + ".gif";
     }
 
     private WorkoutExerciseResponse toExerciseResponse(WorkoutExercise we) {
