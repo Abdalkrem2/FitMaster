@@ -4,6 +4,8 @@ import type {
   MemberDetails,
   CreateMemberRequest,
   UpdateMemberRequest,
+  MemberProfile,
+  UpdateMemberProfileRequest,
 } from "../types/member";
 import type { PageResponse } from "../types/pagination";
 
@@ -43,6 +45,18 @@ export const memberService = {
 
   getMyDetails: async () => {
     const res = await api.get("/members/me");
+    return res.data;
+  },
+
+  getMyProfile: async (): Promise<MemberProfile | undefined> => {
+    const res = await api.get("/members/me/profile");
+    return res.data;
+  },
+
+  updateMyProfile: async (
+    profile: UpdateMemberProfileRequest,
+  ): Promise<MemberProfile> => {
+    const res = await api.patch("/members/me/profile", profile);
     return res.data;
   },
 };
