@@ -25,6 +25,19 @@ export const MemberLayout: React.FC = () => {
   const { user, logout, isMember } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [data, setData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await memberService.getMyDetails();
+        setData(res);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchData();
+  }, []);
 
   // Auto-redirect to onboarding if profile has never been filled in.
   useEffect(() => {
@@ -87,7 +100,9 @@ export const MemberLayout: React.FC = () => {
               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
                 <User className="w-3.5 h-3.5 text-white" />
               </div>
-              <span className="text-sm font-medium text-slate-700">Member</span>
+              <span className="text-sm font-medium text-slate-700">
+                {data?.fullName}
+              </span>
             </div>
             <button
               onClick={logout}
