@@ -44,6 +44,7 @@ public class WorkoutPlanDTOs {
         private Long id;
         private String exerciseName;
         private String imageUrl;
+        private String instructions;
         private Integer sets;
         private Integer reps;
         private Integer repsMax;

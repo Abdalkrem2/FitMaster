@@ -40,4 +40,8 @@ public interface ExerciseRepository extends JpaRepository<Exercise, byte[]> {
     WHERE e IN :exercises
 """)
     List<Exercise> fetchMedia(@Param("exercises") List<Exercise> exercises);
+
+
+
+
 }
