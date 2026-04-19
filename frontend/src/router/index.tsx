@@ -17,6 +17,7 @@ import MemberProfile from "../pages/MemberProfile";
 import { MemberLayout } from "../layouts/MemberLayout";
 import MemberDashboard from "../pages/MemberDashboard";
 import MemberOnboarding from "@/pages/MemberOnboarding";
+import MemberWorkoutPlan from "../pages/MemberWorkoutPlan";
 
 //Guard: ADMIN only
 // if not admin return to tha main page
@@ -50,6 +51,11 @@ export const router = createBrowserRouter([
     path: "/member-profile",
     element: <MemberLayout />,
     children: [{ index: true, element: <MemberProfile /> }],
+  },
+  {
+    path: "/member-workout-plan",
+    element: <MemberLayout />,
+    children: [{ index: true, element: <MemberWorkoutPlan /> }],
   },
   {
     path: "/",

@@ -19,17 +19,24 @@ export type InjuryType =
   | "ELBOW"
   | "HIP";
 
+export type SplitType =
+  | "FULL_BODY"
+  | "UPPER_LOWER"
+  | "BRO_SPLIT_4DAY"
+  | "BRO_SPLIT_5DAY"
+  | "PUSH_PULL_LEGS";
+
 export type TrainingStyle = "STRENGTH" | "HYPERTROPHY" | "CIRCUIT";
 
 export interface MemberProfile {
   goal: FitnessGoal;
   fitnessLevel: FitnessLevel;
-  daysPerWeek: number;
   injuries?: InjuryType[];
   weight?: number;
   height?: number;
   age?: number;
   trainingStyle?: TrainingStyle;
+  splitType?: SplitType;
 }
 
 export interface Member {
@@ -39,7 +46,7 @@ export interface Member {
   debt: number;
   addedByName: string;
   endDate: string;
-  gender: 'Male' | 'Female';
+  gender: "Male" | "Female";
 }
 
 export interface MemberDetails extends Member {
@@ -65,10 +72,10 @@ export interface UpdateMemberRequest {
 export interface UpdateMemberProfileRequest {
   goal: FitnessGoal;
   fitnessLevel: FitnessLevel;
-  daysPerWeek: number;
   injuries?: InjuryType[];
   weight?: number;
   height?: number;
   age?: number;
   trainingStyle?: TrainingStyle;
+  splitType?: SplitType;
 }

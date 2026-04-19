@@ -11,8 +11,8 @@ import {
   AlertCircle,
   Scale,
   Ruler,
-  Clock,
   Shield,
+  LayoutGrid,
 } from "lucide-react";
 import { memberService } from "../services/memberService";
 import type {
@@ -21,6 +21,7 @@ import type {
   FitnessLevel,
   InjuryType,
   TrainingStyle,
+  SplitType,
   UpdateMemberProfileRequest,
 } from "../types/member";
 
@@ -86,6 +87,52 @@ const injuryOptions: InjuryType[] = [
   "HIP",
 ];
 
+const splitDays: Record<SplitType, number> = {
+  FULL_BODY: 3,
+  UPPER_LOWER: 4,
+  BRO_SPLIT_4DAY: 4,
+  BRO_SPLIT_5DAY: 5,
+  PUSH_PULL_LEGS: 6,
+};
+
+const splitTypes: {
+  value: SplitType;
+  label: string;
+  desc: string;
+  days: number;
+}[] = [
+  {
+    value: "FULL_BODY",
+    label: "Full Body",
+    desc: "Train all muscles each session",
+    days: 3,
+  },
+  {
+    value: "UPPER_LOWER",
+    label: "Upper / Lower",
+    desc: "Alternate upper & lower body",
+    days: 4,
+  },
+  {
+    value: "BRO_SPLIT_4DAY",
+    label: "Bro Split 4-Day",
+    desc: "Chest+Tri / Back+Bi / Shoulders / Legs",
+    days: 4,
+  },
+  {
+    value: "BRO_SPLIT_5DAY",
+    label: "Bro Split 5-Day",
+    desc: "Chest / Back / Shoulders / Legs / Arms",
+    days: 5,
+  },
+  {
+    value: "PUSH_PULL_LEGS",
+    label: "Push Pull Legs",
+    desc: "Push / Pull / Legs × 2",
+    days: 6,
+  },
+];
+
 const MemberProfile = () => {
   const [profile, setProfile] = useState<MemberProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -103,7 +150,6 @@ const MemberProfile = () => {
           setProfile({
             goal: "GENERAL_FITNESS",
             fitnessLevel: "BEGINNER",
-            daysPerWeek: 3,
             injuries: [],
             weight: undefined,
             height: undefined,
@@ -139,6 +185,14 @@ const MemberProfile = () => {
     setProfile((current) => (current ? { ...current, [key]: value } : current));
   };
 
+  const handleSplitSelect = (value: SplitType) => {
+    setProfile((current) =>
+      current
+        ? { ...current, splitType: value, daysPerWeek: splitDays[value] }
+        : current,
+    );
+  };
+
   const handleInjuriesToggle = (injury: InjuryType) => {
     setProfile((current) => {
       if (!current) return current;
@@ -162,7 +216,7 @@ const MemberProfile = () => {
     const request: UpdateMemberProfileRequest = {
       goal: profile.goal,
       fitnessLevel: profile.fitnessLevel,
-      daysPerWeek: profile.daysPerWeek,
+      splitType: profile.splitType,
       injuries: profile.injuries,
       weight: profile.weight,
       height: profile.height,
@@ -421,39 +475,61 @@ const MemberProfile = () => {
           </div>
         </div>
 
-        {/* ─── Days Per Week ─── */}
+        {/* ─── Training Split ─── */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-50 flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
-              <Clock className="w-3.5 h-3.5 text-emerald-500" />
+              <LayoutGrid className="w-3.5 h-3.5 text-emerald-500" />
             </div>
             <h2 className="text-sm font-semibold text-slate-700">
-              Training Days Per Week
+              Training Split
             </h2>
           </div>
-          <div className="p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-3xl font-bold text-slate-800">
-                {profile?.daysPerWeek}
-              </span>
-              <span className="text-sm text-slate-400">days per week</span>
-            </div>
-            <div className="flex gap-2">
-              {[1, 2, 3, 4, 5, 6, 7].map((day) => (
-                <button
-                  key={day}
-                  type="button"
-                  onClick={() => handleChange("daysPerWeek", day)}
-                  className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                    (profile?.daysPerWeek ?? 0) >= day
-                      ? "bg-emerald-500 text-white shadow-sm shadow-emerald-500/25"
-                      : "bg-slate-100 text-slate-400 hover:bg-slate-200"
-                  }`}
-                >
-                  {day}
-                </button>
-              ))}
-            </div>
+          <div className="p-6 space-y-3">
+            {splitTypes.map(({ value, label, desc, days }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => handleSplitSelect(value)}
+                className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
+                  profile?.splitType === value
+                    ? "border-indigo-500 ring-1 ring-indigo-500/20 shadow-md"
+                    : "border-slate-100 hover:border-slate-200 hover:shadow-sm"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${
+                      profile?.splitType === value
+                        ? "bg-indigo-500 text-white"
+                        : "bg-slate-100 text-slate-400"
+                    }`}
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-800 text-sm">
+                      {label}
+                    </p>
+                    <p className="text-xs text-slate-400 mt-0.5">{desc}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span
+                    className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                      profile?.splitType === value
+                        ? "bg-indigo-100 text-indigo-600"
+                        : "bg-slate-100 text-slate-400"
+                    }`}
+                  >
+                    {days}×/wk
+                  </span>
+                  {profile?.splitType === value && (
+                    <CheckCircle2 className="w-4 h-4 text-indigo-500" />
+                  )}
+                </div>
+              </button>
+            ))}
           </div>
         </div>
 

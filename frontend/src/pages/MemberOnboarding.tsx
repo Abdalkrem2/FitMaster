@@ -13,14 +13,15 @@ import {
   ArrowRight,
   ArrowLeft,
   Dumbbell,
-  Clock,
   Sparkles,
+  LayoutGrid,
 } from "lucide-react";
 import { memberService } from "../services/memberService";
 import type {
   FitnessGoal,
   FitnessLevel,
   TrainingStyle,
+  SplitType,
   InjuryType,
 } from "../types/member";
 
@@ -28,6 +29,7 @@ interface OnboardingData {
   goal?: FitnessGoal;
   fitnessLevel?: FitnessLevel;
   trainingStyle?: TrainingStyle;
+  splitType?: SplitType;
   daysPerWeek: number;
   weight?: number;
   height?: number;
@@ -35,13 +37,59 @@ interface OnboardingData {
   injuries: InjuryType[];
 }
 
+const splitDays: Record<SplitType, number> = {
+  FULL_BODY: 3,
+  UPPER_LOWER: 4,
+  BRO_SPLIT_4DAY: 4,
+  BRO_SPLIT_5DAY: 5,
+  PUSH_PULL_LEGS: 6,
+};
+
+const splitTypes: {
+  value: SplitType;
+  label: string;
+  desc: string;
+  days: number;
+}[] = [
+  {
+    value: "FULL_BODY",
+    label: "Full Body",
+    desc: "Train all muscles each session",
+    days: 3,
+  },
+  {
+    value: "UPPER_LOWER",
+    label: "Upper / Lower",
+    desc: "Alternate upper & lower body",
+    days: 4,
+  },
+  {
+    value: "BRO_SPLIT_4DAY",
+    label: "Bro Split 4-Day",
+    desc: "Chest+Tri / Back+Bi / Shoulders / Legs",
+    days: 4,
+  },
+  {
+    value: "BRO_SPLIT_5DAY",
+    label: "Bro Split 5-Day",
+    desc: "Chest / Back / Shoulders / Legs / Arms",
+    days: 5,
+  },
+  {
+    value: "PUSH_PULL_LEGS",
+    label: "Push Pull Legs",
+    desc: "Push / Pull / Legs × 2",
+    days: 6,
+  },
+];
+
 const TOTAL_STEPS = 6;
 
 const steps = [
   { label: "Your Goal", desc: "What do you want to achieve?" },
   { label: "Fitness Level", desc: "How experienced are you?" },
   { label: "Training Style", desc: "How do you like to train?" },
-  { label: "Schedule", desc: "Days per week" },
+  { label: "Split Type", desc: "Choose your training split" },
   { label: "Body Info", desc: "Optional measurements" },
   { label: "Injuries", desc: "Areas to work around" },
 ];
@@ -174,7 +222,12 @@ export default function MemberOnboarding() {
     if (step === 1) return !!data.goal;
     if (step === 2) return !!data.fitnessLevel;
     if (step === 3) return !!data.trainingStyle;
+    if (step === 4) return !!data.splitType;
     return true;
+  };
+
+  const selectSplit = (value: SplitType) => {
+    setData((d) => ({ ...d, splitType: value, daysPerWeek: splitDays[value] }));
   };
 
   const handleFinish = async () => {
@@ -185,7 +238,7 @@ export default function MemberOnboarding() {
         goal: data.goal!,
         fitnessLevel: data.fitnessLevel!,
         trainingStyle: data.trainingStyle!,
-        daysPerWeek: data.daysPerWeek,
+        splitType: data.splitType!,
         injuries: data.injuries,
         weight: data.weight,
         height: data.height,
@@ -518,7 +571,7 @@ export default function MemberOnboarding() {
               </div>
             )}
 
-            {/* Step 4: Days Per Week */}
+            {/* Step 4: Split Type */}
             {step === 4 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-400">
                 <div>
@@ -526,50 +579,58 @@ export default function MemberOnboarding() {
                     Step 4 of 6
                   </p>
                   <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-black text-slate-800">
-                    How many days per week?
+                    Choose your training split
                   </h2>
                   <p className="text-slate-400 mt-2">
-                    Choose what realistically fits your schedule.
+                    This determines how your weekly workouts are structured.
                   </p>
                 </div>
-                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8">
-                  <div className="text-center mb-8">
-                    <span className="text-8xl font-black bg-gradient-to-br from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-                      {data.daysPerWeek}
-                    </span>
-                    <p className="text-slate-400 mt-1 font-medium text-lg">
-                      days per week
-                    </p>
-                  </div>
-                  <div className="flex gap-2 sm:gap-3">
-                    {[1, 2, 3, 4, 5, 6, 7].map((day) => (
-                      <button
-                        key={day}
-                        onClick={() => set("daysPerWeek", day)}
-                        className={`flex-1 py-3 sm:py-4 rounded-xl text-sm sm:text-base font-bold transition-all duration-200 ${
-                          data.daysPerWeek >= day
-                            ? "bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-sm shadow-indigo-500/25"
-                            : "bg-slate-100 text-slate-400 hover:bg-slate-200"
-                        }`}
-                      >
-                        {day}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="mt-4 flex justify-between text-xs text-slate-400">
-                    <span>Light</span>
-                    <span>Full commitment</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-50 border border-indigo-100">
-                  <Clock className="w-4 h-4 text-indigo-400 shrink-0" />
-                  <p className="text-sm text-indigo-700 font-medium">
-                    {data.daysPerWeek <= 2
-                      ? "Great for beginners or busy schedules."
-                      : data.daysPerWeek <= 4
-                        ? "A solid, balanced training schedule."
-                        : "High commitment — make sure you allow recovery time."}
-                  </p>
+                <div className="space-y-3">
+                  {splitTypes.map(({ value, label, desc, days }) => (
+                    <button
+                      key={value}
+                      onClick={() => selectSplit(value)}
+                      className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
+                        data.splitType === value
+                          ? "border-indigo-500 ring-1 ring-indigo-500/20 shadow-md"
+                          : "border-slate-100 hover:border-slate-200 hover:shadow-sm"
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div
+                          className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all ${
+                            data.splitType === value
+                              ? "bg-indigo-500 text-white"
+                              : "bg-slate-100 text-slate-400"
+                          }`}
+                        >
+                          <LayoutGrid className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-800 text-base">
+                            {label}
+                          </p>
+                          <p className="text-sm text-slate-400 mt-0.5">
+                            {desc}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 shrink-0">
+                        <span
+                          className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+                            data.splitType === value
+                              ? "bg-indigo-100 text-indigo-600"
+                              : "bg-slate-100 text-slate-400"
+                          }`}
+                        >
+                          {days}×/week
+                        </span>
+                        {data.splitType === value && (
+                          <CheckCircle2 className="w-5 h-5 text-indigo-500" />
+                        )}
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </div>
             )}

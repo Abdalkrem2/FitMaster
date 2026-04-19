@@ -1,5 +1,6 @@
 package com.web.fitmaster.service.Imp;
 
+import com.web.fitmaster.exceptions.NotFoundException;
 import com.web.fitmaster.model.*;
 import com.web.fitmaster.model.enums.DifficultyLevel;
 import com.web.fitmaster.model.enums.FitnessLevel;
@@ -26,7 +27,7 @@ public class WorkoutPlanService {
     public WorkoutPlan getActivePlan(Long memberId) {
         return workoutPlanRepository
                 .findByMember_IdAndStatus(memberId, WorkoutPlanStatus.ACTIVE)
-                .orElseThrow(() -> new RuntimeException("No active workout plan found"));
+                .orElseThrow(() -> new NotFoundException("No active workout plan found"));
     }
 
     @Transactional
