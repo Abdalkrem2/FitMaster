@@ -34,7 +34,7 @@ public class WorkoutPlanService {
 
 
         MemberProfile profile = memberProfileRepository.findByMemberIdAndMember_IsActivatedTrueAndMember_DeletedFalse(memberId)
-                .orElseThrow(() -> new RuntimeException("Member profile not found"));
+                    .orElseThrow(() -> new RuntimeException("Member profile not found"));
 
 
         workoutPlanRepository

@@ -8,6 +8,9 @@ import com.web.fitmaster.model.WorkoutExercise;
 import com.web.fitmaster.model.WorkoutPlan;
 import org.springframework.stereotype.Component;
 
+import java.net.URL;
+import java.util.Base64;
+
 @Component
 public class WorkoutPlanMapper {
 
@@ -41,10 +44,16 @@ public class WorkoutPlanMapper {
     }
 
     private WorkoutExerciseResponse toExerciseResponse(WorkoutExercise we) {
+        String instructions = we.getExercise().getTranslations().stream()
+                .findFirst()
+                .map(t -> t.getInstructions())
+                .orElse("");
+
         String imageUrl = we.getExercise().getMedia().stream()
                 .map(em -> toImageUrl(em.getMediaAsset().getUrl()))
                 .findFirst()
                 .orElse(null);
+
 
         String exerciseName = we.getExercise().getTranslations().stream()
                 .findFirst()
@@ -55,9 +64,11 @@ public class WorkoutPlanMapper {
                 .id(we.getId())
                 .exerciseName(exerciseName)
                 .imageUrl(imageUrl)
+
                 .sets(we.getSets())
                 .reps(we.getReps())
                 .repsMax(we.getRepsMax())
+                .instructions(instructions)
                 .orderIndex(we.getOrderIndex())
                 .build();
     }

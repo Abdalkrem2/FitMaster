@@ -30,7 +30,11 @@
         <java.version>17</java.version>
     </properties>
     <dependencies>
-
+        <dependency>
+            <groupId>org.imgscalr</groupId>
+            <artifactId>imgscalr-lib</artifactId>
+            <version>4.2</version>
+        </dependency>
         <!-- Thymeleaf -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
