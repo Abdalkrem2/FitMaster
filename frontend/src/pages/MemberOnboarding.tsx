@@ -51,37 +51,37 @@ const splitTypes: {
   desc: string;
   days: number;
 }[] = [
-  {
-    value: "FULL_BODY",
-    label: "Full Body",
-    desc: "Train all muscles each session",
-    days: 3,
-  },
-  {
-    value: "UPPER_LOWER",
-    label: "Upper / Lower",
-    desc: "Alternate upper & lower body",
-    days: 4,
-  },
-  {
-    value: "BRO_SPLIT_4DAY",
-    label: "Bro Split 4-Day",
-    desc: "Chest+Tri / Back+Bi / Shoulders / Legs",
-    days: 4,
-  },
-  {
-    value: "BRO_SPLIT_5DAY",
-    label: "Bro Split 5-Day",
-    desc: "Chest / Back / Shoulders / Legs / Arms",
-    days: 5,
-  },
-  {
-    value: "PUSH_PULL_LEGS",
-    label: "Push Pull Legs",
-    desc: "Push / Pull / Legs × 2",
-    days: 6,
-  },
-];
+    {
+      value: "FULL_BODY",
+      label: "Full Body",
+      desc: "Train all muscles each session",
+      days: 3,
+    },
+    {
+      value: "UPPER_LOWER",
+      label: "Upper / Lower",
+      desc: "Alternate upper & lower body",
+      days: 4,
+    },
+    {
+      value: "BRO_SPLIT_4DAY",
+      label: "Bro Split 4-Day",
+      desc: "Chest+Tri / Back+Bi / Shoulders / Legs",
+      days: 4,
+    },
+    {
+      value: "BRO_SPLIT_5DAY",
+      label: "Bro Split 5-Day",
+      desc: "Chest / Back / Shoulders / Legs / Arms",
+      days: 5,
+    },
+    {
+      value: "PUSH_PULL_LEGS",
+      label: "Push Pull Legs",
+      desc: "Push / Pull / Legs × 2",
+      days: 6,
+    },
+  ];
 
 const TOTAL_STEPS = 6;
 
@@ -101,35 +101,35 @@ const goals: {
   icon: typeof Target;
   gradient: string;
 }[] = [
-  {
-    value: "MUSCLE_GAIN",
-    label: "Muscle Gain",
-    desc: "Build strength & size",
-    icon: TrendingUp,
-    gradient: "from-indigo-500 to-violet-600",
-  },
-  {
-    value: "WEIGHT_LOSS",
-    label: "Weight Loss",
-    desc: "Burn fat & get lean",
-    icon: Scale,
-    gradient: "from-rose-400 to-pink-600",
-  },
-  {
-    value: "ENDURANCE",
-    label: "Endurance",
-    desc: "Boost stamina & cardio",
-    icon: Zap,
-    gradient: "from-amber-400 to-orange-500",
-  },
-  {
-    value: "GENERAL_FITNESS",
-    label: "General Fitness",
-    desc: "Stay active & healthy",
-    icon: Target,
-    gradient: "from-emerald-400 to-teal-500",
-  },
-];
+    {
+      value: "MUSCLE_GAIN",
+      label: "Muscle Gain",
+      desc: "Build strength & size",
+      icon: TrendingUp,
+      gradient: "from-indigo-500 to-violet-600",
+    },
+    {
+      value: "WEIGHT_LOSS",
+      label: "Weight Loss",
+      desc: "Burn fat & get lean",
+      icon: Scale,
+      gradient: "from-rose-400 to-pink-600",
+    },
+    {
+      value: "ENDURANCE",
+      label: "Endurance",
+      desc: "Boost stamina & cardio",
+      icon: Zap,
+      gradient: "from-amber-400 to-orange-500",
+    },
+    {
+      value: "GENERAL_FITNESS",
+      label: "General Fitness",
+      desc: "Stay active & healthy",
+      icon: Target,
+      gradient: "from-emerald-400 to-teal-500",
+    },
+  ];
 
 const levels: {
   value: FitnessLevel;
@@ -137,25 +137,25 @@ const levels: {
   desc: string;
   years: string;
 }[] = [
-  {
-    value: "BEGINNER",
-    label: "Beginner",
-    desc: "Just getting started",
-    years: "0–1 year",
-  },
-  {
-    value: "INTERMEDIATE",
-    label: "Intermediate",
-    desc: "Know the basics well",
-    years: "1–3 years",
-  },
-  {
-    value: "ADVANCED",
-    label: "Advanced",
-    desc: "Training consistently",
-    years: "3+ years",
-  },
-];
+    {
+      value: "BEGINNER",
+      label: "Beginner",
+      desc: "Just getting started",
+      years: "0–1 year",
+    },
+    {
+      value: "INTERMEDIATE",
+      label: "Intermediate",
+      desc: "Know the basics well",
+      years: "1–3 years",
+    },
+    {
+      value: "ADVANCED",
+      label: "Advanced",
+      desc: "Training consistently",
+      years: "3+ years",
+    },
+  ];
 
 const styles: {
   value: TrainingStyle;
@@ -163,25 +163,25 @@ const styles: {
   desc: string;
   icon: typeof Dumbbell;
 }[] = [
-  {
-    value: "STRENGTH",
-    label: "Strength",
-    desc: "Heavy compound lifts",
-    icon: Dumbbell,
-  },
-  {
-    value: "HYPERTROPHY",
-    label: "Hypertrophy",
-    desc: "Muscle building focus",
-    icon: TrendingUp,
-  },
-  {
-    value: "CIRCUIT",
-    label: "Circuit",
-    desc: "High intensity rounds",
-    icon: Zap,
-  },
-];
+    {
+      value: "STRENGTH",
+      label: "Strength",
+      desc: "Heavy compound lifts",
+      icon: Dumbbell,
+    },
+    {
+      value: "HYPERTROPHY",
+      label: "Hypertrophy",
+      desc: "Muscle building focus",
+      icon: TrendingUp,
+    },
+    {
+      value: "CIRCUIT",
+      label: "Circuit",
+      desc: "High intensity rounds",
+      icon: Zap,
+    },
+  ];
 
 const injuryOptions: InjuryType[] = [
   "KNEE",
@@ -239,10 +239,11 @@ export default function MemberOnboarding() {
         fitnessLevel: data.fitnessLevel!,
         trainingStyle: data.trainingStyle!,
         splitType: data.splitType!,
-        injuries: data.injuries,
-        weight: data.weight,
-        height: data.height,
-        age: data.age,
+        injuries:
+          data.injuries && data.injuries.length > 0 ? data.injuries : null,
+        weight: data.weight ?? null,
+        height: data.height ?? null,
+        age: data.age ?? null,
       });
       navigate("/member-dashboard");
     } catch {
@@ -297,13 +298,12 @@ export default function MemberOnboarding() {
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${active ? "bg-white/15 border border-white/20" : ""}`}
                     >
                       <div
-                        className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                          done
+                        className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${done
                             ? "bg-white text-indigo-600"
                             : active
                               ? "bg-white/30 text-white border-2 border-white/60"
                               : "bg-white/10 text-indigo-300"
-                        }`}
+                          }`}
                       >
                         {done ? <CheckCircle2 className="w-4 h-4" /> : idx}
                       </div>
@@ -439,11 +439,10 @@ export default function MemberOnboarding() {
                     <button
                       key={value}
                       onClick={() => set("goal", value)}
-                      className={`relative flex items-start gap-4 p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
-                        data.goal === value
+                      className={`relative flex items-start gap-4 p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${data.goal === value
                           ? "border-transparent ring-2 ring-indigo-500 ring-offset-2 shadow-md"
                           : "border-slate-100 hover:border-slate-200 hover:shadow-sm"
-                      }`}
+                        }`}
                     >
                       <div
                         className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm shrink-0`}
@@ -482,19 +481,17 @@ export default function MemberOnboarding() {
                     <button
                       key={value}
                       onClick={() => set("fitnessLevel", value)}
-                      className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
-                        data.fitnessLevel === value
+                      className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${data.fitnessLevel === value
                           ? "border-indigo-500 ring-1 ring-indigo-500/20 shadow-md"
                           : "border-slate-100 hover:border-slate-200 hover:shadow-sm"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-4">
                         <div
-                          className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black transition-all ${
-                            data.fitnessLevel === value
+                          className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black transition-all ${data.fitnessLevel === value
                               ? "bg-indigo-500 text-white"
                               : "bg-slate-100 text-slate-400"
-                          }`}
+                            }`}
                         >
                           {value === "BEGINNER"
                             ? "1"
@@ -539,19 +536,17 @@ export default function MemberOnboarding() {
                     <button
                       key={value}
                       onClick={() => set("trainingStyle", value)}
-                      className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
-                        data.trainingStyle === value
+                      className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${data.trainingStyle === value
                           ? "border-violet-500 ring-1 ring-violet-500/20 shadow-md"
                           : "border-slate-100 hover:border-slate-200 hover:shadow-sm"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-4">
                         <div
-                          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
-                            data.trainingStyle === value
+                          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${data.trainingStyle === value
                               ? "bg-violet-500 text-white"
                               : "bg-slate-100 text-slate-400"
-                          }`}
+                            }`}
                         >
                           <Icon className="w-6 h-6" />
                         </div>
@@ -590,19 +585,17 @@ export default function MemberOnboarding() {
                     <button
                       key={value}
                       onClick={() => selectSplit(value)}
-                      className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
-                        data.splitType === value
+                      className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${data.splitType === value
                           ? "border-indigo-500 ring-1 ring-indigo-500/20 shadow-md"
                           : "border-slate-100 hover:border-slate-200 hover:shadow-sm"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-4">
                         <div
-                          className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all ${
-                            data.splitType === value
+                          className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all ${data.splitType === value
                               ? "bg-indigo-500 text-white"
                               : "bg-slate-100 text-slate-400"
-                          }`}
+                            }`}
                         >
                           <LayoutGrid className="w-5 h-5" />
                         </div>
@@ -617,11 +610,10 @@ export default function MemberOnboarding() {
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
                         <span
-                          className={`text-xs font-bold px-2.5 py-1 rounded-full ${
-                            data.splitType === value
+                          className={`text-xs font-bold px-2.5 py-1 rounded-full ${data.splitType === value
                               ? "bg-indigo-100 text-indigo-600"
                               : "bg-slate-100 text-slate-400"
-                          }`}
+                            }`}
                         >
                           {days}×/week
                         </span>
@@ -759,18 +751,16 @@ export default function MemberOnboarding() {
                           key={injury}
                           type="button"
                           onClick={() => toggleInjury(injury)}
-                          className={`flex flex-col items-center gap-2 px-2 py-3 rounded-xl border text-xs font-semibold transition-all duration-200 ${
-                            checked
+                          className={`flex flex-col items-center gap-2 px-2 py-3 rounded-xl border text-xs font-semibold transition-all duration-200 ${checked
                               ? "border-rose-200 bg-rose-50 text-rose-600"
                               : "border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200 hover:bg-slate-100"
-                          }`}
+                            }`}
                         >
                           <div
-                            className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
-                              checked
+                            className={`w-4 h-4 rounded border-2 flex items-center justify-center ${checked
                                 ? "bg-rose-500 border-rose-500"
                                 : "border-slate-300"
-                            }`}
+                              }`}
                           >
                             {checked && (
                               <svg

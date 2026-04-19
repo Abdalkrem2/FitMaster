@@ -24,6 +24,17 @@ public interface ExerciseRepository extends JpaRepository<Exercise, byte[]> {
             @Param("difficulty") DifficultyLevel difficulty
     );
 
+    @Query("""
+    SELECT DISTINCT e FROM Exercise e
+    JOIN FETCH e.exerciseMuscles em
+    WHERE em.muscle.id IN :muscleIds
+    AND em.role = com.web.fitmaster.model.enums.MuscleRole.PRIMARY
+    AND e.isArchived = false
+""")
+    List<Exercise> findByPrimaryMuscles(
+            @Param("muscleIds") List<Long> muscleIds
+    );
+
     // Query 2 — تجيب الـ translations
     @Query("""
     SELECT DISTINCT e FROM Exercise e

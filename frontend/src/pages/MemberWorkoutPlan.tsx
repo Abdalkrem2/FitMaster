@@ -20,6 +20,8 @@ import {
   Trophy,
   Flame,
   Clock,
+  Bookmark,
+  HelpCircle,
 } from "lucide-react";
 import { workoutPlanService } from "../services/workoutPlanService";
 import type {
@@ -94,120 +96,74 @@ function ExerciseCard({
 }: ExerciseCardProps) {
   return (
     <div
-      className={`relative bg-white rounded-2xl border-2 p-5 transition-all duration-200 ${
+      className={`relative bg-white rounded-xl border flex flex-col overflow-hidden transition-all duration-200 group ${
         isCompleted
-          ? "border-emerald-200 bg-emerald-50/30"
+          ? "border-emerald-200 opacity-75"
           : isCurrent
             ? "border-indigo-400 ring-2 ring-indigo-400/20 shadow-md"
             : "border-slate-100 hover:border-slate-200 hover:shadow-sm"
       }`}
     >
-      {/* Index badge + completed overlay */}
-      <div className="flex items-start gap-4">
-        <div
-          className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 ${
-            isCompleted
-              ? "bg-emerald-500 text-white"
-              : isCurrent
-                ? "bg-indigo-500 text-white"
-                : "bg-slate-100 text-slate-500"
-          }`}
-        >
-          {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : index + 1}
+      {/* Top icons */}
+      <div className="absolute top-2 left-2 right-2 flex justify-between z-10 pointer-events-none">
+        <div className="w-6 h-6 flex items-center justify-center text-slate-400 pointer-events-auto cursor-pointer hover:text-slate-700 transition-colors">
+          <Bookmark className="w-3.5 h-3.5" />
         </div>
+        <div 
+          onClick={(e) => { e.stopPropagation(); onView(); }}
+          className="w-6 h-6 flex items-center justify-center text-slate-400 pointer-events-auto cursor-pointer hover:text-slate-700 transition-colors"
+        >
+          <HelpCircle className="w-3.5 h-3.5" />
+        </div>
+      </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <h3
-                className={`font-bold text-base leading-tight ${isCompleted ? "text-slate-400 line-through" : "text-slate-800"}`}
-              >
-                {exercise.exerciseName}
-              </h3>
-              <p className="text-sm text-slate-400 mt-0.5">
-                {exercise.primaryMuscle || "Exercise"}
-              </p>
+      {/* Image container - clicks to view media */}
+      <div 
+        className="w-full aspect-square bg-white relative cursor-pointer flex items-center justify-center"
+        onClick={onView}
+      >
+        {exercise.imageUrl || (exercise.images?.length || 0) > 0 ? (
+          <img 
+            src={exercise.imageUrl || exercise.images?.[0]?.url} 
+            alt={exercise.exerciseName}
+            className="w-[85%] h-[85%] object-contain group-hover:scale-105 transition-transform duration-500" 
+          />
+        ) : (
+          <Dumbbell className="w-10 h-10 text-slate-200" />
+        )}
+
+        {/* Status badges overlay */}
+        {isCompleted && (
+          <div className="absolute inset-0 bg-emerald-500/10 flex items-center justify-center backdrop-blur-[1px]">
+            <div className="bg-emerald-500 text-white p-3 rounded-full shadow-lg">
+              <CheckCircle2 className="w-6 h-6" />
             </div>
-            {exercise.difficulty && (
-              <span
-                className={`text-xs font-semibold px-2 py-0.5 rounded-full border shrink-0 ${DIFF_STYLES[exercise.difficulty]}`}
-              >
-                {exercise.difficulty}
-              </span>
-            )}
           </div>
+        )}
+      </div>
 
-          {/* Sets × Reps */}
-          <div className="mt-2 flex items-center gap-1.5">
-            <span className="text-sm font-black text-indigo-600">
-              {exercise.sets}
-            </span>
-            <span className="text-sm text-slate-400">×</span>
-            <span className="text-sm font-black text-indigo-600">
-              {exercise.reps === exercise.repsMax
-                ? exercise.reps
-                : `${exercise.reps}–${exercise.repsMax}`}
-            </span>
-            <span className="text-sm text-slate-400">reps</span>
-            {exercise.durationSeconds && (
-              <span className="ml-2 text-xs text-slate-400 flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                {exercise.durationSeconds}s
-              </span>
-            )}
-          </div>
+      {/* Content */}
+      <div className="p-3 pt-2 flex-1 flex flex-col border-t border-slate-50">
+        <h3 className={`font-semibold text-sm leading-tight text-slate-800 line-clamp-1 mb-0.5 ${isCompleted ? 'text-slate-500' : ''}`}>
+          {exercise.exerciseName}
+        </h3>
+        <p className="text-[11px] text-slate-400 truncate">
+          {exercise.primaryMuscle || "Exercise"}
+        </p>
 
-          {/* Muscles + Equipment */}
-          {(exercise.targetMuscles?.length || 0) > 0 ||
-          (exercise.equipment?.length || 0) > 0 ? (
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {(exercise.targetMuscles || []).slice(0, 3).map((m) => (
-                <span
-                  key={m}
-                  className="text-xs px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 font-medium"
-                >
-                  {m}
-                </span>
-              ))}
-              {(exercise.equipment || []).slice(0, 2).map((eq) => (
-                <span
-                  key={eq}
-                  className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 font-medium"
-                >
-                  {eq}
-                </span>
-              ))}
-            </div>
-          ) : null}
-
-          {/* Action buttons */}
-          <div className="mt-4 flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onView}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all"
-            >
-              <ImageIcon className="w-3.5 h-3.5" />
-              {exercise.imageUrl || (exercise.images?.length || 0) > 0
-                ? "View"
-                : "Details"}
-            </button>
-            {isTracking && !isCompleted && (
-              <button
+        {/* Tracking Action (if active) */}
+        {isTracking && !isCompleted && isCurrent && (
+          <div className="mt-auto pt-3">
+             <button
                 type="button"
-                onClick={onComplete}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-                  isCurrent
-                    ? "bg-indigo-500 text-white hover:bg-indigo-600 shadow-sm shadow-indigo-500/25"
-                    : "border border-slate-200 text-slate-600 hover:bg-slate-50"
-                }`}
+                onClick={(e) => { e.stopPropagation(); onComplete(); }}
+                className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-indigo-500 text-white text-[11px] font-bold hover:bg-indigo-600 transition-all shadow-sm shadow-indigo-500/25"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 Mark Done
               </button>
-            )}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -992,29 +948,31 @@ export default function MemberWorkoutPlan() {
               </div>
 
               {/* Exercise cards */}
-              {currentDay.exercises
-                .sort((a, b) => a.orderIndex - b.orderIndex)
-                .map((exercise, exIdx) => {
-                  const isDone = completedIds.has(exercise.id);
-                  const isCurrent =
-                    isTracking &&
-                    !isDone &&
-                    currentDay.exercises
-                      .filter((ex) => !completedIds.has(ex.id))
-                      .findIndex((ex) => ex.id === exercise.id) === 0;
-                  return (
-                    <ExerciseCard
-                      key={exercise.id}
-                      exercise={exercise}
-                      index={exIdx}
-                      isCurrent={isCurrent}
-                      isCompleted={isDone}
-                      isTracking={isTracking}
-                      onView={() => openMedia(activeDay, exIdx)}
-                      onComplete={() => completeExercise(exercise.id)}
-                    />
-                  );
-                })}
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {currentDay.exercises
+                  .sort((a, b) => a.orderIndex - b.orderIndex)
+                  .map((exercise, exIdx) => {
+                    const isDone = completedIds.has(exercise.id);
+                    const isCurrent =
+                      isTracking &&
+                      !isDone &&
+                      currentDay.exercises
+                        .filter((ex) => !completedIds.has(ex.id))
+                        .findIndex((ex) => ex.id === exercise.id) === 0;
+                    return (
+                      <ExerciseCard
+                        key={exercise.id}
+                        exercise={exercise}
+                        index={exIdx}
+                        isCurrent={isCurrent}
+                        isCompleted={isDone}
+                        isTracking={isTracking}
+                        onView={() => openMedia(activeDay, exIdx)}
+                        onComplete={() => completeExercise(exercise.id)}
+                      />
+                    );
+                  })}
+              </div>
             </div>
           )}
         </>

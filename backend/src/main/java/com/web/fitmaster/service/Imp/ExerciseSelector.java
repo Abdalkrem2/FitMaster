@@ -36,6 +36,11 @@ public class ExerciseSelector {
             List<Exercise> candidates = exerciseRepository
                     .findByPrimaryMusclesAndDifficulty(muscleIds, difficulty);
 
+            // Fallback: If no exercises match the specific difficulty for this muscle, get any difficulty
+            if (candidates.isEmpty()) {
+                candidates = exerciseRepository.findByPrimaryMuscles(muscleIds);
+            }
+
 // جيب الـ translations والـ media بشكل منفصل
             if (!candidates.isEmpty()) {
                 exerciseRepository.fetchTranslations(candidates);

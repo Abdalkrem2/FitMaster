@@ -70,12 +70,12 @@ export interface UpdateMemberRequest {
 }
 
 export interface UpdateMemberProfileRequest {
-  goal: FitnessGoal;
+  goal?: FitnessGoal;
   fitnessLevel: FitnessLevel;
-  injuries?: InjuryType[];
-  weight?: number;
-  height?: number;
-  age?: number;
+  injuries?: InjuryType[] | null;
+  weight?: number | null;
+  height?: number | null;
+  age?: number | null;
   trainingStyle?: TrainingStyle;
   splitType?: SplitType;
 }

@@ -23,6 +23,8 @@ public class WorkoutPlanController {
     private final WorkoutPlanMapper workoutPlanMapper;
     private final AuthUtil authUtil;
     private final PdfService pdfService;
+
+
     @PostMapping("/generate")
     @PreAuthorize("hasRole('MEMBER')")
     public ResponseEntity<WorkoutPlanDTOs.WorkoutPlanResponse> generate() {
