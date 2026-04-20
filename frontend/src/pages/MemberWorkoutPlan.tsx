@@ -22,6 +22,7 @@ import {
   Clock,
   Bookmark,
   HelpCircle,
+  Download,
 } from "lucide-react";
 import { workoutPlanService } from "../services/workoutPlanService";
 import type {
@@ -109,8 +110,11 @@ function ExerciseCard({
         <div className="w-6 h-6 flex items-center justify-center text-slate-400 pointer-events-auto cursor-pointer hover:text-slate-700 transition-colors">
           <Bookmark className="w-3.5 h-3.5" />
         </div>
-        <div 
-          onClick={(e) => { e.stopPropagation(); onView(); }}
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            onView();
+          }}
           className="w-6 h-6 flex items-center justify-center text-slate-400 pointer-events-auto cursor-pointer hover:text-slate-700 transition-colors"
         >
           <HelpCircle className="w-3.5 h-3.5" />
@@ -118,15 +122,15 @@ function ExerciseCard({
       </div>
 
       {/* Image container - clicks to view media */}
-      <div 
+      <div
         className="w-full aspect-square bg-white relative cursor-pointer flex items-center justify-center"
         onClick={onView}
       >
         {exercise.imageUrl || (exercise.images?.length || 0) > 0 ? (
-          <img 
-            src={exercise.imageUrl || exercise.images?.[0]?.url} 
+          <img
+            src={exercise.imageUrl || exercise.images?.[0]?.url}
             alt={exercise.exerciseName}
-            className="w-[85%] h-[85%] object-contain group-hover:scale-105 transition-transform duration-500" 
+            className="w-[85%] h-[85%] object-contain group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
           <Dumbbell className="w-10 h-10 text-slate-200" />
@@ -144,7 +148,9 @@ function ExerciseCard({
 
       {/* Content */}
       <div className="p-3 pt-2 flex-1 flex flex-col border-t border-slate-50">
-        <h3 className={`font-semibold text-sm leading-tight text-slate-800 line-clamp-1 mb-0.5 ${isCompleted ? 'text-slate-500' : ''}`}>
+        <h3
+          className={`font-semibold text-sm leading-tight text-slate-800 line-clamp-1 mb-0.5 ${isCompleted ? "text-slate-500" : ""}`}
+        >
           {exercise.exerciseName}
         </h3>
         <p className="text-[11px] text-slate-400 truncate">
@@ -154,14 +160,17 @@ function ExerciseCard({
         {/* Tracking Action (if active) */}
         {isTracking && !isCompleted && isCurrent && (
           <div className="mt-auto pt-3">
-             <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); onComplete(); }}
-                className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-indigo-500 text-white text-[11px] font-bold hover:bg-indigo-600 transition-all shadow-sm shadow-indigo-500/25"
-              >
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                Mark Done
-              </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onComplete();
+              }}
+              className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-indigo-500 text-white text-[11px] font-bold hover:bg-indigo-600 transition-all shadow-sm shadow-indigo-500/25"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Mark Done
+            </button>
           </div>
         )}
       </div>
@@ -530,6 +539,7 @@ export default function MemberWorkoutPlan() {
   const [showRegen, setShowRegen] = useState(false);
   const [regenLoading, setRegenLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [mediaExercise, setMediaExercise] = useState<{
     exercise: WorkoutExercise;
     dayIdx: number;
@@ -605,6 +615,27 @@ export default function MemberWorkoutPlan() {
   const handleGenerateFirst = async () => {
     setGenerating(true);
     await doGenerate();
+  };
+
+  const handleDownloadPlan = async () => {
+    if (!plan) return;
+    setDownloading(true);
+    setError(null);
+    try {
+      const pdfBlob = await workoutPlanService.downloadPlanPdf();
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${plan.name}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setError("Unable to download the plan. Please try again.");
+    } finally {
+      setDownloading(false);
+    }
   };
 
   // ── Workout tracking ────────────────────────────────────────────────────────
@@ -882,6 +913,14 @@ export default function MemberWorkoutPlan() {
                       </button>
                     </>
                   )}
+                  <button
+                    onClick={handleDownloadPlan}
+                    disabled={downloading}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all disabled:opacity-70"
+                  >
+                    <Download className="w-4 h-4" />
+                    {downloading ? "Downloading…" : "Download Plan"}
+                  </button>
                 </div>
               </div>
             </div>

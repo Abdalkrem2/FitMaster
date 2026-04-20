@@ -12,6 +12,13 @@ export const workoutPlanService = {
     return data;
   },
 
+  async downloadPlanPdf(): Promise<Blob> {
+    const response = await api.get('/workout-plans/active/pdf', {
+      responseType: 'blob',
+    });
+    return new Blob([response.data], { type: 'application/pdf' });
+  },
+
   saveProgress(progress: WorkoutProgress): void {
     localStorage.setItem(`workout_progress_${progress.planId}`, JSON.stringify(progress));
   },
