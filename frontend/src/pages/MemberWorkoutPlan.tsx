@@ -74,6 +74,23 @@ function timeAgo(iso: string) {
   return `${days} days ago`;
 }
 
+// ─── Image Protection Helpers ─────────────────────────────────────────────────
+
+function handleImageContextMenu(e: React.MouseEvent) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
+function handleImageCopy(e: React.ClipboardEvent) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
+function handleImageDragStart(e: React.DragEvent) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
 // ─── ExerciseCard ─────────────────────────────────────────────────────────────
 
 interface ExerciseCardProps {
@@ -123,14 +140,32 @@ function ExerciseCard({
 
       {/* Image container - clicks to view media */}
       <div
-        className="w-full aspect-square bg-white relative cursor-pointer flex items-center justify-center"
+        className="w-full aspect-square bg-white relative cursor-pointer flex items-center justify-center select-none"
         onClick={onView}
+        onContextMenu={handleImageContextMenu}
+        onCopy={handleImageCopy}
+        style={
+          {
+            userSelect: "none",
+            WebkitUserSelect: "none",
+          } as React.CSSProperties
+        }
       >
         {exercise.imageUrl || (exercise.images?.length || 0) > 0 ? (
           <img
             src={exercise.imageUrl || exercise.images?.[0]?.url}
             alt={exercise.exerciseName}
-            className="w-[85%] h-[85%] object-contain group-hover:scale-105 transition-transform duration-500"
+            draggable={false}
+            onContextMenu={handleImageContextMenu}
+            onCopy={handleImageCopy}
+            onDragStart={handleImageDragStart}
+            className="w-[85%] h-[85%] object-contain group-hover:scale-105 transition-transform duration-500 select-none pointer-events-none"
+            style={
+              {
+                userSelect: "none",
+                WebkitUserSelect: "none",
+              } as React.CSSProperties
+            }
           />
         ) : (
           <Dumbbell className="w-10 h-10 text-slate-200" />
@@ -244,13 +279,31 @@ function MediaViewerModal({
         <div className="p-6 space-y-5">
           {/* Image/Video Gallery */}
           {media.length > 0 ? (
-            <div>
+            <div
+              onContextMenu={handleImageContextMenu}
+              onCopy={handleImageCopy}
+              style={
+                {
+                  userSelect: "none",
+                  WebkitUserSelect: "none",
+                } as React.CSSProperties
+              }
+            >
               <div className="w-full aspect-video bg-slate-900 rounded-2xl overflow-hidden relative">
                 {media[imgIdx]?.type === "VIDEO" ? (
                   <video
                     key={media[imgIdx]?.url}
                     src={media[imgIdx]?.url}
-                    className="w-full h-full object-contain"
+                    draggable={false}
+                    onContextMenu={handleImageContextMenu}
+                    onDragStart={handleImageDragStart}
+                    className="w-full h-full object-contain select-none pointer-events-none"
+                    style={
+                      {
+                        userSelect: "none",
+                        WebkitUserSelect: "none",
+                      } as React.CSSProperties
+                    }
                     controls
                     autoPlay
                     loop
@@ -260,7 +313,17 @@ function MediaViewerModal({
                   <img
                     src={media[imgIdx]?.url}
                     alt={exercise.exerciseName}
-                    className="w-full h-full object-contain"
+                    draggable={false}
+                    onContextMenu={handleImageContextMenu}
+                    onCopy={handleImageCopy}
+                    onDragStart={handleImageDragStart}
+                    className="w-full h-full object-contain select-none pointer-events-none"
+                    style={
+                      {
+                        userSelect: "none",
+                        WebkitUserSelect: "none",
+                      } as React.CSSProperties
+                    }
                   />
                 )}
                 {/* Prev/Next on image */}
@@ -298,7 +361,17 @@ function MediaViewerModal({
                       <img
                         src={m.url}
                         alt=""
-                        className="w-full h-full object-cover"
+                        draggable={false}
+                        onContextMenu={handleImageContextMenu}
+                        onCopy={handleImageCopy}
+                        onDragStart={handleImageDragStart}
+                        className="w-full h-full object-cover select-none"
+                        style={
+                          {
+                            userSelect: "none",
+                            WebkitUserSelect: "none",
+                          } as React.CSSProperties
+                        }
                       />
                     </button>
                   ))}
