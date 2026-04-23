@@ -129,6 +129,8 @@ public class MemberServiceImp implements MemberService {
                 .startDate(calculateStartDate(id))
                 .profilePicture(member.getProfilePicture())
                 .memberships(memberships.stream().map(this::mapMembershipToDTO).collect(Collectors.toList()))
+                .dailyStreak(member.getDailyStreak() != null ? member.getDailyStreak() : 0)
+                .streakLastUpdated(member.getStreakLastUpdated())
                 .build();
 
     }

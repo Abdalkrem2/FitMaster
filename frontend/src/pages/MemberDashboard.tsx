@@ -92,7 +92,8 @@ const MemberDashboard: React.FC = () => {
           {
             icon: Flame,
             label: "Day Streak",
-            value: "—",
+            value:
+              data?.dailyStreak !== undefined ? `${data.dailyStreak}` : "0",
             color: "text-orange-500",
             bg: "bg-orange-50",
             border: "border-orange-100",

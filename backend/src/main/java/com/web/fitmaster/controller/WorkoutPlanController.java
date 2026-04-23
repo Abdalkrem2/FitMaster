@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/workout-plans")
@@ -39,6 +36,42 @@ public class WorkoutPlanController {
         Long memberId = authUtil.loggedInUserId();
         WorkoutPlan plan = workoutPlanService.getActivePlan(memberId);
         return ResponseEntity.ok(workoutPlanMapper.toResponse(plan));
+    }
+
+    @PostMapping("/{planId}/renew")
+    @PreAuthorize("hasRole('MEMBER')")
+    public ResponseEntity<WorkoutPlanDTOs.WorkoutPlanResponse> renewPlan(
+            @PathVariable Long planId,
+            @RequestBody WorkoutPlanDTOs.PlanRenewalRequest request) {
+        Long memberId = authUtil.loggedInUserId();
+        // Verify ownership
+        WorkoutPlan plan = workoutPlanService.getActivePlan(memberId);
+        if (!plan.getId().equals(planId)) {
+            return ResponseEntity.status(403).build();
+        }
+
+        WorkoutPlan renewedPlan = workoutPlanService.renewPlan(
+                planId,
+                request.getChoice(),
+                request.getNewSplit() != null ? request.getNewSplit().name() : null
+        );
+        return ResponseEntity.ok(workoutPlanMapper.toResponse(renewedPlan));
+    }
+
+    @PostMapping("/{planId}/days/{dayNumber}/complete")
+    @PreAuthorize("hasRole('MEMBER')")
+    public ResponseEntity<Void> markDayCompleted(
+            @PathVariable Long planId,
+            @PathVariable Integer dayNumber) {
+        Long memberId = authUtil.loggedInUserId();
+        // Verify ownership
+        WorkoutPlan plan = workoutPlanService.getActivePlan(memberId);
+        if (!plan.getId().equals(planId)) {
+            return ResponseEntity.status(403).build();
+        }
+
+        workoutPlanService.markDayCompleted(planId, dayNumber);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/active/pdf")

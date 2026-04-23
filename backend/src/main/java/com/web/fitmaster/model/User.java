@@ -42,6 +42,12 @@ public class User {
     @Column(name = "is_activated")
     private Boolean isActivated = false;
 
+    @Column(name = "daily_streak")
+    private Integer dailyStreak = 0;
+
+    @Column(name = "streak_last_updated")
+    private LocalDateTime streakLastUpdated;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

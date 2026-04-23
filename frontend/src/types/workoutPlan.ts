@@ -53,7 +53,19 @@ export interface WorkoutPlan {
   status: "ACTIVE" | "ARCHIVED";
   createdAt: string;
   days: WorkoutDay[];
+  planStartDate?: string;
+  planEndDate?: string;
+  completedDaysCount?: number;
+  totalDaysInPlan?: number;
+  isWeekEnded?: boolean;
+  dailyStreak?: number;
+  streakLastUpdated?: string;
 }
+
+export type RenewalChoice =
+  | "SAME_PLAN"
+  | "SAME_SPLIT_NEW_EXERCISES"
+  | "NEW_SPLIT";
 
 export interface SetProgress {
   setNumber: number;

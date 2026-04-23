@@ -44,8 +44,23 @@ public class WorkoutPlan {
     @JoinColumn(name = "member_id", nullable = false)
     private User member;
 
-    @OneToMany(mappedBy = "workoutPlan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "workoutPlan", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<WorkoutDay> workoutDays;
+
+    @Column(name = "plan_start_date")
+    private LocalDateTime planStartDate;
+
+    @Column(name = "plan_end_date")
+    private LocalDateTime planEndDate;
+
+    @Column(name = "completed_days_count", columnDefinition = "INT DEFAULT 0")
+    private Integer completedDaysCount = 0;
+
+    @Column(name = "total_days_in_plan")
+    private Integer totalDaysInPlan;
+
+    @Transient
+    private Boolean isWeekEnded = false;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -53,6 +68,26 @@ public class WorkoutPlan {
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();
+        if (planStartDate == null) {
+            planStartDate = LocalDateTime.now();
+        }
+        if (totalDaysInPlan != null && planEndDate == null) {
+            // Set end date to next Saturday 23:59
+            planEndDate = calculateNextSaturdayEnd();
+        }
+        if (completedDaysCount == null) {
+            completedDaysCount = 0;
+        }
+    }
+
+    private LocalDateTime calculateNextSaturdayEnd() {
+        LocalDateTime now = LocalDateTime.now();
+        // Find next Saturday (day of week 6)
+        int daysUntilSaturday = (6 - now.getDayOfWeek().getValue() + 7) % 7;
+        if (daysUntilSaturday == 0) {
+            daysUntilSaturday = 7; // If today is Saturday, go to next Saturday
+        }
+        return now.plusDays(daysUntilSaturday).withHour(23).withMinute(59).withSecond(0);
     }
 
 

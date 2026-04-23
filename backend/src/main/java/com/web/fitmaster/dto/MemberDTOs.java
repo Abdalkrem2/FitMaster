@@ -83,6 +83,8 @@ public class MemberDTOs {
         private String profilePicture;
         private List<MembershipDTOs.MembershipHistory> memberships;
         private String addedByName;
+        private Integer dailyStreak;
+        private LocalDateTime streakLastUpdated;
     }
 
     @Data

@@ -54,6 +54,8 @@ export interface MemberDetails extends Member {
   profilePicture: string;
   profile?: MemberProfile;
   memberships: Membership[];
+  dailyStreak?: number;
+  streakLastUpdated?: string;
 }
 
 export interface CreateMemberRequest {

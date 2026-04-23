@@ -1,26 +1,49 @@
-import { api } from './api';
-import type { WorkoutPlan, WorkoutProgress } from '../types/workoutPlan';
+import { api } from "./api";
+import type {
+  WorkoutPlan,
+  WorkoutProgress,
+  RenewalChoice,
+} from "../types/workoutPlan";
 
 export const workoutPlanService = {
   async getActivePlan(): Promise<WorkoutPlan> {
-    const { data } = await api.get('/workout-plans/active');
+    const { data } = await api.get("/workout-plans/active");
     return data;
   },
 
   async generateNewPlan(): Promise<WorkoutPlan> {
-    const { data } = await api.post('/workout-plans/generate', {});
+    const { data } = await api.post("/workout-plans/generate", {});
     return data;
   },
 
-  async downloadPlanPdf(): Promise<Blob> {
-    const response = await api.get('/workout-plans/active/pdf', {
-      responseType: 'blob',
+  async renewPlan(
+    planId: number,
+    choice: RenewalChoice,
+    newSplit?: string,
+  ): Promise<WorkoutPlan> {
+    const { data } = await api.post(`/workout-plans/${planId}/renew`, {
+      choice,
+      newSplit,
     });
-    return new Blob([response.data], { type: 'application/pdf' });
+    return data;
+  },
+
+  async markDayCompleted(planId: number, dayNumber: number): Promise<void> {
+    await api.post(`/workout-plans/${planId}/days/${dayNumber}/complete`, {});
+  },
+
+  async downloadPlanPdf(): Promise<Blob> {
+    const response = await api.get("/workout-plans/active/pdf", {
+      responseType: "blob",
+    });
+    return new Blob([response.data], { type: "application/pdf" });
   },
 
   saveProgress(progress: WorkoutProgress): void {
-    localStorage.setItem(`workout_progress_${progress.planId}`, JSON.stringify(progress));
+    localStorage.setItem(
+      `workout_progress_${progress.planId}`,
+      JSON.stringify(progress),
+    );
   },
 
   loadProgress(planId: number): WorkoutProgress | null {

@@ -23,6 +23,13 @@ public class WorkoutPlanDTOs {
         private FitnessLevel level;
         private WorkoutPlanStatus status;
         private LocalDateTime createdAt;
+        private LocalDateTime planStartDate;
+        private LocalDateTime planEndDate;
+        private Integer completedDaysCount;
+        private Integer totalDaysInPlan;
+        private Boolean isWeekEnded;
+        private Integer dailyStreak;
+        private LocalDateTime streakLastUpdated;
         private List<WorkoutDayResponse> days;
     }
 
@@ -49,6 +56,15 @@ public class WorkoutPlanDTOs {
         private Integer reps;
         private Integer repsMax;
         private Integer orderIndex;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class PlanRenewalRequest {
+        private String choice; // SAME_PLAN, SAME_SPLIT_NEW_EXERCISES, NEW_SPLIT
+        private SplitType newSplit; // Only used if choice is NEW_SPLIT
     }
 
 }
