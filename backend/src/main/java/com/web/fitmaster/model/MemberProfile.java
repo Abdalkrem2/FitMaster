@@ -43,12 +43,23 @@ public class MemberProfile {
     @Column(name = "injury_type")
     private List< InjuryType> injuries;
 
+    @Enumerated(EnumType.STRING)
+    private TrainingStyle trainingStyle;
+
+//التغدية
     private Double weight;
     private Double height;
     private Integer age;
+    private boolean hasDiabetes;
+    private boolean hasHeartConditions;
+    private boolean hasHypertension;
 
+    @ElementCollection
     @Enumerated(EnumType.STRING)
-    private TrainingStyle trainingStyle;
+    @CollectionTable(name = "member_allergies", joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "allergy_type")
+    private List<AllergyType> allergies;
+
 
 
 }

@@ -62,6 +62,10 @@ public class MemberServiceImp implements MemberService {
         profile.setInjuries(request.getInjuries());
         profile.setWeight(request.getWeight());
         profile.setHeight(request.getHeight());
+        profile.setAllergies(request.getAllergies());
+        profile.setHasDiabetes(request.isHasDiabetes());
+        profile.setHasHeartConditions(request.isHasHeartConditions());
+        profile.setHasHypertension(request.isHasHypertension());
         profile.setAge(request.getAge());
         profile.setTrainingStyle(request.getTrainingStyle());
 
@@ -80,6 +84,10 @@ public class MemberServiceImp implements MemberService {
                 .weight(profile.getWeight())
                 .height(profile.getHeight())
                 .age(profile.getAge())
+                .hasHypertension(profile.isHasHypertension())
+                .hasDiabetes(profile.isHasDiabetes())
+                .hasHeartConditions(profile.isHasHeartConditions())
+                .allergies(profile.getAllergies())
                 .trainingStyle(profile.getTrainingStyle())
                 .build();
     }
