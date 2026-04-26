@@ -22,6 +22,7 @@ import {
   Clock,
   Bookmark,
   HelpCircle,
+  Download,
 } from "lucide-react";
 import { workoutPlanService } from "../services/workoutPlanService";
 import type {
@@ -73,6 +74,23 @@ function timeAgo(iso: string) {
   return `${days} days ago`;
 }
 
+// ─── Image Protection Helpers ─────────────────────────────────────────────────
+
+function handleImageContextMenu(e: React.MouseEvent) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
+function handleImageCopy(e: React.ClipboardEvent) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
+function handleImageDragStart(e: React.DragEvent) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
 // ─── ExerciseCard ─────────────────────────────────────────────────────────────
 
 interface ExerciseCardProps {
@@ -109,8 +127,11 @@ function ExerciseCard({
         <div className="w-6 h-6 flex items-center justify-center text-slate-400 pointer-events-auto cursor-pointer hover:text-slate-700 transition-colors">
           <Bookmark className="w-3.5 h-3.5" />
         </div>
-        <div 
-          onClick={(e) => { e.stopPropagation(); onView(); }}
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            onView();
+          }}
           className="w-6 h-6 flex items-center justify-center text-slate-400 pointer-events-auto cursor-pointer hover:text-slate-700 transition-colors"
         >
           <HelpCircle className="w-3.5 h-3.5" />
@@ -118,15 +139,33 @@ function ExerciseCard({
       </div>
 
       {/* Image container - clicks to view media */}
-      <div 
-        className="w-full aspect-square bg-white relative cursor-pointer flex items-center justify-center"
+      <div
+        className="w-full aspect-square bg-white relative cursor-pointer flex items-center justify-center select-none"
         onClick={onView}
+        onContextMenu={handleImageContextMenu}
+        onCopy={handleImageCopy}
+        style={
+          {
+            userSelect: "none",
+            WebkitUserSelect: "none",
+          } as React.CSSProperties
+        }
       >
         {exercise.imageUrl || (exercise.images?.length || 0) > 0 ? (
-          <img 
-            src={exercise.imageUrl || exercise.images?.[0]?.url} 
+          <img
+            src={exercise.imageUrl || exercise.images?.[0]?.url}
             alt={exercise.exerciseName}
-            className="w-[85%] h-[85%] object-contain group-hover:scale-105 transition-transform duration-500" 
+            draggable={false}
+            onContextMenu={handleImageContextMenu}
+            onCopy={handleImageCopy}
+            onDragStart={handleImageDragStart}
+            className="w-[85%] h-[85%] object-contain group-hover:scale-105 transition-transform duration-500 select-none pointer-events-none"
+            style={
+              {
+                userSelect: "none",
+                WebkitUserSelect: "none",
+              } as React.CSSProperties
+            }
           />
         ) : (
           <Dumbbell className="w-10 h-10 text-slate-200" />
@@ -144,7 +183,9 @@ function ExerciseCard({
 
       {/* Content */}
       <div className="p-3 pt-2 flex-1 flex flex-col border-t border-slate-50">
-        <h3 className={`font-semibold text-sm leading-tight text-slate-800 line-clamp-1 mb-0.5 ${isCompleted ? 'text-slate-500' : ''}`}>
+        <h3
+          className={`font-semibold text-sm leading-tight text-slate-800 line-clamp-1 mb-0.5 ${isCompleted ? "text-slate-500" : ""}`}
+        >
           {exercise.exerciseName}
         </h3>
         <p className="text-[11px] text-slate-400 truncate">
@@ -154,14 +195,17 @@ function ExerciseCard({
         {/* Tracking Action (if active) */}
         {isTracking && !isCompleted && isCurrent && (
           <div className="mt-auto pt-3">
-             <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); onComplete(); }}
-                className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-indigo-500 text-white text-[11px] font-bold hover:bg-indigo-600 transition-all shadow-sm shadow-indigo-500/25"
-              >
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                Mark Done
-              </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onComplete();
+              }}
+              className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-indigo-500 text-white text-[11px] font-bold hover:bg-indigo-600 transition-all shadow-sm shadow-indigo-500/25"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Mark Done
+            </button>
           </div>
         )}
       </div>
@@ -235,13 +279,31 @@ function MediaViewerModal({
         <div className="p-6 space-y-5">
           {/* Image/Video Gallery */}
           {media.length > 0 ? (
-            <div>
+            <div
+              onContextMenu={handleImageContextMenu}
+              onCopy={handleImageCopy}
+              style={
+                {
+                  userSelect: "none",
+                  WebkitUserSelect: "none",
+                } as React.CSSProperties
+              }
+            >
               <div className="w-full aspect-video bg-slate-900 rounded-2xl overflow-hidden relative">
                 {media[imgIdx]?.type === "VIDEO" ? (
                   <video
                     key={media[imgIdx]?.url}
                     src={media[imgIdx]?.url}
-                    className="w-full h-full object-contain"
+                    draggable={false}
+                    onContextMenu={handleImageContextMenu}
+                    onDragStart={handleImageDragStart}
+                    className="w-full h-full object-contain select-none pointer-events-none"
+                    style={
+                      {
+                        userSelect: "none",
+                        WebkitUserSelect: "none",
+                      } as React.CSSProperties
+                    }
                     controls
                     autoPlay
                     loop
@@ -251,7 +313,17 @@ function MediaViewerModal({
                   <img
                     src={media[imgIdx]?.url}
                     alt={exercise.exerciseName}
-                    className="w-full h-full object-contain"
+                    draggable={false}
+                    onContextMenu={handleImageContextMenu}
+                    onCopy={handleImageCopy}
+                    onDragStart={handleImageDragStart}
+                    className="w-full h-full object-contain select-none pointer-events-none"
+                    style={
+                      {
+                        userSelect: "none",
+                        WebkitUserSelect: "none",
+                      } as React.CSSProperties
+                    }
                   />
                 )}
                 {/* Prev/Next on image */}
@@ -289,7 +361,17 @@ function MediaViewerModal({
                       <img
                         src={m.url}
                         alt=""
-                        className="w-full h-full object-cover"
+                        draggable={false}
+                        onContextMenu={handleImageContextMenu}
+                        onCopy={handleImageCopy}
+                        onDragStart={handleImageDragStart}
+                        className="w-full h-full object-cover select-none"
+                        style={
+                          {
+                            userSelect: "none",
+                            WebkitUserSelect: "none",
+                          } as React.CSSProperties
+                        }
                       />
                     </button>
                   ))}
@@ -530,6 +612,7 @@ export default function MemberWorkoutPlan() {
   const [showRegen, setShowRegen] = useState(false);
   const [regenLoading, setRegenLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [mediaExercise, setMediaExercise] = useState<{
     exercise: WorkoutExercise;
     dayIdx: number;
@@ -605,6 +688,27 @@ export default function MemberWorkoutPlan() {
   const handleGenerateFirst = async () => {
     setGenerating(true);
     await doGenerate();
+  };
+
+  const handleDownloadPlan = async () => {
+    if (!plan) return;
+    setDownloading(true);
+    setError(null);
+    try {
+      const pdfBlob = await workoutPlanService.downloadPlanPdf();
+      const url = URL.createObjectURL(pdfBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${plan.name}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setError("Unable to download the plan. Please try again.");
+    } finally {
+      setDownloading(false);
+    }
   };
 
   // ── Workout tracking ────────────────────────────────────────────────────────
@@ -719,17 +823,20 @@ export default function MemberWorkoutPlan() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Workout Plan</h1>
-          <p className="text-slate-400 text-sm mt-0.5">
+          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <Dumbbell className="w-6 h-6 text-indigo-600" />
+            My Workout Plan
+          </h1>
+          <p className="text-sm text-slate-500 mt-1">
             Your personalised training programme
           </p>
         </div>
         {plan && (
           <button
             onClick={() => setShowRegen(true)}
-            className="self-start sm:self-auto flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all font-medium text-sm shadow-sm shadow-indigo-600/20"
           >
             <RefreshCw className="w-4 h-4" />
             Generate New Plan
@@ -882,6 +989,14 @@ export default function MemberWorkoutPlan() {
                       </button>
                     </>
                   )}
+                  <button
+                    onClick={handleDownloadPlan}
+                    disabled={downloading}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-all disabled:opacity-70"
+                  >
+                    <Download className="w-4 h-4" />
+                    {downloading ? "Downloading…" : "Download Plan"}
+                  </button>
                 </div>
               </div>
             </div>

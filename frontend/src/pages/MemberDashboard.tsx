@@ -12,6 +12,7 @@ import {
   Target,
   CheckCircle2,
   Award,
+  Utensils,
 } from "lucide-react";
 import { memberService } from "../services/memberService";
 
@@ -138,31 +139,25 @@ const MemberDashboard: React.FC = () => {
                 My Plans
               </h2>
             </div>
-            <button
-              onClick={() => navigate("/member-workout-plan")}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 text-sm font-medium hover:bg-indigo-100 transition-colors"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              Generate
-            </button>
+       
           </div>
 
           <div className="p-4 space-y-2">
             {[
               {
                 icon: Dumbbell,
-                label: "My Exercise Plan",
+                label: "Workout Plan",
                 desc: "View your workout plan",
                 color: "text-indigo-600",
                 bg: "bg-indigo-50",
                 to: "/member-workout-plan",
               },
               {
-                icon: Zap,
+                icon: Utensils,
                 label: "Nutrition Plan",
                 desc: "View your nutrition plan",
-                color: "text-violet-600",
-                bg: "bg-violet-50",
+                color: "text-green-600",
+                bg: "bg-green-50",
                 to: "/member-nutrition-plan",
               },
             ].map(({ icon: Icon, label, desc, color, bg, to }) => (
@@ -199,7 +194,7 @@ const MemberDashboard: React.FC = () => {
 
           <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-100">
             <button
-              onClick={() => navigate("/member-workout-plan")}
+              onClick={() => navigate("/member-plan-history")}
               className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-all"
             >
               View all plans

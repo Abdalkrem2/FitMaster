@@ -111,6 +111,11 @@ public class MemberDTOs {
         private Double height;
         private Integer age;
         private TrainingStyle trainingStyle;
+        // ← جديد
+        private boolean hasDiabetes;
+        private boolean hasHeartConditions;
+        private boolean hasHypertension;
+        private List<AllergyType> allergies;
     }
 
     @Data
@@ -134,5 +139,10 @@ public class MemberDTOs {
         private Integer age;
 
         private TrainingStyle trainingStyle;
+        // ← جديد
+        private boolean hasDiabetes;
+        private boolean hasHeartConditions;
+        private boolean hasHypertension;
+        private List<AllergyType> allergies;
     }
 }

@@ -7,9 +7,21 @@ export const workoutPlanService = {
     return data;
   },
 
+  async getPlanHistory(): Promise<WorkoutPlan[]> {
+    const { data } = await api.get('/workout-plans/history');
+    return data;
+  },
+
   async generateNewPlan(): Promise<WorkoutPlan> {
     const { data } = await api.post('/workout-plans/generate', {});
     return data;
+  },
+
+  async downloadPlanPdf(): Promise<Blob> {
+    const response = await api.get('/workout-plans/active/pdf', {
+      responseType: 'blob',
+    });
+    return new Blob([response.data], { type: 'application/pdf' });
   },
 
   saveProgress(progress: WorkoutProgress): void {

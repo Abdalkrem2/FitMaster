@@ -15,6 +15,9 @@ import {
   Dumbbell,
   Sparkles,
   LayoutGrid,
+  Heart,
+  Droplets,
+  ActivitySquare,
 } from "lucide-react";
 import { memberService } from "../services/memberService";
 import type {
@@ -23,6 +26,7 @@ import type {
   TrainingStyle,
   SplitType,
   InjuryType,
+  AllergyType,
 } from "../types/member";
 
 interface OnboardingData {
@@ -35,6 +39,10 @@ interface OnboardingData {
   height?: number;
   age?: number;
   injuries: InjuryType[];
+  hasDiabetes: boolean;
+  hasHeartConditions: boolean;
+  hasHypertension: boolean;
+  allergies: AllergyType[];
 }
 
 const splitDays: Record<SplitType, number> = {
@@ -51,39 +59,39 @@ const splitTypes: {
   desc: string;
   days: number;
 }[] = [
-    {
-      value: "FULL_BODY",
-      label: "Full Body",
-      desc: "Train all muscles each session",
-      days: 3,
-    },
-    {
-      value: "UPPER_LOWER",
-      label: "Upper / Lower",
-      desc: "Alternate upper & lower body",
-      days: 4,
-    },
-    {
-      value: "BRO_SPLIT_4DAY",
-      label: "Bro Split 4-Day",
-      desc: "Chest+Tri / Back+Bi / Shoulders / Legs",
-      days: 4,
-    },
-    {
-      value: "BRO_SPLIT_5DAY",
-      label: "Bro Split 5-Day",
-      desc: "Chest / Back / Shoulders / Legs / Arms",
-      days: 5,
-    },
-    {
-      value: "PUSH_PULL_LEGS",
-      label: "Push Pull Legs",
-      desc: "Push / Pull / Legs × 2",
-      days: 6,
-    },
-  ];
+  {
+    value: "FULL_BODY",
+    label: "Full Body",
+    desc: "Train all muscles each session",
+    days: 3,
+  },
+  {
+    value: "UPPER_LOWER",
+    label: "Upper / Lower",
+    desc: "Alternate upper & lower body",
+    days: 4,
+  },
+  {
+    value: "BRO_SPLIT_4DAY",
+    label: "Bro Split 4-Day",
+    desc: "Chest+Tri / Back+Bi / Shoulders / Legs",
+    days: 4,
+  },
+  {
+    value: "BRO_SPLIT_5DAY",
+    label: "Bro Split 5-Day",
+    desc: "Chest / Back / Shoulders / Legs / Arms",
+    days: 5,
+  },
+  {
+    value: "PUSH_PULL_LEGS",
+    label: "Push Pull Legs",
+    desc: "Push / Pull / Legs × 2",
+    days: 6,
+  },
+];
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 7;
 
 const steps = [
   { label: "Your Goal", desc: "What do you want to achieve?" },
@@ -92,6 +100,7 @@ const steps = [
   { label: "Split Type", desc: "Choose your training split" },
   { label: "Body Info", desc: "Optional measurements" },
   { label: "Injuries", desc: "Areas to work around" },
+  { label: "Health & Diet", desc: "Conditions & allergies" },
 ];
 
 const goals: {
@@ -101,35 +110,35 @@ const goals: {
   icon: typeof Target;
   gradient: string;
 }[] = [
-    {
-      value: "MUSCLE_GAIN",
-      label: "Muscle Gain",
-      desc: "Build strength & size",
-      icon: TrendingUp,
-      gradient: "from-indigo-500 to-violet-600",
-    },
-    {
-      value: "WEIGHT_LOSS",
-      label: "Weight Loss",
-      desc: "Burn fat & get lean",
-      icon: Scale,
-      gradient: "from-rose-400 to-pink-600",
-    },
-    {
-      value: "ENDURANCE",
-      label: "Endurance",
-      desc: "Boost stamina & cardio",
-      icon: Zap,
-      gradient: "from-amber-400 to-orange-500",
-    },
-    {
-      value: "GENERAL_FITNESS",
-      label: "General Fitness",
-      desc: "Stay active & healthy",
-      icon: Target,
-      gradient: "from-emerald-400 to-teal-500",
-    },
-  ];
+  {
+    value: "MUSCLE_GAIN",
+    label: "Muscle Gain",
+    desc: "Build strength & size",
+    icon: TrendingUp,
+    gradient: "from-indigo-500 to-violet-600",
+  },
+  {
+    value: "WEIGHT_LOSS",
+    label: "Weight Loss",
+    desc: "Burn fat & get lean",
+    icon: Scale,
+    gradient: "from-rose-400 to-pink-600",
+  },
+  {
+    value: "ENDURANCE",
+    label: "Endurance",
+    desc: "Boost stamina & cardio",
+    icon: Zap,
+    gradient: "from-amber-400 to-orange-500",
+  },
+  {
+    value: "GENERAL_FITNESS",
+    label: "General Fitness",
+    desc: "Stay active & healthy",
+    icon: Target,
+    gradient: "from-emerald-400 to-teal-500",
+  },
+];
 
 const levels: {
   value: FitnessLevel;
@@ -137,25 +146,25 @@ const levels: {
   desc: string;
   years: string;
 }[] = [
-    {
-      value: "BEGINNER",
-      label: "Beginner",
-      desc: "Just getting started",
-      years: "0–1 year",
-    },
-    {
-      value: "INTERMEDIATE",
-      label: "Intermediate",
-      desc: "Know the basics well",
-      years: "1–3 years",
-    },
-    {
-      value: "ADVANCED",
-      label: "Advanced",
-      desc: "Training consistently",
-      years: "3+ years",
-    },
-  ];
+  {
+    value: "BEGINNER",
+    label: "Beginner",
+    desc: "Just getting started",
+    years: "0–1 year",
+  },
+  {
+    value: "INTERMEDIATE",
+    label: "Intermediate",
+    desc: "Know the basics well",
+    years: "1–3 years",
+  },
+  {
+    value: "ADVANCED",
+    label: "Advanced",
+    desc: "Training consistently",
+    years: "3+ years",
+  },
+];
 
 const styles: {
   value: TrainingStyle;
@@ -163,25 +172,25 @@ const styles: {
   desc: string;
   icon: typeof Dumbbell;
 }[] = [
-    {
-      value: "STRENGTH",
-      label: "Strength",
-      desc: "Heavy compound lifts",
-      icon: Dumbbell,
-    },
-    {
-      value: "HYPERTROPHY",
-      label: "Hypertrophy",
-      desc: "Muscle building focus",
-      icon: TrendingUp,
-    },
-    {
-      value: "CIRCUIT",
-      label: "Circuit",
-      desc: "High intensity rounds",
-      icon: Zap,
-    },
-  ];
+  {
+    value: "STRENGTH",
+    label: "Strength",
+    desc: "Heavy compound lifts",
+    icon: Dumbbell,
+  },
+  {
+    value: "HYPERTROPHY",
+    label: "Hypertrophy",
+    desc: "Muscle building focus",
+    icon: TrendingUp,
+  },
+  {
+    value: "CIRCUIT",
+    label: "Circuit",
+    desc: "High intensity rounds",
+    icon: Zap,
+  },
+];
 
 const injuryOptions: InjuryType[] = [
   "KNEE",
@@ -203,6 +212,10 @@ export default function MemberOnboarding() {
   const [data, setData] = useState<OnboardingData>({
     daysPerWeek: 3,
     injuries: [],
+    hasDiabetes: false,
+    hasHeartConditions: false,
+    hasHypertension: false,
+    allergies: [],
   });
 
   const set = <K extends keyof OnboardingData>(
@@ -216,6 +229,14 @@ export default function MemberOnboarding() {
       injuries: d.injuries.includes(injury)
         ? d.injuries.filter((i) => i !== injury)
         : [...d.injuries, injury],
+    }));
+
+  const toggleAllergy = (allergy: AllergyType) =>
+    setData((d) => ({
+      ...d,
+      allergies: d.allergies.includes(allergy)
+        ? d.allergies.filter((a) => a !== allergy)
+        : [...d.allergies, allergy],
     }));
 
   const canAdvance = () => {
@@ -244,6 +265,10 @@ export default function MemberOnboarding() {
         weight: data.weight ?? null,
         height: data.height ?? null,
         age: data.age ?? null,
+        hasDiabetes: data.hasDiabetes,
+        hasHeartConditions: data.hasHeartConditions,
+        hasHypertension: data.hasHypertension,
+        allergies: data.allergies.length > 0 ? data.allergies : undefined,
       });
       navigate("/member-dashboard");
     } catch {
@@ -298,12 +323,13 @@ export default function MemberOnboarding() {
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${active ? "bg-white/15 border border-white/20" : ""}`}
                     >
                       <div
-                        className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${done
+                        className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                          done
                             ? "bg-white text-indigo-600"
                             : active
                               ? "bg-white/30 text-white border-2 border-white/60"
                               : "bg-white/10 text-indigo-300"
-                          }`}
+                        }`}
                       >
                         {done ? <CheckCircle2 className="w-4 h-4" /> : idx}
                       </div>
@@ -391,7 +417,7 @@ export default function MemberOnboarding() {
                     </span>
                   </h1>
                   <p className="text-slate-400 text-lg leading-relaxed max-w-lg mx-auto">
-                    Answer 6 quick questions and we'll build a personalised
+                    Answer 7 quick questions and we'll build a personalised
                     fitness plan designed just for you.
                   </p>
                 </div>
@@ -425,7 +451,7 @@ export default function MemberOnboarding() {
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-400">
                 <div>
                   <p className="text-sm font-semibold text-indigo-500 uppercase tracking-wider mb-2">
-                    Step 1 of 6
+                    Step 1 of 7
                   </p>
                   <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-black text-slate-800">
                     What's your main goal?
@@ -439,10 +465,11 @@ export default function MemberOnboarding() {
                     <button
                       key={value}
                       onClick={() => set("goal", value)}
-                      className={`relative flex items-start gap-4 p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${data.goal === value
+                      className={`relative flex items-start gap-4 p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
+                        data.goal === value
                           ? "border-transparent ring-2 ring-indigo-500 ring-offset-2 shadow-md"
                           : "border-slate-100 hover:border-slate-200 hover:shadow-sm"
-                        }`}
+                      }`}
                     >
                       <div
                         className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm shrink-0`}
@@ -467,7 +494,7 @@ export default function MemberOnboarding() {
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-400">
                 <div>
                   <p className="text-sm font-semibold text-indigo-500 uppercase tracking-wider mb-2">
-                    Step 2 of 6
+                    Step 2 of 7
                   </p>
                   <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-black text-slate-800">
                     What's your fitness level?
@@ -481,17 +508,19 @@ export default function MemberOnboarding() {
                     <button
                       key={value}
                       onClick={() => set("fitnessLevel", value)}
-                      className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${data.fitnessLevel === value
+                      className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
+                        data.fitnessLevel === value
                           ? "border-indigo-500 ring-1 ring-indigo-500/20 shadow-md"
                           : "border-slate-100 hover:border-slate-200 hover:shadow-sm"
-                        }`}
+                      }`}
                     >
                       <div className="flex items-center gap-4">
                         <div
-                          className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black transition-all ${data.fitnessLevel === value
+                          className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black transition-all ${
+                            data.fitnessLevel === value
                               ? "bg-indigo-500 text-white"
                               : "bg-slate-100 text-slate-400"
-                            }`}
+                          }`}
                         >
                           {value === "BEGINNER"
                             ? "1"
@@ -522,7 +551,7 @@ export default function MemberOnboarding() {
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-400">
                 <div>
                   <p className="text-sm font-semibold text-indigo-500 uppercase tracking-wider mb-2">
-                    Step 3 of 6
+                    Step 3 of 7
                   </p>
                   <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-black text-slate-800">
                     How do you like to train?
@@ -536,17 +565,19 @@ export default function MemberOnboarding() {
                     <button
                       key={value}
                       onClick={() => set("trainingStyle", value)}
-                      className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${data.trainingStyle === value
+                      className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
+                        data.trainingStyle === value
                           ? "border-violet-500 ring-1 ring-violet-500/20 shadow-md"
                           : "border-slate-100 hover:border-slate-200 hover:shadow-sm"
-                        }`}
+                      }`}
                     >
                       <div className="flex items-center gap-4">
                         <div
-                          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${data.trainingStyle === value
+                          className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
+                            data.trainingStyle === value
                               ? "bg-violet-500 text-white"
                               : "bg-slate-100 text-slate-400"
-                            }`}
+                          }`}
                         >
                           <Icon className="w-6 h-6" />
                         </div>
@@ -571,7 +602,7 @@ export default function MemberOnboarding() {
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-400">
                 <div>
                   <p className="text-sm font-semibold text-indigo-500 uppercase tracking-wider mb-2">
-                    Step 4 of 6
+                    Step 4 of 7
                   </p>
                   <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-black text-slate-800">
                     Choose your training split
@@ -585,17 +616,19 @@ export default function MemberOnboarding() {
                     <button
                       key={value}
                       onClick={() => selectSplit(value)}
-                      className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${data.splitType === value
+                      className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
+                        data.splitType === value
                           ? "border-indigo-500 ring-1 ring-indigo-500/20 shadow-md"
                           : "border-slate-100 hover:border-slate-200 hover:shadow-sm"
-                        }`}
+                      }`}
                     >
                       <div className="flex items-center gap-4">
                         <div
-                          className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all ${data.splitType === value
+                          className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all ${
+                            data.splitType === value
                               ? "bg-indigo-500 text-white"
                               : "bg-slate-100 text-slate-400"
-                            }`}
+                          }`}
                         >
                           <LayoutGrid className="w-5 h-5" />
                         </div>
@@ -610,10 +643,11 @@ export default function MemberOnboarding() {
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
                         <span
-                          className={`text-xs font-bold px-2.5 py-1 rounded-full ${data.splitType === value
+                          className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+                            data.splitType === value
                               ? "bg-indigo-100 text-indigo-600"
                               : "bg-slate-100 text-slate-400"
-                            }`}
+                          }`}
                         >
                           {days}×/week
                         </span>
@@ -632,7 +666,7 @@ export default function MemberOnboarding() {
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-400">
                 <div>
                   <p className="text-sm font-semibold text-indigo-500 uppercase tracking-wider mb-2">
-                    Step 5 of 6
+                    Step 5 of 7
                   </p>
                   <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-black text-slate-800">
                     Your body metrics
@@ -722,7 +756,7 @@ export default function MemberOnboarding() {
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-400">
                 <div>
                   <p className="text-sm font-semibold text-indigo-500 uppercase tracking-wider mb-2">
-                    Step 6 of 6 · Final Step
+                    Step 6 of 7
                   </p>
                   <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-black text-slate-800">
                     Any injuries?
@@ -751,16 +785,18 @@ export default function MemberOnboarding() {
                           key={injury}
                           type="button"
                           onClick={() => toggleInjury(injury)}
-                          className={`flex flex-col items-center gap-2 px-2 py-3 rounded-xl border text-xs font-semibold transition-all duration-200 ${checked
+                          className={`flex flex-col items-center gap-2 px-2 py-3 rounded-xl border text-xs font-semibold transition-all duration-200 ${
+                            checked
                               ? "border-rose-200 bg-rose-50 text-rose-600"
                               : "border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200 hover:bg-slate-100"
-                            }`}
+                          }`}
                         >
                           <div
-                            className={`w-4 h-4 rounded border-2 flex items-center justify-center ${checked
+                            className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                              checked
                                 ? "bg-rose-500 border-rose-500"
                                 : "border-slate-300"
-                              }`}
+                            }`}
                           >
                             {checked && (
                               <svg
@@ -791,6 +827,144 @@ export default function MemberOnboarding() {
                     No injuries — skip this
                   </button>
                 </div>
+              </div>
+            )}
+
+            {/* Step 7: Health Conditions & Allergies */}
+            {step === 7 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-400">
+                <div>
+                  <p className="text-sm font-semibold text-indigo-500 uppercase tracking-wider mb-2">
+                    Step 7 of 7 · Final Step
+                  </p>
+                  <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-black text-slate-800">
+                    Any health conditions?
+                  </h2>
+                  <p className="text-slate-400 mt-2">
+                    We'll adjust your nutrition plan accordingly
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  {/* Diabetes */}
+                  <button
+                    type="button"
+                    onClick={() => set("hasDiabetes", !data.hasDiabetes)}
+                    className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
+                      data.hasDiabetes
+                        ? "border-rose-400 bg-rose-50 ring-1 ring-rose-400/20 shadow-sm"
+                        : "border-slate-100 hover:border-slate-200 hover:shadow-sm"
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${
+                        data.hasDiabetes ? "bg-rose-500 text-white" : "bg-slate-100 text-slate-400"
+                      }`}>
+                        <Droplets className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-800 text-sm">Diabetes</p>
+                        <p className="text-xs text-slate-400 mt-0.5">We'll recommend low glycemic foods</p>
+                      </div>
+                    </div>
+                    {data.hasDiabetes && <CheckCircle2 className="w-5 h-5 text-rose-500 shrink-0" />}
+                  </button>
+
+                  {/* Heart Condition */}
+                  <button
+                    type="button"
+                    onClick={() => set("hasHeartConditions", !data.hasHeartConditions)}
+                    className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
+                      data.hasHeartConditions
+                        ? "border-rose-400 bg-rose-50 ring-1 ring-rose-400/20 shadow-sm"
+                        : "border-slate-100 hover:border-slate-200 hover:shadow-sm"
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${
+                        data.hasHeartConditions ? "bg-rose-500 text-white" : "bg-slate-100 text-slate-400"
+                      }`}>
+                        <Heart className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-800 text-sm">Heart Condition</p>
+                        <p className="text-xs text-slate-400 mt-0.5">We'll reduce saturated fats & sodium</p>
+                      </div>
+                    </div>
+                    {data.hasHeartConditions && <CheckCircle2 className="w-5 h-5 text-rose-500 shrink-0" />}
+                  </button>
+
+                  {/* Hypertension */}
+                  <button
+                    type="button"
+                    onClick={() => set("hasHypertension", !data.hasHypertension)}
+                    className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
+                      data.hasHypertension
+                        ? "border-rose-400 bg-rose-50 ring-1 ring-rose-400/20 shadow-sm"
+                        : "border-slate-100 hover:border-slate-200 hover:shadow-sm"
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${
+                        data.hasHypertension ? "bg-rose-500 text-white" : "bg-slate-100 text-slate-400"
+                      }`}>
+                        <ActivitySquare className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-800 text-sm">Hypertension</p>
+                        <p className="text-xs text-slate-400 mt-0.5">We'll keep sodium levels low</p>
+                      </div>
+                    </div>
+                    {data.hasHypertension && <CheckCircle2 className="w-5 h-5 text-rose-500 shrink-0" />}
+                  </button>
+                </div>
+
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 mt-6">
+                  <div className="flex flex-col mb-5">
+                    <h3 className="font-bold text-slate-800">Any food allergies?</h3>
+                    <p className="text-xs text-slate-500 mt-1">Select all that apply</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {(["GLUTEN", "LACTOSE", "NUTS", "EGGS", "SHELLFISH", "SOY"] as AllergyType[]).map((allergy) => {
+                      const checked = data.allergies.includes(allergy);
+                      return (
+                        <button
+                          key={allergy}
+                          type="button"
+                          onClick={() => toggleAllergy(allergy)}
+                          className={`flex items-center gap-3 px-3 py-3 rounded-xl border text-xs font-semibold transition-all duration-200 ${
+                            checked
+                              ? "border-rose-200 bg-rose-50 text-rose-600"
+                              : "border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200 hover:bg-slate-100"
+                          }`}
+                        >
+                          <div
+                            className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${
+                              checked
+                                ? "bg-rose-500 border-rose-500"
+                                : "border-slate-300 bg-white"
+                            }`}
+                          >
+                            {checked && (
+                              <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                              </svg>
+                            )}
+                          </div>
+                          {allergy}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setData((d) => ({ ...d, hasDiabetes: false, hasHeartConditions: false, hasHypertension: false, allergies: [] }))}
+                    className="mt-5 w-full py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:bg-slate-50 transition-colors"
+                  >
+                    No health conditions or allergies — skip this
+                  </button>
+                </div>
 
                 {error && (
                   <p className="text-sm text-red-500 text-center">{error}</p>
@@ -816,8 +990,8 @@ export default function MemberOnboarding() {
               </div>
             )}
 
-            {/* Back / Next (steps 1–5) */}
-            {step >= 1 && step < 6 && (
+            {/* Back / Next */}
+            {step >= 1 && step < 7 && (
               <div className="mt-8 flex items-center justify-between gap-4">
                 <button
                   onClick={() => setStep((s) => s - 1)}

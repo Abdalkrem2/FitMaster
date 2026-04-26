@@ -16,6 +16,10 @@ import {
   Pencil,
   X,
   ArrowLeft,
+  Droplets,
+  Heart,
+  ActivitySquare,
+  Utensils,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { memberService } from "../services/memberService";
@@ -28,6 +32,7 @@ import type {
   SplitType,
   UpdateMemberProfileRequest,
   MemberDetails,
+  AllergyType,
 } from "../types/member";
 
 const fitnessGoals: {
@@ -166,6 +171,10 @@ const MemberProfile = () => {
             height: undefined,
             age: undefined,
             trainingStyle: "STRENGTH",
+            hasDiabetes: false,
+            hasHeartConditions: false,
+            hasHypertension: false,
+            allergies: [],
           });
         }
       } catch (err) {
@@ -204,6 +213,7 @@ const MemberProfile = () => {
     );
   };
 
+
   const handleInjuriesToggle = (injury: InjuryType) => {
     setProfile((current) => {
       if (!current) return current;
@@ -214,6 +224,20 @@ const MemberProfile = () => {
         injuries: hasInjury
           ? injuries.filter((item) => item !== injury)
           : [...injuries, injury],
+      };
+    });
+  };
+
+  const handleAllergyToggle = (allergy: AllergyType) => {
+    setProfile((current) => {
+      if (!current) return current;
+      const allergies = current.allergies ?? [];
+      const hasAllergy = allergies.includes(allergy);
+      return {
+        ...current,
+        allergies: hasAllergy
+          ? allergies.filter((item) => item !== allergy)
+          : [...allergies, allergy],
       };
     });
   };
@@ -236,6 +260,10 @@ const MemberProfile = () => {
       height: profile.height ?? null,
       age: profile.age ?? null,
       trainingStyle: profile.trainingStyle,
+      hasDiabetes: profile.hasDiabetes,
+      hasHeartConditions: profile.hasHeartConditions,
+      hasHypertension: profile.hasHypertension,
+      allergies: profile.allergies,
     };
     try {
       const updated = await memberService.updateMyProfile(request);
@@ -350,6 +378,59 @@ const MemberProfile = () => {
                     {inj.replace(/_/g, " ")}
                   </span>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Health Conditions & Allergies */}
+          {(profile?.hasDiabetes || profile?.hasHeartConditions || profile?.hasHypertension || (profile?.allergies && profile.allergies.length > 0)) && (
+            <div className="col-span-2 lg:col-span-3 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4">
+              <div className="flex items-center gap-2">
+                <Utensils className="w-5 h-5 text-indigo-500" />
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Health & Nutrition</p>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Conditions */}
+                <div className="space-y-2">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Medical Conditions</p>
+                  <div className="flex flex-wrap gap-2">
+                    {profile?.hasDiabetes && (
+                      <span className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-600 rounded-full text-xs font-bold border border-rose-100">
+                        <Droplets className="w-3 h-3" /> Diabetes
+                      </span>
+                    )}
+                    {profile?.hasHeartConditions && (
+                      <span className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-600 rounded-full text-xs font-bold border border-rose-100">
+                        <Heart className="w-3 h-3" /> Heart Condition
+                      </span>
+                    )}
+                    {profile?.hasHypertension && (
+                      <span className="flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-600 rounded-full text-xs font-bold border border-rose-100">
+                        <ActivitySquare className="w-3 h-3" /> Hypertension
+                      </span>
+                    )}
+                    {!profile?.hasDiabetes && !profile?.hasHeartConditions && !profile?.hasHypertension && (
+                      <span className="text-xs text-slate-400">No medical conditions reported</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Allergies */}
+                <div className="space-y-2">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Food Allergies</p>
+                  <div className="flex flex-wrap gap-2">
+                    {profile?.allergies && profile.allergies.length > 0 ? (
+                      profile.allergies.map(allergy => (
+                        <span key={allergy} className="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-bold border border-amber-100">
+                          {allergy}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-xs text-slate-400">No food allergies reported</span>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -690,6 +771,93 @@ const MemberProfile = () => {
                         )}
                       </div>
                       <span>{injury.replace(/_/g, " ")}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* ─── Health Conditions ─── */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-50 flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-rose-50 flex items-center justify-center">
+                <Shield className="w-3.5 h-3.5 text-rose-500" />
+              </div>
+              <h2 className="text-sm font-semibold text-slate-700">
+                Health Conditions
+              </h2>
+            </div>
+            <div className="p-6 space-y-3">
+              {[
+                { key: "hasDiabetes" as const, label: "Diabetes", icon: Droplets, sub: "Low glycemic focus" },
+                { key: "hasHeartConditions" as const, label: "Heart Condition", icon: Heart, sub: "Heart-healthy fats" },
+                { key: "hasHypertension" as const, label: "Hypertension", icon: ActivitySquare, sub: "Sodium-controlled" },
+              ].map(({ key, label, icon: Icon, sub }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => handleChange(key, !profile?.[key])}
+                  className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 text-left transition-all duration-200 bg-white ${
+                    profile?.[key]
+                      ? "border-rose-400 bg-rose-50 ring-1 ring-rose-400/20"
+                      : "border-slate-100 hover:border-slate-200"
+                  }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${
+                      profile?.[key] ? "bg-rose-500 text-white" : "bg-slate-100 text-slate-400"
+                    }`}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-800 text-sm">{label}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">{sub}</p>
+                    </div>
+                  </div>
+                  {profile?.[key] && <CheckCircle2 className="w-5 h-5 text-rose-500 shrink-0" />}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* ─── Food Allergies ─── */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-50 flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
+                <Utensils className="w-3.5 h-3.5 text-amber-500" />
+              </div>
+              <h2 className="text-sm font-semibold text-slate-700">
+                Food Allergies
+              </h2>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                {(["GLUTEN", "LACTOSE", "NUTS", "EGGS", "SHELLFISH", "SOY"] as AllergyType[]).map((allergy) => {
+                  const checked = profile?.allergies?.includes(allergy) ?? false;
+                  return (
+                    <button
+                      key={allergy}
+                      type="button"
+                      onClick={() => handleAllergyToggle(allergy)}
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-all duration-200 ${checked
+                        ? "border-amber-200 bg-amber-50 text-amber-700"
+                        : "border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200 hover:bg-slate-100"
+                        }`}
+                    >
+                      <div
+                        className={`w-3.5 h-3.5 rounded border flex items-center justify-center shrink-0 transition-all ${checked
+                          ? "bg-amber-500 border-amber-500"
+                          : "border-slate-300 bg-white"
+                          }`}
+                      >
+                        {checked && (
+                          <svg className="w-2 h-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                      <span>{allergy}</span>
                     </button>
                   );
                 })}
