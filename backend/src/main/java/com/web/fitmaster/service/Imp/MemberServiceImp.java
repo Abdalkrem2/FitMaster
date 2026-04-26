@@ -99,7 +99,7 @@ public class MemberServiceImp implements MemberService {
            members=userRepository.searchMembers(Set.of(AppRole.MEMBER),search,pageable);
         }
         else{
-         members =userRepository.findByRoles_roleNameInAndDeletedFalse(Set.of(AppRole.MEMBER), pageable);
+         members =userRepository.findByRoles_roleNameInAndDeletedFalseOrderByIdDesc(Set.of(AppRole.MEMBER), pageable);
         }
         List<MemberDTOs.MemberDTO> content= members.stream().map(this::mapToDTO).toList();
 

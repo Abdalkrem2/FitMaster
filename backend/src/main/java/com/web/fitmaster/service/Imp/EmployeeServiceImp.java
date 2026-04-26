@@ -41,7 +41,7 @@ public class EmployeeServiceImp implements EmployeeService {
 
     @Override
     public EmployeeDTOs.EmployeeResponse getAllEmployees(Pageable pageable) {
-        Page<User>content=userRepository.findByRoles_roleNameInAndDeletedFalse(Set.of(AppRole.EMPLOYEE,AppRole.ADMIN),pageable);
+        Page<User>content=userRepository.findByRoles_roleNameInAndDeletedFalseOrderByIdDesc(Set.of(AppRole.EMPLOYEE,AppRole.ADMIN),pageable);
 
         List<EmployeeDTOs.EmployeeDTO> dto = content.stream().map(this::mapToDTO).toList();
 

@@ -32,6 +32,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "OR u.phone LIKE CONCAT('%',:search,'%'))")
     Page<User> searchMembers(@Param("roles") Set<AppRole> roles,@Param("search") String search, Pageable pageable);
 
-    Page<User> findByRoles_roleNameInAndDeletedFalse(Set<AppRole> employee, Pageable pageable);
+    Page<User> findByRoles_roleNameInAndDeletedFalseOrderByIdDesc(Set<AppRole> roles, Pageable pageable);
     List<User> findByRoles_roleNameInAndDeletedFalse(Set<AppRole> roles);
 }

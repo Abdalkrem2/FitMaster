@@ -81,7 +81,8 @@ public class NotificationServiceImp implements NotificationService {
         User currentUser = authUtil.loggedInUser();
         LocalDateTime assignedAt = currentUser.getAdminRoleAssignedAt() != null
                 ? currentUser.getAdminRoleAssignedAt()
-                : LocalDateTime.MIN;
+                : LocalDateTime.of(2000, 1, 1, 0, 0, 0);//كانت عندي هون مشكلة بتخزين التاريخ غلط
+        //LocalDateTime.MIN هاي غلط  لانه بترجع -999999999-01-01T00:00:00
 
         Page<NotificationUserState> states = stateRepository
                 .findActiveByUserId(currentUser.getId(), assignedAt, pageable);
