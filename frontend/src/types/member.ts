@@ -28,6 +28,14 @@ export type SplitType =
 
 export type TrainingStyle = "STRENGTH" | "HYPERTROPHY" | "CIRCUIT";
 
+export type AllergyType =
+  | "GLUTEN"
+  | "LACTOSE"
+  | "NUTS"
+  | "EGGS"
+  | "SHELLFISH"
+  | "SOY";
+
 export interface MemberProfile {
   goal: FitnessGoal;
   fitnessLevel: FitnessLevel;
@@ -37,6 +45,10 @@ export interface MemberProfile {
   age?: number;
   trainingStyle?: TrainingStyle;
   splitType?: SplitType;
+  hasDiabetes?: boolean;
+  hasHeartConditions?: boolean;
+  hasHypertension?: boolean;
+  allergies?: AllergyType[];
 }
 
 export interface Member {
@@ -78,4 +90,8 @@ export interface UpdateMemberProfileRequest {
   age?: number | null;
   trainingStyle?: TrainingStyle;
   splitType?: SplitType;
+  hasDiabetes?: boolean;
+  hasHeartConditions?: boolean;
+  hasHypertension?: boolean;
+  allergies?: AllergyType[];
 }

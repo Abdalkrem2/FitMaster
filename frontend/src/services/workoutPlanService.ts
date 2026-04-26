@@ -7,6 +7,11 @@ export const workoutPlanService = {
     return data;
   },
 
+  async getPlanHistory(): Promise<WorkoutPlan[]> {
+    const { data } = await api.get('/workout-plans/history');
+    return data;
+  },
+
   async generateNewPlan(): Promise<WorkoutPlan> {
     const { data } = await api.post('/workout-plans/generate', {});
     return data;

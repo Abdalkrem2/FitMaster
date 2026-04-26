@@ -35,6 +35,11 @@ public class NutritionPlanService {
                 .findByMember_IdAndStatus(memberId, WorkoutPlanStatus.ACTIVE)
                 .orElseThrow(() -> new RuntimeException("No active nutrition plan found"));
     }
+    public List<NutritionPlan> getAllPlans(Long memberId) {
+        return nutritionPlanRepository
+                .findByMember_IdOrderByCreatedAtDesc(memberId);
+    }
+
     @Transactional
     public NutritionPlan generatePlan(Long memberId) {
 
@@ -133,41 +138,40 @@ public class NutritionPlanService {
         sb.append("- Fat: ").append(fat).append("g\n");
 
         sb.append("""
-            
-            STRICT RULES:
-            1. Return ONLY valid JSON — no markdown, no explanation, no extra text
-            2. Include exactly 5 meals: Breakfast, Morning Snack, Lunch, Afternoon Snack, Dinner
-            3. Total calories must be within ±50 of the target
-            4. Each meal must have at least 2 foods
-            5. Include realistic prep time for each meal
-            6. Include step-by-step recipe instructions for each meal
-            
-            Return this exact JSON structure:
+    
+        STRICT RULES:
+        1. Return ONLY valid JSON — no markdown, no explanation
+        2. Include exactly 5 meals: Breakfast, Morning Snack, Lunch, Afternoon Snack, Dinner
+        3. Total calories must be within ±50 of the target
+        4. Each meal must have at least 2 foods
+        5. Keep recipe steps SHORT — maximum 3 steps per meal
+        6. Keep instructions brief — one sentence each
+    
+    Return this exact JSON structure:
+    {
+      "meals": [
+        {
+          "name": "Breakfast",
+          "mealTime": "8:00 AM",
+          "prepTime": "10 minutes",
+          "totalCalories": 600,
+          "foods": [
             {
-              "meals": [
-                {
-                  "name": "Breakfast",
-                  "mealTime": "8:00 AM",
-                  "prepTime": "10 minutes",
-                  "totalCalories": 600,
-                  "foods": [
-                    {
-                      "name": "Oatmeal",
-                      "amount": "100g",
-                      "calories": 350,
-                      "proteinGrams": 12,
-                      "carbsGrams": 60,
-                      "fatGrams": 7
-                    }
-                  ],
-                  "recipeSteps": [
-                    {"stepOrder": 1, "instruction": "Boil water or milk"},
-                    {"stepOrder": 2, "instruction": "Add oats and cook for 5 minutes"}
-                  ]
-                }
-              ]
+              "name": "Oatmeal",
+              "amount": "100g",
+              "calories": 350,
+              "proteinGrams": 12,
+              "carbsGrams": 60,
+              "fatGrams": 7
             }
-            """);
+          ],
+          "recipeSteps": [
+            {"stepOrder": 1, "instruction": "Brief instruction here"}
+          ]
+        }
+      ]
+    }
+    """);
 
         return sb.toString();
     }
@@ -248,7 +252,7 @@ public class NutritionPlanService {
             NutritionPlan plan = NutritionPlan.builder()
                     .member(member)
                     .goal(profile.getGoal())
-                    .dailyCalories(calories)
+                    .dailyCalories(calories) // مؤقت، رح نعدله بعدين
                     .proteinGrams(protein)
                     .carbsGrams(carbs)
                     .fatGrams(fat)
@@ -267,7 +271,6 @@ public class NutritionPlanService {
                         .recipeSteps(new ArrayList<>())
                         .build();
 
-                // Foods
                 for (JsonNode foodNode : mealNode.path("foods")) {
                     NutritionFood food = NutritionFood.builder()
                             .meal(meal)
@@ -281,7 +284,6 @@ public class NutritionPlanService {
                     meal.getFoods().add(food);
                 }
 
-                // Recipe Steps
                 for (JsonNode stepNode : mealNode.path("recipeSteps")) {
                     NutritionRecipeStep step = NutritionRecipeStep.builder()
                             .meal(meal)
@@ -293,6 +295,31 @@ public class NutritionPlanService {
 
                 plan.getMeals().add(meal);
             }
+
+            // ← هنا نحسب المجموع الفعلي من الوجبات
+            int actualCalories = plan.getMeals().stream()
+                    .mapToInt(NutritionMeal::getTotalCalories)
+                    .sum();
+
+            int actualProtein = plan.getMeals().stream()
+                    .flatMap(meal -> meal.getFoods().stream())
+                    .mapToInt(NutritionFood::getProteinGrams)
+                    .sum();
+
+            int actualCarbs = plan.getMeals().stream()
+                    .flatMap(meal -> meal.getFoods().stream())
+                    .mapToInt(NutritionFood::getCarbsGrams)
+                    .sum();
+
+            int actualFat = plan.getMeals().stream()
+                    .flatMap(meal -> meal.getFoods().stream())
+                    .mapToInt(NutritionFood::getFatGrams)
+                    .sum();
+
+            plan.setDailyCalories(actualCalories);
+            plan.setProteinGrams(actualProtein);
+            plan.setCarbsGrams(actualCarbs);
+            plan.setFatGrams(actualFat);
 
             return plan;
 

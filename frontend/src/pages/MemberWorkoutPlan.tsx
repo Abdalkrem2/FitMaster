@@ -823,17 +823,20 @@ export default function MemberWorkoutPlan() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Workout Plan</h1>
-          <p className="text-slate-400 text-sm mt-0.5">
+          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <Dumbbell className="w-6 h-6 text-indigo-600" />
+            My Workout Plan
+          </h1>
+          <p className="text-sm text-slate-500 mt-1">
             Your personalised training programme
           </p>
         </div>
         {plan && (
           <button
             onClick={() => setShowRegen(true)}
-            className="self-start sm:self-auto flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all font-medium text-sm shadow-sm shadow-indigo-600/20"
           >
             <RefreshCw className="w-4 h-4" />
             Generate New Plan

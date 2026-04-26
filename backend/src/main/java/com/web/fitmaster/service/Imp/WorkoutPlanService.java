@@ -24,6 +24,12 @@ public class WorkoutPlanService {
     private final TrainingConfigFactory configFactory;
     private final ExerciseSelector exerciseSelector;
 
+    public List<WorkoutPlan> getAllPlans(Long memberId) {
+        return workoutPlanRepository
+                .findByMember_IdOrderByCreatedAtDesc(memberId);
+    }
+
+
     public WorkoutPlan getActivePlan(Long memberId) {
         return workoutPlanRepository
                 .findByMember_IdAndStatus(memberId, WorkoutPlanStatus.ACTIVE)

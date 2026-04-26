@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/workout-plans")
 @RequiredArgsConstructor
@@ -54,6 +56,17 @@ public class WorkoutPlanController {
                 .header("Content-Disposition", "attachment; filename=workout-plan.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);
+    }
+
+    @GetMapping("/history")
+    @PreAuthorize("hasRole('MEMBER')")
+    public ResponseEntity<List<WorkoutPlanDTOs.WorkoutPlanResponse>> getHistory() {
+        Long memberId = authUtil.loggedInUserId();
+        return ResponseEntity.ok(
+                workoutPlanService.getAllPlans(memberId).stream()
+                        .map(workoutPlanMapper::toResponse)
+                        .toList()
+        );
     }
 
 }
