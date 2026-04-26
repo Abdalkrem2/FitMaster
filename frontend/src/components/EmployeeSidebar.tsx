@@ -87,13 +87,7 @@ export const EmployeeSidebar: React.FC<EmployeeSidebarProps> = ({
           ))}
         </nav>
 
-        {/* Settings footer */}
-        <div className="p-3 border-t border-slate-100">
-          <button className="flex items-center gap-3 px-4 py-2.5 text-[13px] font-medium rounded-xl text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 w-full">
-            <Settings className="h-[18px] w-[18px] text-slate-400" />
-            Settings
-          </button>
-        </div>
+
       </aside>
     </>
   );

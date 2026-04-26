@@ -36,10 +36,11 @@ export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
       {/* Left side — hamburger + search */}
       <div className="flex items-center gap-3">
         {/* Mobile menu toggle */}
+        {/* Mobile menu toggle — hidden on mobile since we have bottom bar */}
         {onMenuClick && (
           <button
             onClick={onMenuClick}
-            className="lg:hidden p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+            className="hidden lg:hidden p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
           >
             <Menu className="h-5 w-5" />
           </button>
