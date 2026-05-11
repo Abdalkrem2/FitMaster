@@ -40,7 +40,57 @@ public class MemberServiceImp implements MemberService {
     private final AuthUtil authUtil;
     private final PackageRepository packageRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final MemberProfileRepository memberProfileRepository;
 
+    @Override
+    public MemberDTOs.MemberProfileDTO getMemberProfile(Long id) {
+        MemberProfile profile = memberProfileRepository.findByMemberId(id).orElse(null);
+        return mapToProfileDTO(profile);
+    }
+    @Override
+    @Transactional
+    public MemberDTOs.MemberProfileDTO upsertMemberProfile(Long id, MemberDTOs.MemberProfileRequest request) {
+        User member = userRepository.findByIdAndRoles_RoleNameInAndDeletedFalse(id, Set.of(AppRole.MEMBER))
+                .orElseThrow(() -> new NotFoundException(String.format("Member with id '%s' not found", id)));
+
+        MemberProfile profile = memberProfileRepository.findByMemberId(id)
+                .orElseGet(() -> MemberProfile.builder().member(member).build());
+
+        profile.setGoal(request.getGoal());
+        profile.setFitnessLevel(request.getFitnessLevel());
+        profile.setSplitType(request.getSplitType());
+        profile.setInjuries(request.getInjuries());
+        profile.setWeight(request.getWeight());
+        profile.setHeight(request.getHeight());
+        profile.setAllergies(request.getAllergies());
+        profile.setHasDiabetes(request.isHasDiabetes());
+        profile.setHasHeartConditions(request.isHasHeartConditions());
+        profile.setHasHypertension(request.isHasHypertension());
+        profile.setAge(request.getAge());
+        profile.setTrainingStyle(request.getTrainingStyle());
+
+        MemberProfile saved = memberProfileRepository.save(profile);
+        return mapToProfileDTO(saved);
+    }
+    private MemberDTOs.MemberProfileDTO mapToProfileDTO(MemberProfile profile) {
+        if (profile == null) {
+            return null;
+        }
+        return MemberDTOs.MemberProfileDTO.builder()
+                .goal(profile.getGoal())
+                .fitnessLevel(profile.getFitnessLevel())
+                .splitType(profile.getSplitType())
+                .injuries(profile.getInjuries())
+                .weight(profile.getWeight())
+                .height(profile.getHeight())
+                .age(profile.getAge())
+                .hasHypertension(profile.isHasHypertension())
+                .hasDiabetes(profile.isHasDiabetes())
+                .hasHeartConditions(profile.isHasHeartConditions())
+                .allergies(profile.getAllergies())
+                .trainingStyle(profile.getTrainingStyle())
+                .build();
+    }
 
     @Override
     public MemberDTOs.MemberResponse getAllMembers(Pageable pageable,String search) {
@@ -49,7 +99,7 @@ public class MemberServiceImp implements MemberService {
            members=userRepository.searchMembers(Set.of(AppRole.MEMBER),search,pageable);
         }
         else{
-         members =userRepository.findByRoles_roleNameInAndDeletedFalse(Set.of(AppRole.MEMBER), pageable);
+         members =userRepository.findByRoles_roleNameInAndDeletedFalseOrderByIdDesc(Set.of(AppRole.MEMBER), pageable);
         }
         List<MemberDTOs.MemberDTO> content= members.stream().map(this::mapToDTO).toList();
 
