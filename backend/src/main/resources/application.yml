@@ -3,9 +3,9 @@ spring:
     name: FitMaster
 
   datasource:
-    url: jdbc:mysql://localhost:3306/fitmaster_db
-    username: root
-    password: 123444
+    url: ${DB_URL:jdbc:mysql://localhost:3306/fitmaster_db}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123444}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   flyway:
@@ -19,26 +19,28 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
+    show-sql: ${SHOW_SQL:false}
+    open-in-view: false #for prodection  #هي موجودة بالنوتس ارجع راجعها
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
 
-  app:
-    jwtSecret: SGVsbG9Xb3JsZFRoaXNJc0FTZWNyZXRLZXlGb3JKV1RUb2tlbkdlbmVyYXRpb25XaXRoU3ByaW5nQm9vdA==
-    jwtExpirationMs: 86400000
-    jwtCookieName: springBootEcom
+
+
 
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  app:
+    jwtSecret: ${JWT_SECRET:SGVsbG9Xb3JsZFRoaXNJc0FTZWNyZXRLZXlGb3JKV1RUb2tlbkdlbmVyYXRpb25XaXRoU3ByaW5nQm9vdA==}
+    jwtExpirationMs: 86400000
+    jwtCookieName: springBootEcom
 
 exercises:
   images:
-    path: D:/Graduation/GP2/FitMaster/exercises/
+    path: ${EXERCISES_PATH:D:/Graduation/GP2/FitMaster/exercises/}
 
 gemini:
   api:
-    key: AIzaSyAQ17xrozZ7uj_gZQ8Wb-e-2nnts2iu8ow
-    url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
+    key: ${GEMINI_API_KEY:AIzaSyAQ17xrozZ7uj_gZQ8Wb-e-2nnts2iu8ow}
+    url:  ${GEMINI_API_URL:https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent}
