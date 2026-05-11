@@ -46,7 +46,7 @@ const StatCard: React.FC<StatCardProps> = ({
   <Card
     hover
     className="group relative overflow-hidden"
-    style={{ animationDelay: `${delay}ms` } as React.CSSProperties}
+    // style={{ animationDelay: `${delay}ms` } as React.CSSProperties} بعطي عليها ايررور
   >
     {/* Decorative gradient orb */}
     <div className={`absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-[0.07] ${iconBgClass} blur-2xl group-hover:opacity-[0.12] transition-opacity duration-500`} />

@@ -90,8 +90,8 @@ export default function MemberPlanHistory() {
                 <div key={exercise.id} className="flex justify-between items-center text-sm bg-white p-2.5 rounded-lg border border-slate-100">
                   <span className="font-medium text-slate-700">{exercise.exerciseName}</span>
                   <div className="text-slate-500 text-xs flex gap-3">
-                    <span>{exercise.targetSets} sets</span>
-                    <span>{exercise.targetReps} reps</span>
+                    <span>{exercise.sets} sets</span>
+                    <span>{exercise.reps} reps</span>
                   </div>
                 </div>
               ))}
