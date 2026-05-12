@@ -46,7 +46,7 @@ public class MemberServiceImp implements MemberService {
     @Transactional
     public MemberDTOs.MemberProfileDTO getMemberProfile(Long id) {
         MemberProfile profile = memberProfileRepository.findByMemberId(id)
-                .orElseThrow(()->new NotFoundException("Member Profile Not Found"));
+                .orElse(null);
 
         memberProfileRepository.findByMemberIdWithAllergies(id)
                 .ifPresent(p -> profile.setAllergies(p.getAllergies()));

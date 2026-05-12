@@ -44,3 +44,8 @@ gemini:
   api:
     key: ${GEMINI_API_KEY:AIzaSyAQ17xrozZ7uj_gZQ8Wb-e-2nnts2iu8ow}
     url:  ${GEMINI_API_URL:https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent}
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:dakuwdt6l}
+  api-key: ${CLOUDINARY_API_KEY:176965344899189}
+  api-secret: ${CLOUDINARY_API_SECRET:sNI8zrxgU5YDYQ0_EO8kaJ18ias}

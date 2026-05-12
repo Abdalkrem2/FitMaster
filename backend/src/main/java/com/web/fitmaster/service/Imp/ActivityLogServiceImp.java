@@ -5,6 +5,7 @@ import com.web.fitmaster.model.ActivityLog;
 import com.web.fitmaster.model.enums.EntityType;
 import com.web.fitmaster.repository.ActivityLogRepository;
 import com.web.fitmaster.service.ActivityLogService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class ActivityLogServiceImp implements ActivityLogService {
     private final ActivityLogRepository activityLogRepository;
     @Override
+    @Transactional
     public ActivityLogDTOs.LogsResponse getLogs(Long performedBy, EntityType entityType, Pageable pageable) {
         Page<ActivityLog>activityLogs;
         if(performedBy != null &&entityType != null) {
