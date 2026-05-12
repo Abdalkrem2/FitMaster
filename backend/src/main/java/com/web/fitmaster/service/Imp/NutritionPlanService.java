@@ -2,10 +2,13 @@ package com.web.fitmaster.service.Imp;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.web.fitmaster.dto.NutritionPlanDTOs;
 import com.web.fitmaster.model.*;
 import com.web.fitmaster.model.enums.WorkoutPlanStatus;
+import com.web.fitmaster.nutrition.NutritionPlanMapper;
 import com.web.fitmaster.repository.MemberProfileRepository;
 import com.web.fitmaster.repository.NutritionPlanRepository;
+import com.web.fitmaster.workout.WorkoutPlanMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.net.http.*;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,21 +27,27 @@ public class NutritionPlanService {
 
     private final MemberProfileRepository memberProfileRepository;
     private final NutritionPlanRepository nutritionPlanRepository;
+    private final NutritionPlanMapper nutritionPlanMapper;
+    private final WorkoutPlanMapper workoutPlanMapper;
+    @Value("${groq.api.key}")
+    private String groqApiKey;
 
-    @Value("${gemini.api.key}")
-    private String geminiApiKey;
+    @Value("${groq.api.url}")
+    private String groqApiUrl;
 
-    @Value("${gemini.api.url}")
-    private String geminiApiUrl;
 
-    public NutritionPlan getActivePlan(Long memberId) {
-        return nutritionPlanRepository
+@Transactional
+    public NutritionPlanDTOs.NutritionPlanResponse getActivePlan(Long memberId) {
+       NutritionPlan nutritionPlan= nutritionPlanRepository
                 .findByMember_IdAndStatus(memberId, WorkoutPlanStatus.ACTIVE)
                 .orElseThrow(() -> new RuntimeException("No active nutrition plan found"));
+       return nutritionPlanMapper.toResponse(nutritionPlan);
     }
-    public List<NutritionPlan> getAllPlans(Long memberId) {
-        return nutritionPlanRepository
+@Transactional
+    public List<NutritionPlanDTOs.NutritionPlanResponse> getAllPlans(Long memberId) {
+       List<NutritionPlan> nutritionPlans= nutritionPlanRepository
                 .findByMember_IdOrderByCreatedAtDesc(memberId);
+       return nutritionPlans.stream().map(nutritionPlanMapper::toResponse).toList();
     }
 
     @Transactional
@@ -68,7 +78,7 @@ public class NutritionPlanService {
         String prompt = buildPrompt(profile, member, calories, protein, carbs, fat);
 
         // 5. استدعي Gemini مع Retry
-        String jsonResponse = callGeminiWithRetry(prompt, 3);
+        String jsonResponse = callgorqWithRetry(prompt, 3);
 
         // 6. Parse الـ Response
         NutritionPlan plan = parseAndBuildPlan(jsonResponse, profile, member, calories, protein, carbs, fat);
@@ -113,75 +123,44 @@ public class NutritionPlanService {
     private String buildPrompt(MemberProfile profile, User member,
                                int calories, int protein, int carbs, int fat) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Generate a detailed daily meal plan in JSON format.\n\n");
-        sb.append("Member info:\n");
-        sb.append("- Goal: ").append(profile.getGoal()).append("\n");
-        sb.append("- Age: ").append(profile.getAge()).append("\n");
-        sb.append("- Weight: ").append(profile.getWeight()).append("kg\n");
-        sb.append("- Height: ").append(profile.getHeight()).append("cm\n");
-        sb.append("- Gender: ").append(member.getGender()).append("\n");
 
-        // Health conditions
-        if (profile.isHasDiabetes()) sb.append("- Has diabetes: avoid simple sugars, low glycemic foods only\n");
-        if (profile.isHasHeartConditions()) sb.append("- Has heart condition: avoid saturated fats, low sodium\n");
-        if (profile.isHasHypertension()) sb.append("- Has hypertension: very low sodium\n");
+        sb.append("Create a daily meal plan with EXACTLY ").append(calories).append(" kcal total.\n");
+        sb.append("Split across 5 meals, each meal ~").append(calories / 5).append(" kcal.\n\n");
 
-        // Allergies
+        sb.append("Goal: ").append(profile.getGoal()).append("\n");
+        sb.append("Targets: ").append(protein).append("g protein, ")
+                .append(carbs).append("g carbs, ")
+                .append(fat).append("g fat\n");
+
+        if (profile.isHasDiabetes()) sb.append("Diabetic: low glycemic foods only\n");
+        if (profile.isHasHeartConditions()) sb.append("Heart condition: low saturated fat\n");
+        if (profile.isHasHypertension()) sb.append("Hypertension: low sodium\n");
         if (profile.getAllergies() != null && !profile.getAllergies().isEmpty()) {
-            sb.append("- Allergies: ").append(profile.getAllergies()).append(" — STRICTLY avoid these\n");
+            sb.append("AVOID: ").append(profile.getAllergies()).append("\n");
         }
 
-        sb.append("\nNutrition targets:\n");
-        sb.append("- Daily calories: ").append(calories).append(" kcal\n");
-        sb.append("- Protein: ").append(protein).append("g\n");
-        sb.append("- Carbs: ").append(carbs).append("g\n");
-        sb.append("- Fat: ").append(fat).append("g\n");
+        sb.append("\nRULES:\n");
+        sb.append("1. Return ONLY valid JSON, no markdown\n");
+        sb.append("2. Exactly 5 meals: Breakfast, Morning Snack, Lunch, Afternoon Snack, Dinner\n");
+        sb.append("3. Each meal must reach ~").append(calories / 5).append(" kcal — use large portions\n");
+        sb.append("4. At least 2 foods per meal\n");
+        sb.append("5. Max 3 recipe steps per meal\n\n");
 
-        sb.append("""
-    
-        STRICT RULES:
-        1. Return ONLY valid JSON — no markdown, no explanation
-        2. Include exactly 5 meals: Breakfast, Morning Snack, Lunch, Afternoon Snack, Dinner
-        3. Total calories must be within ±50 of the target
-        4. Each meal must have at least 2 foods
-        5. Keep recipe steps SHORT — maximum 3 steps per meal
-        6. Keep instructions brief — one sentence each
-    
-    Return this exact JSON structure:
-    {
-      "meals": [
-        {
-          "name": "Breakfast",
-          "mealTime": "8:00 AM",
-          "prepTime": "10 minutes",
-          "totalCalories": 600,
-          "foods": [
-            {
-              "name": "Oatmeal",
-              "amount": "100g",
-              "calories": 350,
-              "proteinGrams": 12,
-              "carbsGrams": 60,
-              "fatGrams": 7
-            }
-          ],
-          "recipeSteps": [
-            {"stepOrder": 1, "instruction": "Brief instruction here"}
-          ]
-        }
-      ]
-    }
-    """);
+        sb.append("JSON structure:\n");
+        sb.append("{\"meals\":[{\"name\":\"Breakfast\",\"mealTime\":\"8:00 AM\",\"prepTime\":\"10 minutes\",");
+        sb.append("\"totalCalories\":").append(calories / 5).append(",");
+        sb.append("\"foods\":[{\"name\":\"food\",\"amount\":\"100g\",\"calories\":300,");
+        sb.append("\"proteinGrams\":20,\"carbsGrams\":30,\"fatGrams\":10}],");
+        sb.append("\"recipeSteps\":[{\"stepOrder\":1,\"instruction\":\"step here\"}]}]}\n");
 
         return sb.toString();
     }
-
     // ─── Gemini API Call ─────────────────────────────────────────────────────
 
-    private String callGeminiWithRetry(String prompt, int maxRetries) {
+    private String callgorqWithRetry(String prompt, int maxRetries) {
         for (int attempt = 1; attempt <= maxRetries; attempt++) {
             try {
-                String response = callGemini(prompt);
+                String response = callGroq(prompt);
                 String clean = cleanResponse(response);
                 validateJson(clean);
                 return clean;
@@ -194,36 +173,43 @@ public class NutritionPlanService {
         throw new RuntimeException("Gemini failed");
     }
 
-    private String callGemini(String prompt) throws Exception {
+    private String callGroq(String prompt) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
-        // ابني الـ request body بشكل صح
         String requestBody = mapper.writeValueAsString(
-                Map.of("contents", List.of(
-                        Map.of("parts", List.of(
-                                Map.of("text", prompt)
-                        ))
-                ))
+                Map.of(
+                        "model", "llama-3.3-70b-versatile",
+                        "messages", List.of(
+                                Map.of("role", "user", "content", prompt)
+                        ),
+                        "temperature", 0.7
+                )
         );
 
+        HttpClient client = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(30))
+                .build();
+
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(geminiApiUrl + "?key=" + geminiApiKey))
+                .uri(URI.create(groqApiUrl))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + groqApiKey)
+                .timeout(Duration.ofSeconds(60))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
-        HttpResponse<String> response = HttpClient.newHttpClient()
+        HttpResponse<String> response = client
                 .send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 200) {
-            throw new RuntimeException("Gemini API error: " + response.statusCode()
+            throw new RuntimeException("Groq API error: " + response.statusCode()
                     + " — " + response.body());
         }
 
         JsonNode root = mapper.readTree(response.body());
-        return root.path("candidates").get(0)
-                .path("content").path("parts").get(0)
-                .path("text").asText();
+        return root.path("choices").get(0)
+                .path("message")
+                .path("content").asText();
     }
 
     private String cleanResponse(String response) {
@@ -266,7 +252,7 @@ public class NutritionPlanService {
                         .name(mealNode.path("name").asText())
                         .mealTime(mealNode.path("mealTime").asText())
                         .prepTime(mealNode.path("prepTime").asText())
-                        .totalCalories(mealNode.path("totalCalories").asInt())
+                        .totalCalories(0)
                         .foods(new ArrayList<>())
                         .recipeSteps(new ArrayList<>())
                         .build();
@@ -283,6 +269,11 @@ public class NutritionPlanService {
                             .build();
                     meal.getFoods().add(food);
                 }
+
+                int mealCalories = meal.getFoods().stream()
+                        .mapToInt(NutritionFood::getCalories)
+                        .sum();
+                meal.setTotalCalories(mealCalories);
 
                 for (JsonNode stepNode : mealNode.path("recipeSteps")) {
                     NutritionRecipeStep step = NutritionRecipeStep.builder()
@@ -324,7 +315,7 @@ public class NutritionPlanService {
             return plan;
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse Gemini response: " + e.getMessage());
+            throw new RuntimeException("Failed to parse Groq response: " + e.getMessage());
         }
     }
 }
