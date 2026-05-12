@@ -43,10 +43,18 @@ public class MemberServiceImp implements MemberService {
     private final MemberProfileRepository memberProfileRepository;
 
     @Override
+    @Transactional
     public MemberDTOs.MemberProfileDTO getMemberProfile(Long id) {
-        MemberProfile profile = memberProfileRepository.findByMemberId(id).orElse(null);
+        MemberProfile profile = memberProfileRepository.findByMemberId(id)
+                .orElseThrow(()->new NotFoundException("Member Profile Not Found"));
+
+        memberProfileRepository.findByMemberIdWithAllergies(id)
+                .ifPresent(p -> profile.setAllergies(p.getAllergies()));
+
         return mapToProfileDTO(profile);
     }
+
+
     @Override
     @Transactional
     public MemberDTOs.MemberProfileDTO upsertMemberProfile(Long id, MemberDTOs.MemberProfileRequest request) {
@@ -93,7 +101,7 @@ public class MemberServiceImp implements MemberService {
     }
 
     @Override
-    @Transactional
+    @Transactional//ضفتها لانه بعد ما وقفت open-in-view: false اعطاني lazy
     public MemberDTOs.MemberResponse getAllMembers(Pageable pageable,String search) {
         Page<User> members;
         if(search !=null && !search.isBlank()){
