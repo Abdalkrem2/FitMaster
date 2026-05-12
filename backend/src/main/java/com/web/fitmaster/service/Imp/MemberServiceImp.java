@@ -93,6 +93,7 @@ public class MemberServiceImp implements MemberService {
     }
 
     @Override
+    @Transactional
     public MemberDTOs.MemberResponse getAllMembers(Pageable pageable,String search) {
         Page<User> members;
         if(search !=null && !search.isBlank()){
