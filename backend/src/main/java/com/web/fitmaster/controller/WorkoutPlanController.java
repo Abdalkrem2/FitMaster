@@ -39,18 +39,18 @@ public class WorkoutPlanController {
     @PreAuthorize("hasRole('MEMBER')")
     public ResponseEntity<WorkoutPlanDTOs.WorkoutPlanResponse> getActive() {
         Long memberId = authUtil.loggedInUserId();
-        WorkoutPlan plan = workoutPlanService.getActivePlan(memberId);
-        return ResponseEntity.ok(workoutPlanMapper.toResponse(plan));
+        WorkoutPlanDTOs.WorkoutPlanResponse plan = workoutPlanService.getActivePlan(memberId);
+        return ResponseEntity.ok(plan);
     }
 
     @GetMapping("/active/pdf")
     @PreAuthorize("hasRole('MEMBER')")
     public ResponseEntity<byte[]> downloadPdf() {
         Long memberId = authUtil.loggedInUserId();
-        WorkoutPlan plan = workoutPlanService.getActivePlan(memberId);
-        WorkoutPlanDTOs.WorkoutPlanResponse response = workoutPlanMapper.toResponse(plan);
+        WorkoutPlanDTOs.WorkoutPlanResponse plan = workoutPlanService.getActivePlan(memberId);
 
-        byte[] pdf = pdfService.generateWorkoutPlanPdf(response);
+
+        byte[] pdf = pdfService.generateWorkoutPlanPdf(plan);
 
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment; filename=workout-plan.pdf")
@@ -62,10 +62,7 @@ public class WorkoutPlanController {
     @PreAuthorize("hasRole('MEMBER')")
     public ResponseEntity<List<WorkoutPlanDTOs.WorkoutPlanResponse>> getHistory() {
         Long memberId = authUtil.loggedInUserId();
-        return ResponseEntity.ok(
-                workoutPlanService.getAllPlans(memberId).stream()
-                        .map(workoutPlanMapper::toResponse)
-                        .toList()
+        return ResponseEntity.ok(workoutPlanService.getAllPlans(memberId)
         );
     }
 
