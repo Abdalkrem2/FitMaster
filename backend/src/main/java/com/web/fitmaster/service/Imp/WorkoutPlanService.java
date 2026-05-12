@@ -1,5 +1,6 @@
 package com.web.fitmaster.service.Imp;
 
+import com.web.fitmaster.dto.WorkoutPlanDTOs;
 import com.web.fitmaster.exceptions.NotFoundException;
 import com.web.fitmaster.model.*;
 import com.web.fitmaster.model.enums.DifficultyLevel;
@@ -21,19 +22,24 @@ public class WorkoutPlanService {
 
     private final MemberProfileRepository memberProfileRepository;
     private final WorkoutPlanRepository workoutPlanRepository;
+    private final WorkoutPlanMapper workoutPlanMapper;
     private final TrainingConfigFactory configFactory;
     private final ExerciseSelector exerciseSelector;
 
-    public List<WorkoutPlan> getAllPlans(Long memberId) {
-        return workoutPlanRepository
+    @Transactional
+    public List<WorkoutPlanDTOs.WorkoutPlanResponse> getAllPlans(Long memberId) {
+        List<WorkoutPlan> workoutPlan= workoutPlanRepository
                 .findByMember_IdOrderByCreatedAtDesc(memberId);
+        return workoutPlan.stream().map(workoutPlanMapper::toResponse).toList();
     }
 
+    @Transactional
+    public WorkoutPlanDTOs.WorkoutPlanResponse getActivePlan(Long memberId) {
 
-    public WorkoutPlan getActivePlan(Long memberId) {
-        return workoutPlanRepository
+        WorkoutPlan workoutPlan= workoutPlanRepository
                 .findByMember_IdAndStatus(memberId, WorkoutPlanStatus.ACTIVE)
                 .orElseThrow(() -> new NotFoundException("No active workout plan found"));
+        return workoutPlanMapper.toResponse(workoutPlan);
     }
 
     @Transactional

@@ -8,10 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface WorkoutPlanRepository extends JpaRepository<WorkoutPlan, Long> {
-    // تجيب الخطة النشطة للمember
+
     Optional<WorkoutPlan> findByMember_IdAndStatus(Long memberId, WorkoutPlanStatus status);
+
     List<WorkoutPlan> findByMember_IdOrderByCreatedAtDesc(Long memberId);
 
-    // تجيب كل خطط الـ member
+
     List<WorkoutPlan> findByMember_Id(Long memberId);
 }
