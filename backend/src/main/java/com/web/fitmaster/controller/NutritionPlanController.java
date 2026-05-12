@@ -37,18 +37,18 @@ public class NutritionPlanController {
     @PreAuthorize("hasRole('MEMBER')")
     public ResponseEntity<NutritionPlanResponse> getActive() {
         Long memberId = authUtil.loggedInUserId();
-        NutritionPlan plan = nutritionPlanService.getActivePlan(memberId);
-        return ResponseEntity.ok(nutritionPlanMapper.toResponse(plan));
+        NutritionPlanResponse plan = nutritionPlanService.getActivePlan(memberId);
+        return ResponseEntity.ok(plan);
     }
 
     @GetMapping("/active/pdf")
     @PreAuthorize("hasRole('MEMBER')")
     public ResponseEntity<byte[]> downloadPdf() {
         Long memberId = authUtil.loggedInUserId();
-        NutritionPlan plan = nutritionPlanService.getActivePlan(memberId);
-        NutritionPlanDTOs.NutritionPlanResponse response = nutritionPlanMapper.toResponse(plan);
+        NutritionPlanResponse plan = nutritionPlanService.getActivePlan(memberId);
+      ;
 
-        byte[] pdf = nutritionPdfService.generateNutritionPlanPdf(response);
+        byte[] pdf = nutritionPdfService.generateNutritionPlanPdf(plan);
 
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment; filename=nutrition-plan.pdf")
@@ -61,9 +61,7 @@ public class NutritionPlanController {
     public ResponseEntity<List<NutritionPlanResponse>> getHistory() {
         Long memberId = authUtil.loggedInUserId();
         return ResponseEntity.ok(
-                nutritionPlanService.getAllPlans(memberId).stream()
-                        .map(nutritionPlanMapper::toResponse)
-                        .toList()
+                nutritionPlanService.getAllPlans(memberId)
         );
     }
 }
