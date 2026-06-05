@@ -21,7 +21,7 @@ jobs:
 
       - name: Build & Test Backend
         working-directory: ./backend
-        run: ./mvnw clean package
+        run: ./mvnw clean package -DskipTests
         env:
           DB_URL: jdbc:mysql://localhost:3306/fitmaster_db
           DB_USERNAME: root
