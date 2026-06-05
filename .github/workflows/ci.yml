@@ -1,0 +1,38 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build & Test Backend
+        working-directory: ./backend
+        run: ./mvnw clean package
+        env:
+          DB_URL: jdbc:mysql://localhost:3306/fitmaster_db
+          DB_USERNAME: root
+          DB_PASSWORD: root
+          JWT_SECRET: test-secret-key-for-ci
+          GEMINI_API_KEY: test
+          GEMINI_API_URL: test
+          SHOW_SQL: false
+
+      - name: Build Frontend
+        working-directory: ./frontend
+        run: |
+          npm install
+          npm run build
