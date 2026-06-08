@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { Camera, X } from 'lucide-react';
+import { Camera, X, RefreshCcw } from 'lucide-react';
 
 interface Props {
   open: boolean;
@@ -11,6 +11,7 @@ export default function CameraCaptureModal({ open, onClose, onCapture }: Props) 
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
 
   useEffect(() => {
     if (open) {
@@ -21,13 +22,14 @@ export default function CameraCaptureModal({ open, onClose, onCapture }: Props) 
     return () => {
       stopCamera();
     };
-  }, [open]);
+  }, [open, facingMode]);
 
   const startCamera = async () => {
     try {
+      stopCamera();
       setError(null);
       const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'user' } 
+        video: { facingMode } 
       });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -104,13 +106,22 @@ export default function CameraCaptureModal({ open, onClose, onCapture }: Props) 
           </div>
         )}
 
-        <div className="flex justify-between items-center">
-          <button
-            onClick={startCamera}
-            className="px-4 py-2 border rounded hover:bg-gray-50 text-sm"
-          >
-            Retry Camera
-          </button>
+        <div className="flex justify-between items-center mt-4">
+          <div className="flex gap-2">
+            <button
+              onClick={startCamera}
+              className="px-3 py-2 border rounded hover:bg-gray-50 text-sm"
+            >
+              Retry
+            </button>
+            <button
+              onClick={() => setFacingMode(prev => prev === 'user' ? 'environment' : 'user')}
+              className="px-3 py-2 border rounded hover:bg-gray-50 text-sm flex items-center gap-1"
+            >
+              <RefreshCcw size={16} />
+              <span>Flip</span>
+            </button>
+          </div>
           {!error && (
             <button
               onClick={handleCapture}

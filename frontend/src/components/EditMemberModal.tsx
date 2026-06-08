@@ -17,6 +17,7 @@ interface Props {
 export default function EditMemberModal({ open, onClose, member, onUpdated }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const [showCamera, setShowCamera] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -134,7 +135,15 @@ export default function EditMemberModal({ open, onClose, member, onUpdated }: Pr
               
               <button
                 type="button"
-                onClick={(e) => { e.stopPropagation(); setShowCamera(true); }}
+                onClick={(e) => { 
+                  e.stopPropagation(); 
+                  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                  if (isMobile) {
+                    cameraInputRef.current?.click(); 
+                  } else {
+                    setShowCamera(true);
+                  }
+                }}
                 className="absolute bottom-0 right-0 p-1.5 bg-white border border-slate-200 text-slate-500 rounded-full shadow-sm hover:text-indigo-600 hover:border-indigo-200 transition-colors"
                 title="Use Camera"
               >
@@ -147,6 +156,14 @@ export default function EditMemberModal({ open, onClose, member, onUpdated }: Pr
               ref={fileInputRef}
               type="file"
               accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
               className="hidden"
               onChange={handleFileChange}
             />
