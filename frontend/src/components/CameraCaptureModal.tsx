@@ -69,8 +69,17 @@ export default function CameraCaptureModal({ open, onClose, onCapture }: Props) 
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl p-4 w-[90%] max-w-[500px] shadow-xl relative">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[110]"
+      onClick={(e) => {
+        e.stopPropagation();
+        onClose();
+      }}
+    >
+      <div 
+        className="bg-white rounded-2xl p-4 w-[90%] max-w-[500px] shadow-xl relative"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button 
           onClick={onClose}
           className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-100 z-10"
@@ -88,7 +97,8 @@ export default function CameraCaptureModal({ open, onClose, onCapture }: Props) 
             <video 
               ref={videoRef} 
               autoPlay 
-              playsInline 
+              playsInline
+              muted
               className="w-full h-full object-cover"
             />
           </div>
