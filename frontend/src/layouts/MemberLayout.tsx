@@ -10,6 +10,7 @@ import {
   Utensils,
   LogOut,
   History,
+  Settings,
 } from "lucide-react";
 
 const navItems = [
@@ -18,6 +19,7 @@ const navItems = [
   { to: "/member-nutrition-plan", icon: Utensils, label: "Nutrition Plan" },
   { to: "/member-plan-history", icon: History, label: "History" },
   { to: "/member-profile", icon: User, label: "Profile" },
+  { to: "/member-settings", icon: Settings, label: "Settings" },
 ];
 
 export const MemberLayout: React.FC = () => {

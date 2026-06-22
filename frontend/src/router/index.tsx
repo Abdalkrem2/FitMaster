@@ -20,6 +20,7 @@ import MemberOnboarding from "@/pages/MemberOnboarding";
 import MemberWorkoutPlan from "../pages/MemberWorkoutPlan";
 import MemberNutritionPlan from "../pages/MemberNutritionPlan";
 import MemberPlanHistory from "../pages/MemberPlanHistory";
+import MemberSettings from "../pages/MemberSettings";
 
 //Guard: ADMIN only
 // if not admin return to tha main page
@@ -68,6 +69,11 @@ export const router = createBrowserRouter([
     path: "/member-plan-history",
     element: <MemberLayout />,
     children: [{ index: true, element: <MemberPlanHistory /> }],
+  },
+  {
+    path: "/member-settings",
+    element: <MemberLayout />,
+    children: [{ index: true, element: <MemberSettings /> }],
   },
   {
     path: "/",

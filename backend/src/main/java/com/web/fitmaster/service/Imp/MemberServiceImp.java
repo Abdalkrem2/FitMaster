@@ -382,9 +382,12 @@ public class MemberServiceImp implements MemberService {
 
     @Override
     @Transactional
-    public void changePassword(Long id, String newPassword) {
+    public void changePassword(Long id, String currentPassword, String newPassword) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Member not found"));
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new BadRequestException("Current password is incorrect");
+        }
         user.setPassword(passwordEncoder.encode(newPassword));
     }
 }

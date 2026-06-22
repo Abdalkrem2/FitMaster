@@ -59,4 +59,11 @@ export const memberService = {
     const res = await api.patch("/members/me/profile", profile);
     return res.data;
   },
+
+  changePassword: async (
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> => {
+    await api.patch("/members/me/password", { currentPassword, newPassword });
+  },
 };
