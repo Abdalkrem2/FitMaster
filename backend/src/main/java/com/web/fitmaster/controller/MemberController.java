@@ -115,7 +115,7 @@ public class MemberController {
     @PreAuthorize("hasRole('MEMBER')")
     public ResponseEntity<String> changePassword(@RequestBody Map<String, String> body) {
         User loggedIn = authUtil.loggedInUser();
-        memberService.changePassword(loggedIn.getId(), body.get("newPassword"));
+        memberService.changePassword(loggedIn.getId(), body.get("currentPassword"), body.get("newPassword"));
         return ResponseEntity.ok("Password changed successfully");
     }
 

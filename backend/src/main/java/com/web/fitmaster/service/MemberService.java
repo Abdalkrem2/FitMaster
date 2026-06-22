@@ -22,7 +22,7 @@ public interface MemberService {
     List<MembershipDTOs.MembershipHistory> getMemberships(Long id);
     long countActiveMembers();
     long countExpiringSoon();
-    void changePassword(Long id, String newPassword);
+    void changePassword(Long id, String currentPassword, String newPassword);
     MemberDTOs.MemberProfileDTO getMemberProfile(Long id);
     MemberDTOs.MemberProfileDTO upsertMemberProfile(Long id, MemberDTOs.MemberProfileRequest request);
 }
