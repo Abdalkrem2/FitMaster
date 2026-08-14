@@ -3,9 +3,9 @@ spring:
     name: FitMaster
 
   datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3306/fitmaster_db}
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:123444}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   flyway:
@@ -32,7 +32,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   app:
-    jwtSecret: ${JWT_SECRET:SGVsbG9Xb3JsZFRoaXNJc0FTZWNyZXRLZXlGb3JKV1RUb2tlbkdlbmVyYXRpb25XaXRoU3ByaW5nQm9vdA==}
+    jwtSecret: ${JWT_SECRET}
     jwtExpirationMs: 86400000
     jwtCookieName: springBootEcom
 
@@ -43,11 +43,11 @@ exercises:
 
 
 cloudinary:
-  cloud-name: ${CLOUDINARY_CLOUD_NAME:dakuwdt6l}
-  api-key: ${CLOUDINARY_API_KEY:176965344899189}
-  api-secret: ${CLOUDINARY_API_SECRET:sNI8zrxgU5YDYQ0_EO8kaJ18ias}
+  cloud-name: ${CLOUDINARY_CLOUD_NAME}
+  api-key: ${CLOUDINARY_API_KEY}
+  api-secret: ${CLOUDINARY_API_SECRET}
 
 groq:
   api:
-    key: ${GROQ_API_KEY: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}
+    key: ${GROQ_API_KEY}
     url: https://api.groq.com/openai/v1/chat/completions

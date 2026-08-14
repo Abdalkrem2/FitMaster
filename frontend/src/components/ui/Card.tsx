@@ -56,7 +56,7 @@ export const CardTitle: React.FC<{
   className?: string;
 }> = ({ children, className = "" }) => (
   <h3
-    className={`text-lg font-semibold text-slate-900 tracking-tight ${className}`}
+    className={`text-lg font-semibold text-slate-900 tracking-tight  ${className}`}
   >
     {children}
   </h3>
